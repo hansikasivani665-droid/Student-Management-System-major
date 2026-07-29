@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Dashboard</title>
+
+<link rel="stylesheet" href="../css/student-dashboard.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+
+<header class="top-header">
+
+
+<div>
+
+<h1>
+
+<i class="fa-solid fa-graduation-cap"></i>
+
+Student Dashboard
+
+</h1>
+
+
+<p>
+Welcome to Student Management System
+</p>
+
+
+</div>
+
+
+
+<button onclick="logout()">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Logout
+
+</button>
+
+
+</header>
+
+
+
+
+
+
+
+<!-- ================= PROFILE ================= -->
+
+
+<section class="profile-section">
+
+
+<div class="profile-card">
+
+
+<img src="../assets/images/admin.png">
+
+
+<div>
+
+
+<h2 id="studentName">
+Loading...
+</h2>
+
+
+<p>
+<i class="fa-solid fa-id-card"></i>
+Roll No:
+<span id="studentRoll">
+-
+</span>
+</p>
+
+
+
+<p>
+<i class="fa-solid fa-building"></i>
+Department:
+<span id="studentDepartment">
+-
+</span>
+</p>
+
+
+
+<p>
+<i class="fa-solid fa-graduation-cap"></i>
+Year:
+<span id="studentYear">
+-
+</span>
+</p>
+
+
+
+<p>
+<i class="fa-solid fa-envelope"></i>
+Email:
+<span id="studentEmail">
+-
+</span>
+</p>
+
+
+
+<p>
+<i class="fa-solid fa-phone"></i>
+Phone:
+<span id="studentPhone">
+-
+</span>
+</p>
+
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- ================= CARDS ================= -->
+
+
+<section class="cards">
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-file-lines"></i>
+
+<div>
+
+<h3>Total Results</h3>
+
+<h2 id="totalResults">
+0
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-book"></i>
+
+<div>
+
+<h3>Total Subjects</h3>
+
+<h2 id="totalSubjects">
+0
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-chart-line"></i>
+
+<div>
+
+<h3>Average Marks</h3>
+
+<h2 id="averageMarks">
+0%
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-star"></i>
+
+<div>
+
+<h3>Highest Marks</h3>
+
+<h2 id="highestMarks">
+0
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<div>
+
+<h3>Result Status</h3>
+
+<h2 id="resultStatus">
+-
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+<div>
+
+<h3>Attendance</h3>
+
+<h2 id="attendancePercentage">
+0%
+</h2>
+
+</div>
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= ATTENDANCE DETAILS ================= -->
+
+
+<section class="attendance-box">
+
+
+<h2>
+
+<i class="fa-solid fa-calendar-days"></i>
+
+Attendance Details
+
+</h2>
+
+
+
+<div class="attendance-grid">
+
+
+<div>
+
+<h3>Total Days</h3>
+
+<p id="totalDays">
+0
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<h3>Present Days</h3>
+
+<p id="presentDays">
+0
+</p>
+
+</div>
+
+
+
+
+
+<div>
+
+<h3>Absent Days</h3>
+
+<p id="absentDays">
+0
+</p>
+
+</div>
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= RESULTS ================= -->
+
+
+<section class="results-box">
+
+
+<h2>
+
+<i class="fa-solid fa-book-open"></i>
+
+My Results
+
+</h2>
+
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+<th>Subject</th>
+
+<th>Marks</th>
+
+<th>Grade</th>
+
+<th>Status</th>
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="studentResultBody">
+
+
+</tbody>
+
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= ACTIVITIES ================= -->
+
+
+<section class="activity-box">
+
+
+<h2>
+
+<i class="fa-solid fa-bell"></i>
+
+Recent Activities
+
+</h2>
+
+
+
+<ul>
+
+
+<li>
+<i class="fa-solid fa-check"></i>
+Results Published
+</li>
+
+
+<li>
+<i class="fa-solid fa-check"></i>
+Attendance Updated
+</li>
+
+
+<li>
+<i class="fa-solid fa-check"></i>
+Profile Information Loaded
+</li>
+
+
+</ul>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<footer>
+
+© 2026 Student Management System
+
+</footer>
+
+
+
+
+
+<script src="../js/student-dashboard.js"></script>
+
+
+</body>
+
+</html>

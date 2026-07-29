@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Management System | Attendance</title>
+
+
+<link rel="stylesheet" href="../css/attendance.css">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<link rel="icon" href="../assets/images/favicon.png">
+
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+
+<div class="logo">
+
+<i class="fa-solid fa-graduation-cap"></i>
+
+<h2>SMS</h2>
+
+</div>
+
+
+
+
+<div class="profile-box">
+
+
+<img src="../assets/images/favicon.png">
+
+
+<div>
+
+<h4>Hansika Sivani</h4>
+
+<p>
+
+<i class="fa-solid fa-user-shield"></i>
+
+Admin
+
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<nav>
+
+
+<a href="dashboard.html">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</a>
+
+
+
+<a href="student-list.html">
+
+<i class="fa-solid fa-users"></i>
+
+Students
+
+</a>
+
+
+
+<a href="add-student.html">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Add Student
+
+</a>
+
+
+
+
+<a class="active" href="attendance.html">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+Attendance
+
+</a>
+
+
+
+<a href="results.html">
+
+<i class="fa-solid fa-chart-column"></i>
+
+Results
+
+</a>
+
+
+
+</nav>
+
+
+
+</aside>
+
+
+
+
+
+
+
+<!-- ================= MAIN ================= -->
+
+
+<main class="main-content">
+
+
+
+
+
+<header class="top-header">
+
+
+<div>
+
+
+<h1>
+
+<i class="fa-solid fa-calendar-check"></i>
+
+Attendance Management
+
+</h1>
+
+
+<p>
+
+Track and maintain daily student attendance records
+
+</p>
+
+
+</div>
+
+
+
+
+<div class="date-time">
+
+
+<div>
+
+<i class="fa-solid fa-calendar"></i>
+
+<span id="todayDate"></span>
+
+</div>
+
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+
+<!-- ================= CARDS ================= -->
+
+<section class="cards">
+
+
+<div class="card">
+
+<i class="fa-solid fa-users"></i>
+
+
+<div>
+
+<h3>Total Students</h3>
+
+<h2 id="totalStudents">
+0
+</h2>
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-user-check"></i>
+
+
+<div>
+
+<h3>Present Today</h3>
+
+<h2 id="presentCount">
+0
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-user-clock"></i>
+
+
+<div>
+
+<h3>Absent Today</h3>
+
+<h2 id="absentCount">
+0
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-chart-line"></i>
+
+
+<div>
+
+<h3>Attendance %</h3>
+
+<h2 id="attendancePercentage">
+0%
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= FILTER ================= -->
+
+
+<section class="filter-box">
+
+
+
+<input 
+type="text"
+id="searchStudent"
+placeholder="Search student name or roll number">
+
+
+
+
+
+<select id="departmentFilter">
+
+
+<option value="All">
+All Departments
+</option>
+
+
+<option>
+CSE
+</option>
+
+
+<option>
+ECE
+</option>
+
+
+<option>
+EEE
+</option>
+
+
+<option>
+Mechanical
+</option>
+
+
+<option>
+Civil
+</option>
+
+
+</select>
+
+
+
+
+
+
+<select id="yearFilter">
+
+
+<option value="All">
+All Years
+</option>
+
+
+<option>
+1st Year
+</option>
+
+
+<option>
+2nd Year
+</option>
+
+
+<option>
+3rd Year
+</option>
+
+
+<option>
+4th Year
+</option>
+
+
+</select>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+<!-- ================= TABLE ================= -->
+
+
+<form id="attendanceForm">
+
+
+
+<section class="table-card">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Roll Number</th>
+
+<th>Name</th>
+
+<th>Department</th>
+
+<th>Year</th>
+
+<th>Status</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="attendanceBody">
+
+
+</tbody>
+
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+
+
+
+<div class="buttons">
+
+
+<button type="button"
+id="markPresent"
+class="present">
+
+
+<i class="fa-solid fa-check"></i>
+
+Mark All Present
+
+
+</button>
+
+
+
+
+
+<button type="button"
+id="markAbsent"
+class="absent">
+
+
+<i class="fa-solid fa-user-xmark"></i>
+
+Mark All Absent
+
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="buttons">
+
+
+<button class="save">
+
+
+<i class="fa-solid fa-floppy-disk"></i>
+
+Save Attendance
+
+</button>
+
+
+
+<button type="reset"
+class="reset">
+
+
+<i class="fa-solid fa-rotate-left"></i>
+
+Reset
+
+
+</button>
+
+
+</div>
+
+
+
+
+
+</form>
+
+
+
+
+
+
+<footer>
+
+
+<p>
+
+© 2026 Student Management System | Attendance Module
+
+</p>
+
+
+</footer>
+
+
+</main>
+
+</div>
+
+
+<script src="../js/attendance.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Management System | Add Student</title>
+
+<link rel="stylesheet" href="../css/add-student.css">
+
+<link rel="icon" href="../assets/images/favicon.png">
+
+
+<link 
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+
+<div class="logo">
+
+<i class="fa-solid fa-graduation-cap"></i>
+
+<h2>SMS</h2>
+
+</div>
+
+
+
+<div class="profile-box">
+
+
+<img src="../assets/images/favicon.png">
+
+
+<div>
+
+<h4>Hansika Sivani</h4>
+
+<p>
+<i class="fa-solid fa-user-tie"></i>
+Admin
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<nav>
+
+
+<a href="dashboard.html">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</a>
+
+
+
+<a href="student-list.html">
+
+<i class="fa-solid fa-users"></i>
+
+Students
+
+</a>
+
+
+
+<a class="active" href="add-student.html">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Add Student
+
+</a>
+
+
+
+<a href="attendance.html">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+Attendance
+
+</a>
+
+
+
+<a href="results.html">
+
+<i class="fa-solid fa-chart-column"></i>
+
+Results
+
+</a>
+
+
+</nav>
+
+
+</aside>
+
+
+
+
+
+<!-- MAIN CONTENT -->
+
+
+<main class="main-content">
+
+
+
+<header class="top-header">
+
+
+<div>
+
+<h1>
+
+<i class="fa-solid fa-user-plus"></i>
+
+Add New Student
+
+</h1>
+
+
+<p>
+Register student details into the management system
+</p>
+
+
+</div>
+
+
+
+
+<div class="date-time">
+
+
+<div>
+
+<i class="fa-solid fa-calendar"></i>
+
+<span id="liveDate"></span>
+
+</div>
+
+
+<div>
+
+<i class="fa-solid fa-clock"></i>
+
+<span id="liveTime"></span>
+
+</div>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+<section class="form-card">
+
+
+<h2>
+
+<i class="fa-solid fa-id-card"></i>
+
+Student Information
+
+</h2>
+
+
+
+
+
+<form id="majorAddStudentForm">
+
+
+
+<div class="form-grid">
+
+
+
+<div class="form-group">
+
+<label>
+<i class="fa-solid fa-user"></i>
+Student Name
+</label>
+
+<input 
+type="text"
+id="studentName"
+required>
+
+</div>
+
+
+
+
+
+<div class="form-group">
+
+<label>
+<i class="fa-solid fa-id-badge"></i>
+Roll Number
+</label>
+
+<input 
+type="text"
+id="rollNumber"
+required>
+
+</div>
+
+
+
+
+
+<div class="form-group">
+
+<label>
+<i class="fa-solid fa-building-columns"></i>
+Department
+</label>
+
+
+<select id="department" required>
+
+<option value="">Select Department</option>
+
+<option value="CSE">CSE</option>
+
+<option value="ECE">ECE</option>
+
+<option value="EEE">EEE</option>
+
+<option value="Mechanical">Mechanical</option>
+
+<option value="Civil">Civil</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label>
+<i class="fa-solid fa-calendar"></i>
+Year
+</label>
+
+
+<div>
+
+
+<label>
+<input type="radio" name="year" value="1st Year">
+1st Year
+</label>
+
+
+<label>
+<input type="radio" name="year" value="2nd Year">
+2nd Year
+</label>
+
+
+<label>
+<input type="radio" name="year" value="3rd Year">
+3rd Year
+</label>
+
+
+<label>
+<input type="radio" name="year" value="4th Year">
+4th Year
+</label>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="form-group">
+
+<label>
+<i class="fa-solid fa-envelope"></i>
+Email
+</label>
+
+
+<input
+type="email"
+id="emailAddress"
+required>
+
+
+</div>
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label>
+
+<i class="fa-solid fa-phone"></i>
+
+Phone
+
+</label>
+
+
+<input
+
+type="text"
+
+id="phone"
+
+maxlength="10"
+
+required>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+<div class="buttons">
+
+
+<button type="submit" class="save-btn">
+
+<i class="fa-solid fa-save"></i>
+
+Save Student
+
+</button>
+
+
+
+<button type="reset" class="reset-btn">
+
+Reset
+
+</button>
+
+
+</div>
+
+
+
+
+</form>
+
+
+
+</section>
+
+
+
+
+
+
+<footer>
+
+<p>
+
+© 2026 Student Management System
+
+</p>
+
+</footer>
+
+
+
+
+</main>
+
+
+
+</div>
+
+
+
+
+
+
+<script src="../js/add-student.js"></script>
+
+
+</body>
+
+</html>

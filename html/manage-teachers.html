@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Teachers | SMS</title>
+
+
+<link rel="stylesheet" href="/css/manage-teachers.css">
+
+
+<link rel="icon" href="images/favicon.png">
+
+
+</head>
+
+
+
+<body>
+
+
+<header>
+
+<h1>
+👨‍🏫 Manage Teachers
+</h1>
+
+<p>
+Admin Teacher Management Panel
+</p>
+
+
+</header>
+
+
+
+
+
+<main>
+
+
+
+<section class="form-card">
+
+
+<h2>
+➕ Add Teacher
+</h2>
+
+
+
+<form id="teacherForm">
+
+
+<input 
+type="text"
+id="teacherName"
+placeholder="Teacher Name"
+required>
+
+
+
+<input
+type="email"
+id="teacherEmail"
+placeholder="Email Address"
+required>
+
+
+
+<input
+type="text"
+id="teacherDepartment"
+placeholder="Department"
+required>
+
+
+
+<input
+type="text"
+id="teacherSubject"
+placeholder="Subject"
+required>
+
+
+
+<input
+type="tel"
+id="teacherPhone"
+placeholder="Phone Number"
+required>
+
+
+
+<button type="submit">
+
+Add Teacher
+
+</button>
+
+
+</form>
+
+
+</section>
+
+
+
+
+
+
+
+<section class="table-card">
+
+
+<div class="toolbar">
+
+
+<input 
+type="text"
+id="searchTeacher"
+placeholder="🔍 Search Teacher">
+
+
+</div>
+
+
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Email</th>
+
+<th>Department</th>
+
+<th>Subject</th>
+
+<th>Phone</th>
+
+<th>Action</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="teacherTable">
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+<button class="back"
+onclick="location.href='dashboard.html'">
+
+⬅ Back Dashboard
+
+</button>
+
+
+
+</main>
+
+
+
+<script src="/js/manage-teachers.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,810 @@
+/* ===========================================
+   STUDENT MANAGEMENT SYSTEM
+   LOGIN PAGE
+=========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+
+    background:linear-gradient(rgba(15,23,42,.85),
+    rgba(30,64,175,.85)),
+    url("../assets/images/college.jpg");
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-repeat:no-repeat;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow-x:hidden;
+
+}
+
+.login-container{
+
+    width:1100px;
+
+    max-width:95%;
+
+    min-height:650px;
+
+    background:white;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    box-shadow:0 25px 50px rgba(0,0,0,.25);
+
+    animation:fadeIn .8s ease;
+
+}
+
+/* ==========================
+        LEFT PANEL
+========================== */
+
+.left-panel{
+
+    background:
+    linear-gradient(rgba(37,99,235,.92),
+    rgba(30,64,175,.92)),
+    url("../assets/images/login-bg.jpg");
+
+    background-size:cover;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:50px;
+
+}
+
+.overlay{
+
+    width:100%;
+
+}
+
+.overlay h1{
+
+    font-size:42px;
+
+    margin-bottom:20px;
+
+    line-height:1.3;
+
+}
+
+.overlay h1 i{
+
+    color:#facc15;
+
+}
+
+.overlay p{
+
+    font-size:18px;
+
+    margin-bottom:40px;
+
+    color:#e5e7eb;
+
+}
+
+.features{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:22px;
+
+}
+
+.feature{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    font-size:18px;
+
+}
+
+.feature i{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:50%;
+
+    background:white;
+
+    color:#2563eb;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+}
+
+/* ==========================
+        RIGHT PANEL
+========================== */
+
+.right-panel{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#f8fafc;
+
+    padding:40px;
+
+}
+
+.log{
+
+    width:100%;
+
+    max-width:420px;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.logo i{
+
+    font-size:70px;
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.logo h2{
+
+    color:#1e3a8a;
+
+    font-size:34px;
+
+    margin-bottom:8px;
+
+}
+
+.logo p{
+
+    color:#64748b;
+
+}
+
+/* ==========================
+        FORM
+========================== */
+
+.form-group{
+
+    margin-bottom:22px;
+
+}
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+.form-group label i{
+
+    color:#2563eb;
+
+    margin-right:8px;
+
+}
+
+.form-group input{
+
+    width:100%;
+
+    padding:15px 18px;
+
+    border:2px solid #dbe4f0;
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    transition:.35s;
+
+    background:white;
+
+}
+
+.form-group input:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 12px rgba(37,99,235,.18);
+
+}
+
+.form-group input::placeholder{
+
+    color:#94a3b8;
+
+}
+
+/* ==========================
+      REMEMBER ME
+========================== */
+
+.options{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin:18px 0 28px;
+
+    font-size:14px;
+
+}
+
+.options label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    cursor:pointer;
+
+    color:#475569;
+
+}
+
+.options input{
+
+    accent-color:#2563eb;
+
+}
+
+/* ==========================
+      LOGIN BUTTON
+========================== */
+
+.login{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.login i{
+
+    margin-right:10px;
+
+}
+
+.login:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 14px 28px rgba(37,99,235,.30);
+
+}
+
+.login:active{
+
+    transform:scale(.98);
+
+}
+
+/* ==========================
+      FORGOT PASSWORD
+========================== */
+
+.forgot{
+
+    text-align:center;
+
+    margin-top:20px;
+
+}
+
+.forgot a{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.forgot a:hover{
+
+    color:#1d4ed8;
+
+    text-decoration:underline;
+
+}
+
+/* ==========================
+      DEMO ACCOUNT
+========================== */
+
+.demo{
+
+    margin-top:30px;
+
+    background:#eff6ff;
+
+    border-left:5px solid #2563eb;
+
+    padding:18px;
+
+    border-radius:12px;
+
+}
+
+.demo h4{
+
+    color:#1e3a8a;
+
+    margin-bottom:10px;
+
+}
+
+.demo p{
+
+    color:#475569;
+
+    margin-bottom:5px;
+
+    font-size:14px;
+
+}
+
+.demo strong{
+
+    color:#0f172a;
+
+}
+
+/* ===========================================
+        FOOTER
+=========================================== */
+
+footer{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    color:white;
+
+    font-size:14px;
+
+    line-height:1.8;
+
+}
+
+footer p{
+
+    margin:2px 0;
+
+}
+
+/* ===========================================
+        ANIMATIONS
+=========================================== */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes slideLeft{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(-60px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+@keyframes slideRight{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(60px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+.left-panel{
+
+    animation:slideLeft .9s ease;
+
+}
+
+.right-panel{
+
+    animation:slideRight .9s ease;
+
+}
+
+/* ===========================================
+        SCROLLBAR
+=========================================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#dbeafe;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#2563eb;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#1d4ed8;
+
+}
+
+/* ===========================================
+        RESPONSIVE
+=========================================== */
+
+@media(max-width:1100px){
+
+.login-container{
+
+grid-template-columns:1fr;
+
+min-height:auto;
+
+}
+
+.left-panel{
+
+padding:50px 35px;
+
+}
+
+.right-panel{
+
+padding:35px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.left-panel{
+
+display:none;
+
+}
+
+.login-container{
+
+width:95%;
+
+}
+
+.right-panel{
+
+padding:25px;
+
+}
+
+.logo h2{
+
+font-size:28px;
+
+}
+
+.log{
+
+max-width:100%;
+
+}
+
+.options{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:12px;
+
+}
+
+}
+
+@media(max-width:500px){
+
+body{
+
+padding:15px;
+
+}
+
+.right-panel{
+
+padding:20px;
+
+}
+
+.logo i{
+
+font-size:55px;
+
+}
+
+.logo h2{
+
+font-size:24px;
+
+}
+
+.form-group input{
+
+padding:13px;
+
+}
+
+.login{
+
+padding:14px;
+
+font-size:16px;
+
+}
+
+.demo{
+
+padding:15px;
+
+}
+
+footer{
+
+font-size:13px;
+
+}
+
+}
+
+/* ===========================================
+        HOVER EFFECTS
+=========================================== */
+
+.feature{
+
+transition:.35s;
+
+}
+
+.feature:hover{
+
+transform:translateX(8px);
+
+}
+
+.feature:hover i{
+
+background:#facc15;
+
+color:#1e3a8a;
+
+}
+
+.demo{
+
+transition:.35s;
+
+}
+
+.demo:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 10px 20px rgba(37,99,235,.15);
+
+}
+
+.form-group input:hover{
+
+border-color:#60a5fa;
+
+}
+
+.logo i{
+
+transition:.4s;
+
+}
+
+.logo i:hover{
+
+transform:rotate(10deg) scale(1.1);
+
+color:#1d4ed8;
+
+}
+
+/* ===========================================
+        SELECTION
+=========================================== */
+
+::selection{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+/* ==========================
+   Role Selection
+========================== */
+
+#role{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    background:#fff;
+
+    cursor:pointer;
+
+}
+
+#role:focus{
+
+    border-color:#2563eb;
+
+    outline:none;
+
+    box-shadow:0 0 8px rgba(37,99,235,.25);
+
+}

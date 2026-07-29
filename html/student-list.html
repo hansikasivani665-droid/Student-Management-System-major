@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Management System | Student List</title>
+
+<link rel="stylesheet" href="../css/student-list.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<link rel="icon" href="../assets/images/favicon.png">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="header-left">
+
+<h1><i class="fa-solid fa-graduation-cap"></i> Student Management System</h1>
+
+<p>Manage Students Efficiently</p>
+
+</div>
+
+<div class="header-right">
+
+<button onclick="location.href='dashboard.html'">
+
+<i class="fa-solid fa-house"></i>
+
+Dashboard
+
+</button>
+
+</div>
+
+</header>
+
+<section class="statistics">
+
+<div class="card">
+
+<i class="fa-solid fa-users"></i>
+
+<div>
+
+<h2 id="studentCount">0</h2>
+
+<p>Total Students</p>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-building-columns"></i>
+
+<div>
+
+<h2>5</h2>
+
+<p>Departments</p>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-user-check"></i>
+
+<div>
+
+<h2>100%</h2>
+
+<p>Active</p>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-download"></i>
+
+<div>
+
+<h2>CSV</h2>
+
+<p>Export</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="toolbar">
+
+<div class="search-box">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+
+type="text"
+
+id="searchStudent"
+
+placeholder="Search by Roll Number or Name">
+
+</div>
+
+<select id="departmentFilter">
+
+<option value="All">All Departments</option>
+
+<option>CSE</option>
+
+<option>ECE</option>
+
+<option>EEE</option>
+
+<option>Mechanical</option>
+
+<option>Civil</option>
+
+</select>
+
+<select id="yearFilter">
+
+<option value="All">All Years</option>
+
+<option>1st Year</option>
+
+<option>2nd Year</option>
+
+<option>3rd Year</option>
+
+<option>4th Year</option>
+
+</select>
+
+<button id="exportBtn">
+
+<i class="fa-solid fa-file-arrow-down"></i>
+
+Export CSV
+
+</button>
+
+</section>
+
+<section class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>Photo</th>
+
+<th>Roll No</th>
+
+<th>Name</th>
+
+<th>Department</th>
+
+<th>Year</th>
+
+<th>Phone</th>
+
+<th>Email</th>
+
+<th>Status</th>
+
+<th>Edit</th>
+
+<th>Delete</th>
+
+</tr>
+
+</thead>
+
+<tbody id="studentTableBody">
+
+</tbody>
+
+</table>
+
+<div id="loading" class="loading">
+
+<i class="fa-solid fa-spinner fa-spin"></i>
+
+<p>Loading Students...</p>
+
+</div>
+
+<div id="emptyState" class="empty-state" style="display:none;">
+
+<i class="fa-solid fa-user-graduate"></i>
+
+<h2>No Students Found</h2>
+
+<p>No student records are available.</p>
+
+</div>
+
+</section>
+
+<section class="quick-actions">
+
+<button onclick="location.href='add-student.html'">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Add Student
+
+</button>
+
+<button onclick="location.href='attendance.html'">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+Attendance
+
+</button>
+
+<button onclick="location.href='results.html'">
+
+<i class="fa-solid fa-chart-column"></i>
+
+Results
+
+</button>
+
+<button onclick="location.href='dashboard.html'">
+
+<i class="fa-solid fa-house"></i>
+
+Dashboard
+
+</button>
+
+</section>
+
+<footer>
+
+<p>
+
+© 2026 Student Management System
+
+</p>
+
+<p>
+
+Developed by <strong>Hansika Sivani</strong>
+
+</p>
+
+</footer>
+
+<script src="../js/student-list.js"></script>
+
+</body>
+
+</html>

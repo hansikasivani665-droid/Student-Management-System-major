@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Settings</title>
+
+<link rel="stylesheet" href="../css/settings.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<header>
+
+<h1>
+<i class="fa-solid fa-gear"></i>
+System Settings
+</h1>
+
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+
+</header>
+
+
+
+
+<section class="settings-card">
+
+
+<h2>General Settings</h2>
+
+
+<label>College Name</label>
+
+<input id="collegeName"
+value="Student Management System College">
+
+
+
+<label>System Name</label>
+
+<input id="systemName"
+value="SMS">
+
+
+
+<label>Academic Year</label>
+
+<input id="year"
+value="2026-2027">
+
+
+
+
+
+<h2>Appearance</h2>
+
+
+<select id="theme">
+
+<option>
+Light
+</option>
+
+<option>
+Dark
+</option>
+
+
+</select>
+
+
+
+
+
+<h2>Notifications</h2>
+
+
+<label>
+
+<input type="checkbox" checked id="notification">
+
+Enable Notifications
+
+</label>
+
+
+
+
+<button onclick="saveSettings()">
+
+<i class="fa-solid fa-save"></i>
+
+Save Settings
+
+</button>
+
+
+
+</section>
+
+
+
+<script src="../js/settings.js"></script>
+
+
+</body>
+
+</html>

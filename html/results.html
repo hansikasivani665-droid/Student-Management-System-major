@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+Student Management System | Results
+</title>
+
+
+<link rel="stylesheet" href="../css/results.css">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<link rel="icon" href="../assets/images/favicon.png">
+
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+
+<div class="logo">
+
+<i class="fa-solid fa-graduation-cap"></i>
+
+<h2>SMS</h2>
+
+</div>
+
+
+
+
+
+<nav>
+
+
+<a href="dashboard.html">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</a>
+
+
+
+<a href="student-list.html">
+
+<i class="fa-solid fa-users"></i>
+
+Students
+
+</a>
+
+
+
+<a href="add-student.html">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Add Student
+
+</a>
+
+
+
+<a href="attendance.html">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+Attendance
+
+</a>
+
+
+
+
+<a class="active" href="results.html">
+
+<i class="fa-solid fa-chart-column"></i>
+
+Results
+
+</a>
+
+
+
+<a href="admin-profile.html">
+
+<i class="fa-solid fa-user"></i>
+
+Profile
+
+</a>
+
+
+
+<a href="settings.html">
+
+<i class="fa-solid fa-gear"></i>
+
+Settings
+
+</a>
+
+
+</nav>
+
+
+</aside>
+
+
+
+
+
+
+
+
+<!-- MAIN CONTENT -->
+
+
+<main class="main-content">
+
+
+
+
+
+<header class="top-header">
+
+
+<div>
+
+<h1>
+
+<i class="fa-solid fa-chart-column"></i>
+
+Results Management
+
+</h1>
+
+
+<p>
+
+Manage student academic results
+
+</p>
+
+
+</div>
+
+
+
+<div>
+
+<button onclick="location.href='dashboard.html'">
+
+<i class="fa-solid fa-house"></i>
+
+Dashboard
+
+</button>
+
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+
+
+<!-- RESULT CARDS -->
+
+
+<section class="cards">
+
+
+<div class="card">
+
+<i class="fa-solid fa-file-lines"></i>
+
+<div>
+
+<h3>
+Total Results
+</h3>
+
+
+<h2 id="totalResults">
+0
+</h2>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-chart-line"></i>
+
+
+<div>
+
+<h3>
+Average Marks
+</h3>
+
+
+<h2 id="averageMarks">
+0%
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-award"></i>
+
+
+<div>
+
+<h3>
+Pass Percentage
+</h3>
+
+
+<h2 id="passPercentage">
+0%
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- SEARCH -->
+
+
+<section class="toolbar">
+
+
+<input
+
+type="text"
+
+id="searchResult"
+
+placeholder="Search student name or roll number"
+
+onkeyup="searchResults()"
+
+
+>
+
+
+
+<button onclick="location.href='add-result.html'">
+
+<i class="fa-solid fa-plus"></i>
+
+Add Result
+
+</button>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- TABLE -->
+
+
+<section class="table-card">
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+<th>
+#
+</th>
+
+
+<th>
+Roll No
+</th>
+
+
+<th>
+Name
+</th>
+
+
+<th>
+Department
+</th>
+
+
+<th>
+Subject
+</th>
+
+
+<th>
+Marks
+</th>
+
+
+<th>
+Grade
+</th>
+
+
+<th>
+Status
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="resultTableBody">
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<footer>
+
+
+<p>
+
+© 2026 Student Management System | Results Module
+
+</p>
+
+
+</footer>
+
+
+
+
+
+</main>
+
+
+
+</div>
+
+
+
+
+
+
+
+<script src="../js/results.js"></script>
+
+
+</body>
+
+
+</html>
