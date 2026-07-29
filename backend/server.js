@@ -30,8 +30,8 @@ app.use("/attendance", attendanceRoutes);
 app.use("/results", resultRoutes);
 app.use("/admin", adminRoutes);
 
-// Fallback Engine to route traffic smoothly directly into Dashboard View
-app.get("*", (req, res) => {
+// SAFE FALLBACK: Serves your main dashboard safely without route parsing bugs
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/html/dashboard.html"));
 });
 
