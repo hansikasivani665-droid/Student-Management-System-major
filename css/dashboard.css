@@ -1,269 +1,307 @@
 /* =====================================================
-   STUDENT MANAGEMENT SYSTEM - DASHBOARD
-   Major Project Version 2.0
+   STUDENT MANAGEMENT SYSTEM - DASHBOARD STYLES v2.0
+   Shared Design Core Layout Architecture (Poppins Based)
 ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://googleapis.com');
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-    background:#eef3f9;
-    color:#2c3e50;
+body {
+    background: #eef3f9;
+    color: #2c3e50;
+    animation: fadeIn 0.4s ease-out;
 }
 
-.container{
-    display:flex;
-    min-height:100vh;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===========================================
-            SIDEBAR
-=========================================== */
-
-.sidebar{
-    width:270px;
-    background:linear-gradient(180deg,#0f172a,#1e3a8a);
-    color:white;
-    position:fixed;
-    left:0;
-    top:0;
-    height:100%;
-    overflow-y:auto;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
-}
-
-.logo{
-    text-align:center;
-    padding:35px 20px;
-    border-bottom:1px solid rgba(255,255,255,.15);
-}
-
-.logo i{
-    font-size:55px;
-    color:#facc15;
-    margin-bottom:12px;
-}
-
-.logo h2{
-    font-size:28px;
-    font-weight:700;
-}
-
-.sidebar ul{
-    list-style:none;
-    padding:20px;
-}
-
-.sidebar ul li{
-    margin-bottom:12px;
-}
-
-.sidebar ul li a{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    color:white;
-    text-decoration:none;
-    padding:15px 18px;
-    border-radius:12px;
-    transition:.35s;
-    font-size:16px;
-    font-weight:500;
-}
-
-.sidebar ul li a:hover{
-    background:white;
-    color:#1e3a8a;
-    transform:translateX(6px);
-}
-
-.sidebar ul li.active a{
-    background:white;
-    color:#1e3a8a;
+.container {
+    display: flex;
+    min-height: 100vh;
 }
 
 /* ===========================================
-            MAIN CONTENT
+            SIDEBAR LAYOUT
 =========================================== */
+.sidebar {
+    width: 270px;
+    background: linear-gradient(180deg, #0f172a, #1e3a8a);
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+    z-index: 100;
+}
 
-.main-content{
-    margin-left:270px;
-    width:calc(100% - 270px);
-    padding:35px;
+.sidebar .logo {
+    text-align: center;
+    padding: 35px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .15);
+}
+
+.sidebar .logo i {
+    font-size: 55px;
+    color: #facc15;
+    margin-bottom: 12px;
+}
+
+.sidebar .logo h2 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 20px;
+}
+
+.sidebar ul li {
+    margin-bottom: 12px;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    text-decoration: none;
+    padding: 15px 18px;
+    border-radius: 12px;
+    transition: .35s;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.sidebar ul li a:hover {
+    background: white;
+    color: #1e3a8a;
+    transform: translateX(6px);
+}
+
+.sidebar ul li.active a {
+    background: white;
+    color: #1e3a8a;
 }
 
 /* ===========================================
-            HEADER
+            MAIN WINDOW HOUSING WRAPPER
 =========================================== */
-
-.top-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:white;
-    padding:25px;
-    border-radius:18px;
-    margin-bottom:30px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.top-header h1{
-    font-size:34px;
-    color:#1e3a8a;
-}
-
-.top-header p{
-    color:#6b7280;
-    margin-top:6px;
-}
-
-.header-right{
-    display:flex;
-    gap:18px;
-}
-
-.date-box,
-.time-box{
-    background:#2563eb;
-    color:white;
-    padding:14px 18px;
-    border-radius:12px;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    gap:10px;
+.main-content {
+    margin-left: 270px;
+    width: calc(100% - 270px);
+    padding: 35px;
 }
 
 /* ===========================================
-        DASHBOARD CARDS
+            TOP APPBAR CORNER HEADER
 =========================================== */
-
-.dashboard-cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-    gap:22px;
-    margin-bottom:35px;
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 }
 
-.card{
-    background:white;
-    border-radius:18px;
-    padding:25px;
-    display:flex;
-    align-items:center;
-    gap:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-    transition:.35s;
+.top-header h1 {
+    font-size: 34px;
+    color: #1e3a8a;
+    font-weight: 700;
 }
 
-.card:hover{
-    transform:translateY(-8px);
-    box-shadow:0 15px 35px rgba(37,99,235,.18);
+.top-header p {
+    color: #6b7280;
+    margin-top: 6px;
+    font-size: 14px;
 }
 
-.card-icon{
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:28px;
+.header-right {
+    display: flex;
+    gap: 18px;
 }
 
-.card h3{
-    color:#6b7280;
-    font-size:15px;
-    margin-bottom:6px;
+.date-box, .time-box {
+    background: #2563eb;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
 }
 
-.card h2{
-    font-size:30px;
-    color:#111827;
+.time-box {
+    background: #0f172a;
 }
-
-/* Card Colors */
-
-.blue .card-icon{ background:#2563eb; }
-.green .card-icon{ background:#16a34a; }
-.red .card-icon{ background:#dc2626; }
-.orange .card-icon{ background:#ea580c; }
-.purple .card-icon{ background:#7c3aed; }
-.cyan .card-icon{ background:#0891b2; }
-.yellow .card-icon{ background:#ca8a04; }
-.dark .card-icon{ background:#334155; }
 
 /* ===========================================
-        QUICK ACTIONS
+        ANALYTICS SUMMARY TILES GRID
 =========================================== */
-
-.quick-actions{
-    background:white;
-    padding:25px;
-    border-radius:18px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-    margin-bottom:35px;
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
+    margin-bottom: 35px;
 }
 
-.quick-actions h2{
-    color:#1e3a8a;
-    margin-bottom:20px;
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+    transition: .35s;
 }
 
-.action-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:20px;
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(37, 99, 235, .18);
 }
 
-.action-card{
-    text-decoration:none;
-    color:white;
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
-    border-radius:16px;
-    padding:25px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    transition:.35s;
+.card-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
 }
 
-.action-card:hover{
-    transform:translateY(-6px);
+.card h3 {
+    color: #6b7280;
+    font-size: 15px;
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
-.action-card i{
-    font-size:36px;
-    margin-bottom:12px;
+.card h2 {
+    font-size: 30px;
+    color: #111827;
+    font-weight: 700;
 }
 
-.action-card span{
-    font-size:17px;
-    font-weight:600;
+/* Dynamic Summary Accent Decors */
+.blue .card-icon { background: #2563eb; }
+.green .card-icon { background: #16a34a; }
+.purple .card-icon { background: #7c3aed; }
+.orange .card-icon { background: #ea580c; }
+
+/* ===========================================
+        QUICK ACCESS INTERACTIVE TILES
+=========================================== */
+.quick-actions {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+    margin-bottom: 35px;
 }
 
-.notification-popup{
-    position:fixed;
-    top:20px;
-    right:-400px;
-    background:#2563eb;
-    color:white;
-    padding:16px 24px;
-    border-radius:10px;
-    font-weight:600;
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
-    transition:.5s;
-    z-index:9999;
+.quick-actions h2 {
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
 }
 
-.notification-popup.show{
-    right:20px;
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.action-card {
+    text-decoration: none;
+    color: white;
+    border-radius: 16px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: .35s;
+}
+
+.action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+.action-card i {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.action-card span {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+/* Dynamic Gradient Accent Backgrounds */
+.blue-grad { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.green-grad { background: linear-gradient(135deg, #16a34a, #15803d); }
+.purple-grad { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.orange-grad { background: linear-gradient(135deg, #ea580c, #c2410c); }
+
+/* ===========================================
+        FOOTER BRANDING SEGMENT
+=========================================== */
+footer {
+    width: 100%;
+    margin-top: auto;
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+footer p {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+footer strong {
+    color: #1f2937;
+}
+
+/* ===========================================
+        ADAPTIVE VIEWPORT RESPONSIVENESS
+=========================================== */
+@media (max-width: 992px) {
+    .sidebar { width: 80px; padding: 10px 0; }
+    .sidebar .logo h2, .sidebar ul li a span { display: none; }
+    .sidebar .logo { padding: 20px 0; }
+    .sidebar ul li a { justify-content: center; padding: 15px; }
+    .main-content { margin-left: 80px; width: calc(100% - 80px); padding: 20px; }
+}
+
+@media (max-width: 768px) {
+    .top-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .action-grid { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 10px; text-align: center; }
 }

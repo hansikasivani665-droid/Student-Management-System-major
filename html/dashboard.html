@@ -1,699 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Student Management System | Dashboard</title>
-
-<link rel="stylesheet" href="../css/dashboard.css">
-
-<link rel="icon" href="../assets/images/favicon.png">
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System | Dashboard</title>
+    <!-- Major Project Style Path Link -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <!-- Font Awesome v6.6.0 Integration -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <link rel="icon" href="images/favicon.png">
 </head>
-
-
 <body>
 
-
-<div class="container">
-
-
-<!-- ================= SIDEBAR ================= -->
-
-<aside class="sidebar">
-
-
-<div class="logo">
-
-<i class="fa-solid fa-graduation-cap"></i>
-
-<h2>SMS Admin</h2>
-
-</div>
-
-
-
-<ul>
-
-
-<li class="active">
-
-<a href="dashboard.html">
-
-<i class="fa-solid fa-house"></i>
-
-Dashboard
-
-</a>
-
-</li>
-
-
-
-<li>
-
-<a href="student-list.html">
-
-<i class="fa-solid fa-users"></i>
-
-Students
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="add-student.html">
-
-<i class="fa-solid fa-user-plus"></i>
-
-Add Student
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="attendance.html">
-
-<i class="fa-solid fa-calendar-check"></i>
-
-Attendance
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="results.html">
-
-<i class="fa-solid fa-square-poll-vertical"></i>
-
-Results
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="admin-profile.html">
-
-<i class="fa-solid fa-user"></i>
-
-Profile
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="settings.html">
-
-<i class="fa-solid fa-gear"></i>
-
-Settings
-
-</a>
-
-</li>
-
-
-
-
-<li>
-
-<a href="#" id="logout">
-
-<i class="fa-solid fa-right-from-bracket"></i>
-
-Logout
-
-</a>
-
-</li>
-
-
-
-</ul>
-
-
-</aside>
-
-
-
-
-
-
-
-<!-- ================= MAIN ================= -->
-
-
-<main class="main-content">
-
-
-
-
-
-<header class="top-header">
-
-
-<div>
-
-<h1>
-Dashboard
-</h1>
-
-
-<p>
-
-Welcome Back, Administrator 👋
-
-</p>
-
-
-</div>
-
-
-
-
-<div class="header-right">
-
-
-<div class="date-box">
-
-<i class="fa-solid fa-calendar-days"></i>
-
-<span id="currentDate"></span>
-
-</div>
-
-
-
-<div class="time-box">
-
-<i class="fa-solid fa-clock"></i>
-
-<span id="currentTime"></span>
-
-</div>
-
-
-</div>
-
-
-</header>
-
-
-
-
-
-
-
-
-<!-- ================= CARDS ================= -->
-
-
-<section class="dashboard-cards">
-
-
-
-
-
-<div class="card blue">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-user-graduate"></i>
-
-</div>
-
-
-<div>
-
-<h3>Total Students</h3>
-
-<h2 id="totalStudents">
-0
-</h2>
-
-
-</div>
-
-</div>
-
-
-
-
-
-
-
-
-<div class="card green">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-circle-check"></i>
-
-</div>
-
-
-<div>
-
-<h3>Present Today</h3>
-
-<h2 id="presentStudents">
-0
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="card red">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-circle-xmark"></i>
-
-</div>
-
-
-<div>
-
-<h3>Absent Today</h3>
-
-<h2 id="absentStudents">
-0
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card orange">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-chart-line"></i>
-
-</div>
-
-
-<div>
-
-<h3>Average Marks</h3>
-
-
-<h2 id="averageMarks">
-0%
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card purple">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-building-columns"></i>
-
-</div>
-
-
-<div>
-
-<h3>Departments</h3>
-
-
-<h2 id="totalDepartments">
-0
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="card cyan">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-file-circle-check"></i>
-
-</div>
-
-
-<div>
-
-<h3>Results Published</h3>
-
-
-<h2 id="resultsCount">
-0
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card yellow">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-award"></i>
-
-</div>
-
-
-<div>
-
-<h3>Pass Percentage</h3>
-
-
-<h2 id="passPercentage">
-0%
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="card cyan">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-book"></i>
-
-</div>
-
-
-<div>
-
-<h3>Total Subjects</h3>
-
-
-<h2 id="totalSubjects">
-0
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card green">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-calendar-check"></i>
-
-</div>
-
-
-<div>
-
-<h3>Attendance Percentage</h3>
-
-
-<h2 id="attendancePercentage">
-0%
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card dark">
-
-
-<div class="card-icon">
-
-<i class="fa-solid fa-star"></i>
-
-</div>
-
-
-<div>
-
-<h3>Latest Student</h3>
-
-
-<h2 id="latestStudent">
--
-</h2>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<!-- ================= QUICK ACTIONS ================= -->
-
-
-<section class="quick-actions">
-
-
-<h2>
-Quick Actions
-</h2>
-
-
-
-<div class="action-grid">
-
-
-<a href="add-student.html" class="action-card">
-
-<i class="fa-solid fa-user-plus"></i>
-
-<span>Add Student</span>
-
-</a>
-
-
-
-
-<a href="student-list.html" class="action-card">
-
-<i class="fa-solid fa-users"></i>
-
-<span>Student List</span>
-
-</a>
-
-
-
-
-
-<a href="attendance.html" class="action-card">
-
-<i class="fa-solid fa-calendar-check"></i>
-
-<span>Attendance</span>
-
-</a>
-
-
-
-
-
-<a href="results.html" class="action-card">
-
-<i class="fa-solid fa-chart-column"></i>
-
-<span>Results</span>
-
-</a>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- ================= FOOTER ================= -->
-
-
-<footer>
-
-
-<h3>
-Student Management System
-</h3>
-
-
-<p>
-Major Project • Version 2.0
-</p>
-
-
-<p>
-Developed by <strong>Hansika Sivani</strong>
-</p>
-
-
-<p>
-© 2026 All Rights Reserved
-</p>
-
-
-
-</footer>
-
-
-
-
-
-</main>
-
-
-
-</div>
-
-
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<script src="../js/dashboard.js"></script>
-
-
-
+    <div class="container">
+
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <h2>SMS</h2>
+            </div>
+            <ul>
+                <li class="active">
+                    <a href="dashboard.html">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="student-list.html">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Student List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="add-student.html">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Add Student</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="attendance.html">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="results.html">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Results</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- ===========================================
+                    MAIN CONTENT AREA
+        =========================================== -->
+        <main class="main-content">
+
+            <!-- Top Header Module with Live Dynamic Clocks -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back! Here is your administration control panel overview.</p>
+                </div>
+                <div class="header-right">
+                    <div class="date-box">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span id="liveDateDisplay">Loading Date...</span>
+                    </div>
+                    <div class="time-box">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="liveTimeDisplay">00:00:00 AM</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Major 2.0 Dynamic Grid Telemetry Row Cards -->
+            <section class="dashboard-cards">
+                <div class="card blue">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h3>Total Students</h3>
+                        <h2 id="studentCount">0</h2>
+                    </div>
+                </div>
+                <div class="card green">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <h3>Departments</h3>
+                        <h2>5</h2>
+                    </div>
+                </div>
+                <div class="card purple">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <div>
+                        <h3>Active Status</h3>
+                        <h2>100%</h2>
+                    </div>
+                </div>
+                <div class="card orange">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <div>
+                        <h3>Data Export</h3>
+                        <h2>CSV</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Access Core Action Navigation Management Row -->
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-grid">
+                    <a href="add-student.html" class="action-card blue-grad">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Add Student</span>
+                    </a>
+                    <a href="student-list.html" class="action-card green-grad">
+                        <i class="fa-solid fa-address-book"></i>
+                        <span>View Registry</span>
+                    </a>
+                    <a href="attendance.html" class="action-card purple-grad">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Track Attendance</span>
+                    </a>
+                    <a href="results.html" class="action-card orange-grad">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Analyze Results</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Internship Compliant Signature Footer -->
+            <footer>
+                <p>© 2026 Student Management System | Avishkarana Andhra Internship Capstone</p>
+                <p>Developed by <strong>Hansika Sivani</strong></p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Dashboard Operational Dynamic Metrics Scripts Controller -->
+    <script src="../js/dashboard.js"></script>
 </body>
-
 </html>
