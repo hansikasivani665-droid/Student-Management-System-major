@@ -30,9 +30,25 @@ app.use("/attendance", attendanceRoutes);
 app.use("/results", resultRoutes);
 app.use("/admin", adminRoutes);
 
-// SAFE FALLBACK: Serves your main dashboard safely without route parsing bugs
+// ============================================================================
+// CHANGED SECTION: SAFE PRODUCTION PATH FALLBACK ENGINE
+// ============================================================================
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/html/dashboard.html"));
+    // 1. Try to serve dashboard.html from the primary directory
+    let primaryPath = path.join(__dirname, "../frontend/html/dashboard.html");
+    
+    // 2. Secondary fallback case to check if file sits directly under frontend/
+    let secondaryPath = path.join(__dirname, "../frontend/dashboard.html");
+
+    res.sendFile(primaryPath, (err) => {
+        if (err) {
+            res.sendFile(secondaryPath, (innerErr) => {
+                if (innerErr) {
+                    res.status(404).send("<h2>System Routing Error: File dashboard.html not found in repository directories. Check your folder nesting paths!</h2>");
+                }
+            });
+        }
+    });
 });
 
 // Production Dynamic Viewport Environment Port Hook
