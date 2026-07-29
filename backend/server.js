@@ -1,84 +1,46 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
-
-// Database Connection
+// Database Connection Handshake
 require("./models/database");
 
-
-// Routes
+// Routing Modules
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/students");
 const attendanceRoutes = require("./routes/attendance");
 const resultRoutes = require("./routes/results");
 const adminRoutes = require("./routes/admin");
 
-
-
 const app = express();
 
-
-// Middleware
-
+// Global Network Resource Middlewares
 app.use(cors());
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.urlencoded({
-    extended:true
-}));
+// Serve Frontend Static Web Assets Directly via Node Cluster System
+app.use(express.static(path.join(__dirname, "../frontend")));
 
+// API Endpoints Routing Mapping
+app.use("/auth", authRoutes);
+app.use("/students", studentRoutes);
+app.use("/attendance", attendanceRoutes);
+app.use("/results", resultRoutes);
+app.use("/admin", adminRoutes);
 
-
-
-// Test API
-
-app.get("/",(req,res)=>{
-
-    res.json({
-
-        success:true,
-        message:"🎓 Student Management System Backend Running"
-
-    });
-
+// Fallback Engine to route traffic smoothly directly into Dashboard View
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/html/dashboard.html"));
 });
 
-
-
-
-// API Routes
-
-app.use("/auth",authRoutes);
-
-app.use("/students",studentRoutes);
-
-app.use("/attendance",attendanceRoutes);
-
-app.use("/results",resultRoutes);
-
-app.use("/admin",adminRoutes);
-
-
-
-
-
-// Server Port
-
+// Production Dynamic Viewport Environment Port Hook
 const PORT = process.env.PORT || 5000;
 
-
-app.listen(PORT,()=>{
-
-
-    console.log("--------------------------------");
-
-    console.log("🚀 Student Management System");
-
-    console.log("Server Running : http://localhost:"+PORT);
-
-    console.log("--------------------------------");
-
-
+app.listen(PORT, () => {
+    console.log("==========================================");
+    console.log("🚀 SMS PRODUCTION ENGINE OPERATIONAL");
+    console.log(`Cluster Port: ${PORT}`);
+    console.log("==========================================");
 });
