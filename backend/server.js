@@ -3,60 +3,124 @@ const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
 
-// Database Connection Handshake
+// ===============================
+// Database Connection
+// ===============================
 require("./models/database");
 
-// Routing Modules
+// ===============================
+// Import Routes
+// ===============================
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/students");
 const attendanceRoutes = require("./routes/attendance");
 const resultRoutes = require("./routes/results");
 const adminRoutes = require("./routes/admin");
+const dashboardRoutes = require("./routes/dashboard");
+const teacherRoutes = require("./routes/teachers");   // <-- ADDED
 
 const app = express();
 
-// Global Network Resource Middlewares
+// ===============================
+// Middlewares
+// ===============================
 app.use(cors());
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
-// Serve Frontend Static Web Assets Directly via Node Cluster System
-app.use(express.static(path.join(__dirname, "../frontend")));
+// ===============================
+// Static Files
+// ===============================
+app.use("/html", express.static(path.join(__dirname, "../html")));
+app.use("/css", express.static(path.join(__dirname, "../css")));
+app.use("/js", express.static(path.join(__dirname, "../js")));
+app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
-// API Endpoints Routing Mapping
+// ===============================
+// API Routes
+// ===============================
 app.use("/auth", authRoutes);
+
 app.use("/students", studentRoutes);
+
 app.use("/attendance", attendanceRoutes);
+
 app.use("/results", resultRoutes);
+
 app.use("/admin", adminRoutes);
 
-// ============================================================================
-// CHANGED SECTION: SAFE PRODUCTION PATH FALLBACK ENGINE
-// ============================================================================
-app.use((req, res) => {
-    // 1. Try to serve dashboard.html from the primary directory
-    let primaryPath = path.join(__dirname, "../frontend/html/dashboard.html");
-    
-    // 2. Secondary fallback case to check if file sits directly under frontend/
-    let secondaryPath = path.join(__dirname, "../frontend/dashboard.html");
+app.use("/dashboard", dashboardRoutes);
 
-    res.sendFile(primaryPath, (err) => {
-        if (err) {
-            res.sendFile(secondaryPath, (innerErr) => {
-                if (innerErr) {
-                    res.status(404).send("<h2>System Routing Error: File dashboard.html not found in repository directories. Check your folder nesting paths!</h2>");
-                }
-            });
-        }
+app.use("/teachers", teacherRoutes);      // <-- ADDED
+
+// ===============================
+// Health Check
+// ===============================
+app.get("/", (req, res) => {
+
+    res.json({
+
+        success: true,
+
+        application: "Student Management System",
+
+        version: "2.0",
+
+        database: "SQLite",
+
+        status: "Running"
+
     });
+
 });
 
-// Production Dynamic Viewport Environment Port Hook
+// ===============================
+// 404
+// ===============================
+app.use((req, res) => {
+
+    res.status(404).json({
+
+        success: false,
+
+        message: "API Route Not Found"
+
+    });
+
+});
+
+// ===============================
+// Error Handler
+// ===============================
+app.use((err, req, res, next) => {
+
+    console.error(err);
+
+    res.status(500).json({
+
+        success: false,
+
+        message: "Internal Server Error"
+
+    });
+
+});
+
+// ===============================
+// Server
+// ===============================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log("==========================================");
-    console.log("🚀 SMS PRODUCTION ENGINE OPERATIONAL");
-    console.log(`Cluster Port: ${PORT}`);
-    console.log("==========================================");
+
+    console.log("======================================");
+    console.log("🚀 Student Management System");
+    console.log("======================================");
+    console.log("Server Running");
+    console.log("Port :", PORT);
+    console.log("Environment :", process.env.NODE_ENV || "development");
+    console.log("======================================");
+
 });

@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+console.log("teachers.js Loaded");
+
 const db = require("../models/database");
 
 

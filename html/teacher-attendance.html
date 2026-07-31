@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Attendance</title>
+
+<link rel="stylesheet" href="../css/teacher-attendance.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>📅 Teacher Attendance</h1>
+
+    <p id="teacherName">
+        Teacher
+    </p>
+
+</header>
+
+
+
+<section class="attendance-container">
+
+
+    <h2>Mark Student Attendance</h2>
+
+
+    <div class="date-box">
+
+        <label>
+            Date:
+        </label>
+
+        <input type="date" id="attendanceDate">
+
+    </div>
+
+
+
+    <table>
+
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Roll No
+                </th>
+
+                <th>
+                    Student Name
+                </th>
+
+                <th>
+                    Department
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+
+        <tbody id="studentTable">
+
+
+        </tbody>
+
+
+
+    </table>
+
+
+
+    <button id="saveAttendance">
+
+        Save Attendance
+
+    </button>
+
+
+
+    <p id="message"></p>
+
+
+</section>
+
+
+
+<footer>
+
+© 2026 Student Management System
+
+</footer>
+
+<script src="/js/teacher-attendance.js"></script>
+
+</body>
+
+</html>

@@ -4,6 +4,8 @@ const db = require("../models/database");
 
 router.get("/", (req, res) => {
 
+    const today = new Date().toISOString().split("T")[0];
+
     db.get(
         "SELECT COUNT(*) AS totalStudents FROM students",
         [],
@@ -17,8 +19,11 @@ router.get("/", (req, res) => {
             }
 
             db.get(
-                "SELECT COUNT(*) AS presentStudents FROM attendance WHERE status='Present'",
-                [],
+                `SELECT COUNT(*) AS presentStudents
+                 FROM attendance
+                 WHERE status='Present'
+                 AND date=?`,
+                [today],
                 (err, presentData) => {
 
                     if (err) {
@@ -29,8 +34,11 @@ router.get("/", (req, res) => {
                     }
 
                     db.get(
-                        "SELECT COUNT(*) AS absentStudents FROM attendance WHERE status='Absent'",
-                        [],
+                        `SELECT COUNT(*) AS absentStudents
+                         FROM attendance
+                         WHERE status='Absent'
+                         AND date=?`,
+                        [today],
                         (err, absentData) => {
 
                             if (err) {
@@ -41,7 +49,9 @@ router.get("/", (req, res) => {
                             }
 
                             db.get(
-                                "SELECT COUNT(*) AS resultsCount, AVG(marks) AS averageMarks FROM results",
+                                `SELECT COUNT(*) AS resultsCount,
+                                        AVG(marks) AS averageMarks
+                                 FROM results`,
                                 [],
                                 (err, resultData) => {
 
@@ -88,51 +98,50 @@ router.get("/", (req, res) => {
                                                                 });
                                                             }
 
-                                                            // 1. Core Variables Calculations
-                                                            const totalStudents = studentData ? studentData.totalStudents : 0;
-                                                            const resultsCount = resultData ? resultData.resultsCount : 0;
-                                                            const passCount = passData ? passData.passCount : 0;
-                                                            
-                                                            const averageMarks = resultData && resultData.averageMarks
-                                                                ? Math.round(resultData.averageMarks)
-                                                                : 75; // Safe default average mark percentage
+                                                            const totalStudents = studentData.totalStudents || 0;
 
-                                                            const passPercentage = resultsCount > 0
-                                                                ? Math.round((passCount / resultsCount) * 100)
-                                                                : 100; // Perfect pass record fallback for presentation
+                                                            const presentStudents = presentData.presentStudents || 0;
 
-                                                            // 2. Attendance Alignment Core Engine
-                                                            // Checks database rows. If rows are empty or out of sync, defaults everything to 'Present'
-                                                            const dbPresent = presentData ? presentData.presentStudents : 0;
-                                                            const dbAbsent = absentData ? absentData.absentStudents : 0;
-                                                            
-                                                            let finalPresent = dbPresent;
-                                                            let finalAbsent = dbAbsent;
+                                                            const absentStudents = absentData.absentStudents || 0;
 
-                                                            if (dbPresent === 0 && dbAbsent === 0) {
-                                                                finalPresent = totalStudents;
-                                                                finalAbsent = 0;
-                                                            } else {
-                                                                // Sync edge cases to prevent overflow numbers on presentation
-                                                                const checkedTotal = dbPresent + dbAbsent;
-                                                                if (checkedTotal !== totalStudents) {
-                                                                    finalPresent = totalStudents - dbAbsent;
-                                                                    if (finalPresent < 0) finalPresent = totalStudents;
-                                                                    finalAbsent = totalStudents - finalPresent;
-                                                                }
-                                                            }
+                                                            const resultsCount = resultData.resultsCount || 0;
 
-                                                            // 3. Return the fully calculated response payload
+                                                            const averageMarks =
+                                                                resultData.averageMarks
+                                                                    ? Math.round(resultData.averageMarks)
+                                                                    : 0;
+
+                                                            const passCount = passData.passCount || 0;
+
+                                                            const passPercentage =
+                                                                resultsCount > 0
+                                                                    ? Math.round((passCount / resultsCount) * 100)
+                                                                    : 0;
+
                                                             res.json({
+
                                                                 success: true,
-                                                                totalStudents: totalStudents,
-                                                                presentStudents: finalPresent,
-                                                                absentStudents: finalAbsent,
-                                                                averageMarks: averageMarks,
-                                                                totalDepartments: deptData ? deptData.totalDepartments : 0,
-                                                                resultsCount: totalStudents, // Forces alignment across counters
-                                                                passPercentage: passPercentage,
-                                                                latestStudent: latestStudent ? latestStudent.name : "-"
+
+                                                                totalStudents,
+
+                                                                presentStudents,
+
+                                                                absentStudents,
+
+                                                                averageMarks,
+
+                                                                totalDepartments:
+                                                                    deptData.totalDepartments || 0,
+
+                                                                resultsCount,
+
+                                                                passPercentage,
+
+                                                                latestStudent:
+                                                                    latestStudent
+                                                                        ? latestStudent.name
+                                                                        : "-"
+
                                                             });
 
                                                         }

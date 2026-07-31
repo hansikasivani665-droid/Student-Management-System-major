@@ -1,31 +1,30 @@
-function saveSettings(){
+function saveSettings() {
 
+    let data = {
 
-let data={
+        college: document.getElementById("collegeName").value,
 
-college:
-document.getElementById("collegeName").value,
+        system: document.getElementById("systemName").value,
 
-system:
-document.getElementById("systemName").value,
+        year: document.getElementById("year").value,
 
-year:
-document.getElementById("year").value,
+        theme: document.getElementById("theme").value
 
-theme:
-document.getElementById("theme").value
+    };
 
+    localStorage.setItem(
+        "settings",
+        JSON.stringify(data)
+    );
 
-};
+    // Save theme separately
+    localStorage.setItem(
+        "theme",
+        data.theme
+    );
 
+    applyTheme();
 
-localStorage.setItem(
-"settings",
-JSON.stringify(data)
-);
-
-
-alert("Settings Saved Successfully");
-
+    alert("Settings Saved Successfully");
 
 }

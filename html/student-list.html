@@ -3,274 +3,333 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Student Management System | Student List</title>
+    <title>Student List | Student Management System</title>
 
-<link rel="stylesheet" href="../css/student-list.css">
+    <link rel="stylesheet"
+          href="../css/student-list.css">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-<link rel="icon" href="../assets/images/favicon.png">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
 <body>
 
-<header>
+<div class="container">
 
-<div class="header-left">
+    <!-- =========================
+            SIDEBAR
+    ========================== -->
 
-<h1><i class="fa-solid fa-graduation-cap"></i> Student Management System</h1>
+    <aside class="sidebar">
 
-<p>Manage Students Efficiently</p>
+        <div class="logo">
+
+            <i class="fa-solid fa-graduation-cap"></i>
+
+            <h2>SMS</h2>
+
+        </div>
+
+        <ul>
+
+            <li>
+
+                <a href="dashboard.html">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <li class="active">
+
+                <a href="student-list.html">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    Student List
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="add-student.html">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Add Student
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="attendance.html">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                    Attendance
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="results.html">
+
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+
+                    Results
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="settings.html">
+
+                    <i class="fa-solid fa-gear"></i>
+
+                    Settings
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- =========================
+            MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>
+
+                    Student Management
+
+                </h1>
+
+                <p>
+
+                    View, Search and Manage Students
+
+                </p>
+
+            </div>
+
+            <a href="add-student.html"
+               class="add-btn">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Add Student
+
+            </a>
+
+        </header>
+
+        <!-- =========================
+                FILTER SECTION
+        ========================== -->
+
+        <section class="filter-section">
+
+            <input
+
+                type="text"
+
+                id="searchStudent"
+
+                placeholder="Search by Name or Roll Number...">
+
+            <select id="departmentFilter">
+
+                <option value="">All Departments</option>
+
+                <option>CSE</option>
+
+                <option>ECE</option>
+
+                <option>EEE</option>
+
+                <option>Mechanical</option>
+
+                <option>Civil</option>
+
+            </select>
+
+            <select id="yearFilter">
+
+                <option value="">All Years</option>
+
+                <option>1st Year</option>
+
+                <option>2nd Year</option>
+
+                <option>3rd Year</option>
+
+                <option>4th Year</option>
+
+            </select>
+
+        </section>
+
+                <!-- =========================
+                STUDENT TABLE
+        ========================== -->
+
+        <section class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Photo</th>
+
+                        <th>Name</th>
+
+                        <th>Roll No</th>
+
+                        <th>Department</th>
+
+                        <th>Year</th>
+
+                        <th>Email</th>
+
+                        <th>Phone</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentTableBody">
+
+                    <!-- JavaScript will load data here -->
+
+                    <tr>
+
+                        <td colspan="10" class="loading">
+
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                            Loading Students...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- =========================
+                PAGINATION
+        ========================== -->
+
+        <section class="pagination">
+
+            <button id="prevPage">
+
+                <i class="fa-solid fa-angle-left"></i>
+
+                Previous
+
+            </button>
+
+            <span id="pageNumber">
+
+                Page 1
+
+            </span>
+
+            <button id="nextPage">
+
+                Next
+
+                <i class="fa-solid fa-angle-right"></i>
+
+            </button>
+
+        </section>
+
+    </main>
 
 </div>
 
-<div class="header-right">
+<!-- =========================
+        DELETE CONFIRM MODAL
+========================== -->
 
-<button onclick="location.href='dashboard.html'">
+<div class="modal" id="deleteModal">
 
-<i class="fa-solid fa-house"></i>
+    <div class="modal-content">
 
-Dashboard
+        <i class="fa-solid fa-circle-exclamation warning-icon"></i>
 
-</button>
+        <h2>
 
-</div>
+            Delete Student
 
-</header>
+        </h2>
 
-<section class="statistics">
+        <p>
 
-<div class="card">
+            Are you sure you want to permanently remove this student?
 
-<i class="fa-solid fa-users"></i>
+        </p>
 
-<div>
+        <div class="modal-buttons">
 
-<h2 id="studentCount">0</h2>
+            <button class="cancel-btn"
+                    id="cancelDelete">
 
-<p>Total Students</p>
+                Cancel
 
-</div>
+            </button>
 
-</div>
+            <button class="delete-btn"
+                    id="confirmDelete">
 
-<div class="card">
+                Delete
 
-<i class="fa-solid fa-building-columns"></i>
+            </button>
 
-<div>
+        </div>
 
-<h2>5</h2>
-
-<p>Departments</p>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<i class="fa-solid fa-user-check"></i>
-
-<div>
-
-<h2>100%</h2>
-
-<p>Active</p>
+    </div>
 
 </div>
-
-</div>
-
-<div class="card">
-
-<i class="fa-solid fa-download"></i>
-
-<div>
-
-<h2>CSV</h2>
-
-<p>Export</p>
-
-</div>
-
-</div>
-
-</section>
-
-<section class="toolbar">
-
-<div class="search-box">
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-<input
-
-type="text"
-
-id="searchStudent"
-
-placeholder="Search by Roll Number or Name">
-
-</div>
-
-<select id="departmentFilter">
-
-<option value="All">All Departments</option>
-
-<option>CSE</option>
-
-<option>ECE</option>
-
-<option>EEE</option>
-
-<option>Mechanical</option>
-
-<option>Civil</option>
-
-</select>
-
-<select id="yearFilter">
-
-<option value="All">All Years</option>
-
-<option>1st Year</option>
-
-<option>2nd Year</option>
-
-<option>3rd Year</option>
-
-<option>4th Year</option>
-
-</select>
-
-<button id="exportBtn">
-
-<i class="fa-solid fa-file-arrow-down"></i>
-
-Export CSV
-
-</button>
-
-</section>
-
-<section class="table-container">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>#</th>
-
-<th>Photo</th>
-
-<th>Roll No</th>
-
-<th>Name</th>
-
-<th>Department</th>
-
-<th>Year</th>
-
-<th>Phone</th>
-
-<th>Email</th>
-
-<th>Status</th>
-
-<th>Edit</th>
-
-<th>Delete</th>
-
-</tr>
-
-</thead>
-
-<tbody id="studentTableBody">
-
-</tbody>
-
-</table>
-
-<div id="loading" class="loading">
-
-<i class="fa-solid fa-spinner fa-spin"></i>
-
-<p>Loading Students...</p>
-
-</div>
-
-<div id="emptyState" class="empty-state" style="display:none;">
-
-<i class="fa-solid fa-user-graduate"></i>
-
-<h2>No Students Found</h2>
-
-<p>No student records are available.</p>
-
-</div>
-
-</section>
-
-<section class="quick-actions">
-
-<button onclick="location.href='add-student.html'">
-
-<i class="fa-solid fa-user-plus"></i>
-
-Add Student
-
-</button>
-
-<button onclick="location.href='attendance.html'">
-
-<i class="fa-solid fa-calendar-check"></i>
-
-Attendance
-
-</button>
-
-<button onclick="location.href='results.html'">
-
-<i class="fa-solid fa-chart-column"></i>
-
-Results
-
-</button>
-
-<button onclick="location.href='dashboard.html'">
-
-<i class="fa-solid fa-house"></i>
-
-Dashboard
-
-</button>
-
-</section>
-
-<footer>
-
-<p>
-
-© 2026 Student Management System
-
-</p>
-
-<p>
-
-Developed by <strong>Hansika Sivani</strong>
-
-</p>
-
-</footer>
 
 <script src="../js/student-list.js"></script>
 

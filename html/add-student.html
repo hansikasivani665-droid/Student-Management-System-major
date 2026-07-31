@@ -1,108 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management System | Enterprise Registration</title>
+
+    <title>Add Student | Student Management System</title>
+
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+    <!-- Add Student CSS -->
     <link rel="stylesheet" href="../css/add-student.css">
-    <link rel="stylesheet" href="https://cloudflare.com">
-    <link rel="icon" href="images/favicon.png">
+
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
 </head>
+
+
 <body>
-    <div class="container">
-        <!-- ===========================================
-                    SIDEBAR NAVIGATION SYSTEM
-        =========================================== -->
-        <aside class="sidebar">
-            <div class="logo">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <h2>SMS</h2>
+
+
+<div class="dashboard-container">
+
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <i class="fa-solid fa-graduation-cap"></i>
+
+            <h2>SMS</h2>
+
+        </div>
+
+
+
+        <ul>
+
+
+            <li>
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-house"></i>
+                    Dashboard
+                </a>
+            </li>
+
+
+
+            <li>
+                <a href="profile.html">
+                    <i class="fa-solid fa-user"></i>
+                    Profile
+                </a>
+            </li>
+
+
+
+            <li class="active">
+
+                <a href="add-student.html">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Add Student
+
+                </a>
+
+            </li>
+
+
+
+            <li>
+
+                <a href="student-list.html">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    Student List
+
+                </a>
+
+            </li>
+
+
+
+            <li>
+
+                <a href="attendance.html">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                    Attendance
+
+                </a>
+
+            </li>
+
+
+
+            <li>
+
+                <a href="results.html">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Results
+
+                </a>
+
+            </li>
+
+
+
+            <li>
+
+                <a href="../index.html">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </a>
+
+            </li>
+
+
+
+        </ul>
+
+
+    </aside>
+
+
+
+
+
+
+    <!-- Main Content -->
+
+
+    <main class="main-content">
+
+
+        <div class="page-header">
+
+
+            <div>
+
+                <h1>
+                    Add New Student
+                </h1>
+
+                <p>
+                    Register a new student into the system
+                </p>
+
+
             </div>
-            <ul>
-                <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
-                <li><a href="student-list.html"><i class="fa-solid fa-users"></i><span>Student List</span></a></li>
-                <li class="active"><a href="add-student.html"><i class="fa-solid fa-user-plus"></i><span>Add Student</span></a></li>
-                <li><a href="attendance.html"><i class="fa-solid fa-calendar-check"></i><span>Attendance</span></a></li>
-                <li><a href="results.html"><i class="fa-solid fa-chart-column"></i><span>Results</span></a></li>
-            </ul>
-        </aside>
 
-        <!-- ===========================================
-                    MAIN PRODUCTION CONTAINER
-        =========================================== -->
-        <main class="main-content">
-            <header class="top-header">
-                <div class="header-left">
-                    <h1 id="pageHeadingTitle">Add Student</h1>
-                    <p>Register new profiles to the cloud tracking system efficiently.</p>
-                </div>
-                <div class="header-right">
-                    <div class="date-box">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <span id="liveDateDisplay">Loading...</span>
-                    </div>
-                </div>
-            </header>
 
-            <!-- Backend Analytics Telemetry Blocks -->
-            <section class="dashboard-cards">
-                <div class="card blue"><div class="card-icon"><i class="fa-solid fa-user-plus"></i></div><div><h3>Form Context</h3><h2 id="liveRegisterCount">New</h2></div></div>
-                <div class="card green"><div class="card-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><h3>Cloud Engine</h3><h2 id="cloudStatus">Active</h2></div></div>
-                <div class="card purple"><div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div><div><h3>Auth Role</h3><h2>Secured</h2></div></div>
-                <div class="card orange"><div class="card-icon"><i class="fa-solid fa-credit-card"></i></div><div><h3>Fintech API</h3><h2 id="feeStatus">Ready</h2></div></div>
-            </section>
 
-            <!-- Enterprise Submission Form Grid Layout Structure -->
-            <section class="form-container-card">
-                <div class="form-card-header">
-                    <h2><i class="fa-solid fa-id-card-clip"></i> Academic Profile Details</h2>
-                    <span class="badge-role"><i class="fa-solid fa-user-shield"></i> Registrar Authorization</span>
+            <div class="header-icon">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <!-- Form Card -->
+
+
+        <section class="student-form-card">
+
+
+            <form id="studentForm">
+
+
+
+                <div class="form-grid">
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Roll Number *
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                            <input 
+                            type="text"
+                            id="rollNo"
+                            placeholder="Enter roll number"
+                            required>
+
+                        </div>
+
+                    </div>
+
+
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Full Name *
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-user"></i>
+
+
+                            <input 
+                            type="text"
+                            id="name"
+                            placeholder="Enter student name"
+                            required>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Email *
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+
+                            <input 
+                            type="email"
+                            id="email"
+                            placeholder="student@gmail.com"
+                            required>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Phone Number *
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-phone"></i>
+
+
+                           <input 
+    type="tel"
+    id="phone"
+    name="phone"
+    maxlength="10"
+    pattern="[0-9]{10}"
+    placeholder="Enter 10 digit phone number"
+    required>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Date of Birth
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-calendar"></i>
+
+
+                            <input 
+                            type="date"
+                            id="dob">
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Gender
+                        </label>
+
+
+                        <div class="input-box">
+
+
+                            <i class="fa-solid fa-venus-mars"></i>
+
+
+                            <select id="gender">
+
+
+                                <option>Select Gender</option>
+
+                                <option>Male</option>
+
+                                <option>Female</option>
+
+                                <option>Other</option>
+
+
+                            </select>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Department
+                        </label>
+
+
+                        <div class="input-box">
+
+
+                            <i class="fa-solid fa-building-columns"></i>
+
+
+                            <select id="department">
+
+
+                                <option>CSE</option>
+
+                                <option>ECE</option>
+
+                                <option>EEE</option>
+
+                                <option>Mechanical</option>
+
+                                <option>Civil</option>
+
+
+                            </select>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+
+
+                        <label>
+                            Academic Year
+                        </label>
+
+
+                        <div class="input-box">
+
+
+                            <i class="fa-solid fa-graduation-cap"></i>
+
+
+                            <select id="year">
+
+
+                                <option>1st Year</option>
+
+                                <option>2nd Year</option>
+
+                                <option>3rd Year</option>
+
+                                <option>4th Year</option>
+
+
+                            </select>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
                 </div>
-                <form class="student-form" id="majorAddStudentForm" onsubmit="return false;">
-                    <div class="form-grid-layout">
-                        <div class="form-field-group"><label for="studentName">Student Name</label><input type="text" id="studentName" placeholder="Enter Full Name" required autofocus></div>
-                        <div class="form-field-group"><label for="rollNumber">Roll Number</label><input type="text" id="rollNumber" placeholder="Enter Roll Number" required></div>
-                        <div class="form-field-group">
-                            <label for="department">Department</label>
-                            <select id="department" required>
-                                <option value="" disabled selected>Select Department</option>
-                                <option value="CSE">CSE</option><option value="ECE">ECE</option><option value="EEE">EEE</option><option value="Mechanical">Mechanical</option><option value="Civil">Civil</option>
-                            </select>
-                        </div>
-                        <div class="form-field-group"><label for="studentPhoto">Profile Photo URL</label><input type="url" id="studentPhoto" placeholder="https://example.com"></div>
-                        <div class="form-field-group"><label for="emailAddress">Email Address</label><input type="email" id="emailAddress" placeholder="name@domain.com" required></div>
-                        <div class="form-field-group"><label for="phone">Phone Number</label><input type="tel" id="phone" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit number" required></div>
-                        <div class="form-field-group">
-                            <label for="userRole">Portal System Role</label>
-                            <select id="userRole" required>
-                                <option value="Student" selected>Student</option><option value="Representative">Class Representative</option><option value="Moderator">Faculty Moderator</option>
-                            </select>
-                        </div>
-                        <div class="form-field-group">
-                            <label for="paymentStatus">Fee Gateway Status</label>
-                            <select id="paymentStatus" required>
-                                <option value="Pending">❌ Invoice Pending Payment</option><option value="Paid">✅ Paid via Online Gateway</option><option value="Exempted">⚠️ Scholarship Exempted</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="radio-section-container">
-                        <label class="radio-section-title">Academic Year of Study</label>
-                        <div class="radio-grid-options">
-                            <label class="radio-option"><input type="radio" name="year" value="1st Year" required> <span>1st Year</span></label>
-                            <label class="radio-option"><input type="radio" name="year" value="2nd Year"> <span>2nd Year</span></label>
-                            <label class="radio-option"><input type="radio" name="year" value="3rd Year"> <span>3rd Year</span></label>
-                            <label class="radio-option"><input type="radio" name="year" value="4th Year"> <span>4th Year</span></label>
-                        </div>
-                    </div>
-                    <div id="message" class="form-status-feedback"></div>
-                    <div class="form-action-button-row">
-                        <button type="submit" class="submit-btn-action"><i class="fa-solid fa-floppy-disk"></i> <span>Save Record</span></button>
-                        <button type="reset" class="reset-btn-action"><i class="fa-solid fa-rotate"></i> <span>Reset Form</span></button>
-                    </div>
-                </form>
-            </section>
-        </main>
-    </div>
-    <script src="../js/add-student.js"></script>
+
+
+
+
+
+
+
+                <div class="form-group full-width">
+
+
+                    <label>
+                        Address
+                    </label>
+
+
+                    <textarea 
+                    id="address"
+                    placeholder="Enter complete address">
+                    </textarea>
+
+
+                </div>
+
+
+
+
+
+
+
+                <button class="submit-btn" type="submit">
+
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Add Student
+
+
+                </button>
+
+
+
+
+
+                <p id="message"></p>
+
+
+
+            </form>
+
+
+
+        </section>
+
+
+
+
+    </main>
+
+
+
+</div>
+
+
+
+
+
+<script src="../js/add-student.js"></script>
+
+
 </body>
+
+
 </html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Teacher Results</title>
+
+<link rel="stylesheet" href="../css/teacher-results.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>📊 Enter Student Results</h1>
+
+<a href="teacher-dashboard.html">⬅ Dashboard</a>
+
+</header>
+
+<div class="container">
+
+<form id="resultForm">
+
+<input
+type="text"
+id="roll"
+placeholder="Roll Number"
+required>
+
+
+
+    <input
+        type="text"
+        id="subject"
+        placeholder="Subject"
+        required>
+
+ 
+
+<input
+type="number"
+id="marks"
+placeholder="Marks"
+min="0"
+max="100"
+required>
+
+<button>
+
+Save Result
+
+</button>
+
+</form>
+
+<p id="message"></p>
+
+</div>
+
+<script src="../js/teacher-results.js"></script>
+
+</body>
+
+</html>

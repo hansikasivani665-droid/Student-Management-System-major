@@ -1,114 +1,59 @@
-# Student Management System (SMS)
+# 🎓 Student Management System
 
-## 📌 Project Overview
-
-The **Student Management System** is a web-based application developed to manage student academic and administrative activities digitally.
-
-The system helps administrators and students to manage student details, attendance records, examination results, and profile information efficiently.
-
-This project provides a user-friendly interface with separate dashboards for administrators and students.
+A modern **Student Management System (SMS)** developed using **HTML, CSS, JavaScript, Node.js, Express.js, and SQLite**. This project provides an easy way to manage students, teachers, attendance, and academic results through a clean and user-friendly interface.
 
 ---
 
-# 🚀 Features
+## 📌 Features
 
-## 👨‍💼 Admin Module
-
-### Dashboard
-- Total Students Count
-- Department Count
-- Attendance Overview
-- Results Overview
-- Average Marks Calculation
-- Pass Percentage Calculation
-- Latest Student Details
-
-### Student Management
+### 👨‍💼 Admin Module
+- Secure Admin Login
+- Dashboard with Statistics
 - Add New Students
+- Edit Student Information
+- Delete Students
 - View Student List
-- Store Student Information
-- Manage Student Profiles
+- Search Students
+- Filter by Department & Year
+- Manage Attendance
+- View Results
+- Manage Teachers
+- Admin Profile
+- System Settings
 
-### Attendance Management
-- Record Student Attendance
-- View Present and Absent Details
-- Calculate Attendance Percentage
+### 👨‍🏫 Teacher Module
+- Teacher Dashboard
+- Mark Student Attendance
+- Enter Student Results
+- View Student List
+- Teacher Profile
 
-### Results Management
-- Add Student Results
+### 👨‍🎓 Student Module
+- Student Login
+- View Personal Profile
+- View Attendance
 - View Academic Results
-- Calculate:
-  - Average Marks
-  - Grade
-  - Pass Percentage
-
-### Admin Profile & Settings
-- View Administrator Profile
-- Manage System Settings
 
 ---
 
-# 👨‍🎓 Student Module
+# 🚀 Technologies Used
 
-### Student Dashboard
-
-Students can view:
-
-- Personal Profile Details
-- Roll Number
-- Department
-- Year
-- Email
-- Phone Number
-
-### Academic Details
-
-- Total Subjects
-- Total Results
-- Average Marks
-- Highest Marks
-- Result Status
-
-### Attendance Details
-
-- Total Working Days
-- Present Days
-- Absent Days
-- Attendance Percentage
-
-### Results
-
-Students can view:
-
-- Subject Name
-- Marks
-- Grade
-- Result Status
-
----
-
-# 🛠️ Technologies Used
-
-## Frontend
-
+### Frontend
 - HTML5
 - CSS3
-- JavaScript
-- Font Awesome Icons
+- JavaScript (ES6)
 
-## Backend
-
+### Backend
 - Node.js
 - Express.js
 
-## Database
+### Database
+- SQLite
 
-- SQLite Database
-
-## Tools Used
-
-- Visual Studio Code
-- Git & GitHub
+### Tools
+- VS Code
+- Git
+- GitHub
 - Postman
 
 ---
@@ -116,86 +61,73 @@ Students can view:
 # 📂 Project Structure
 
 ```
-Student Management System Major
-
+Student-Management-System/
 │
-├── frontend
+├── assets/
+│   ├── images/
+│   └── icons/
 │
-│   ├── html
-│   │   ├── login.html
-│   │   ├── dashboard.html
-│   │   ├── student-dashboard.html
-│   │   ├── results.html
-│   │   ├── attendance.html
-│   │   └── profile.html
-│   │
-│   ├── css
-│   │   ├── dashboard.css
-│   │   ├── student-dashboard.css
-│   │   └── styles.css
-│   │
-│   ├── js
-│       ├── dashboard.js
-│       ├── student-dashboard.js
-│       ├── results.js
-│       └── attendance.js
+├── css/
 │
+├── html/
 │
-├── backend
+├── js/
 │
-│   ├── routes
-│   │   ├── students.js
-│   │   ├── results.js
-│   │   └── attendance.js
-│   │
-│   ├── models
-│   │   └── database.js
-│   │
-│   ├── server.js
-│   ├── package.json
-│   └── .env
+├── routes/
+│
+├── models/
+│
+├── database/
+│
+├── server.js
+│
+├── package.json
 │
 └── README.md
-
 ```
 
 ---
 
-# ⚙️ Installation & Setup
+# 📷 Screenshots
 
-## Step 1: Clone Repository
+You can add screenshots here after uploading them.
 
-```
-git clone <repository-url>
-```
+- Login Page
+- Admin Dashboard
+- Student List
+- Attendance Module
+- Results Module
+- Teacher Dashboard
 
 ---
 
-## Step 2: Install Backend Dependencies
+# ⚙️ Installation
 
-Go to backend folder:
+Clone the repository
 
+```bash
+git clone https://github.com/YOUR_USERNAME/Student-Management-System.git
 ```
-cd backend
+
+Move into the project
+
+```bash
+cd Student-Management-System
 ```
 
-Install required packages:
+Install dependencies
 
-```
+```bash
 npm install
 ```
 
----
+Start the server
 
-## Step 3: Start Backend Server
-
-Run:
-
-```
+```bash
 node server.js
 ```
 
-Server will start at:
+Open your browser
 
 ```
 http://localhost:5000
@@ -203,117 +135,43 @@ http://localhost:5000
 
 ---
 
-## Step 4: Run Frontend
+# 💻 Modules
 
-Open:
-
-```
-frontend/html/login.html
-```
-
-in your browser.
-
----
-
-# 🔐 Login Details
-
-## Admin Login
-
-```
-Email:
-admin@gmail.com
-
-Password:
-admin123
-```
+- Authentication
+- Dashboard
+- Student Management
+- Teacher Management
+- Attendance Management
+- Result Management
+- Profile Management
+- Settings
 
 ---
 
-## Student Login Example
+# 🗄 Database
 
-```
-Roll Number:
-2298789
+SQLite Database
 
-Password:
-Hansika@123
-```
+Tables Included
 
----
-
-# 🔗 API Endpoints
-
-## Students
-
-```
-GET /students
-```
-
-Get all student details.
-
+- Students
+- Teachers
+- Attendance
+- Results
+- Users
 
 ---
 
-## Results
+# ✨ Future Improvements
 
-```
-GET /results
-```
-
-Get student results.
-
-
----
-
-## Attendance
-
-```
-GET /attendance
-```
-
-Get attendance records.
-
-
----
-
-# 📊 Calculations Implemented
-
-## Average Marks
-
-```
-Average Marks =
-Total Marks / Number of Subjects
-```
-
----
-
-## Pass Percentage
-
-```
-Pass Percentage =
-(Number of Passed Results / Total Results) × 100
-```
-
----
-
-## Attendance Percentage
-
-```
-Attendance Percentage =
-(Present Days / Total Working Days) × 100
-```
-
----
-
-# 🎯 Future Enhancements
-
-- Student registration system
-- Role-based authentication
-- Password encryption
-- Email notifications
-- Online fee payment
-- PDF report generation
-- Cloud database integration
+- Password Encryption
+- Role Based Authentication
+- Dark Mode
+- Student Photo Upload
+- Export Reports to PDF
+- Email Notifications
+- Performance Analytics
+- Responsive Mobile Design
 
 ---
 
@@ -321,10 +179,12 @@ Attendance Percentage =
 
 **Hansika Sivani**
 
-B.Tech Computer Science Engineering
+B.Tech Student
 
 ---
 
 # 📄 License
 
-This project is developed for academic major project purposes.
+This project is developed for educational purposes.
+
+© 2026 Hansika Sivani

@@ -15,10 +15,7 @@ if(localStorage.getItem("loggedIn") !== "true"){
 
 
 
-// Temporary student roll
-// Later we will connect this with student login
-
-const studentRoll = "2298789";
+let studentRoll = null;
 
 
 
@@ -30,17 +27,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     loadStudentProfile();
 
-    loadStudentResults();
-
-    loadStudentAttendance();
-
 
 });
-
-
-
-
-
 
 
 
@@ -56,8 +44,13 @@ async function loadStudentProfile(){
 try{
 
 
+const email =
+localStorage.getItem("currentUser");
+
+
+
 let response =
-await fetch(STUDENT_API);
+await fetch(`${STUDENT_API}/email/${email}`);
 
 
 
@@ -71,15 +64,13 @@ if(data.success){
 
 
 let student =
-data.students.find(
-s=>s.roll===studentRoll
-);
+data.student;
 
 
 
+studentRoll =
+student.roll;
 
-
-if(student){
 
 
 
@@ -113,9 +104,20 @@ student.phone;
 
 
 
+
+// Now that we have the roll, load the rest
+
+loadStudentResults();
+
+loadStudentAttendance();
+
+
+
 }
 
+else{
 
+console.log("Student not found");
 
 }
 
