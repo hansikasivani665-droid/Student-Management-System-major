@@ -5,9 +5,7 @@
 // =====================================================
 
 
-const API = "https://onrender.com";
-
-
+const API = "https://student-management-system-major-1.onrender.com";
 
 // ======================================
 // Chart Instances

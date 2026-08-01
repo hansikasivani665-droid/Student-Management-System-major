@@ -88,7 +88,7 @@ document
     // ===========================
     try {
 
-        const response = await fetch(`${API}auth/login`, {
+        const response = await fetch(`${API}/auth/login`, {
 
             method: "POST",
 
