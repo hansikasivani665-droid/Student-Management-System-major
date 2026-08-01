@@ -1,4 +1,4 @@
-const API = "http://localhost:5000/results";
+const API = "https://student-management-system-major.onrender.com/students";
 
 const form = document.getElementById("resultForm");
 const message = document.getElementById("message");

@@ -3,7 +3,7 @@
 // =====================================
 
 
-const STUDENT_API = "http://localhost:5000/students";
+const STUDENT_API = "https://student-management-system-major.onrender.com/students";
 
 
 let allStudents = [];

@@ -11,11 +11,11 @@ if(localStorage.getItem("loggedIn") !== "true"){
 
 
 const STUDENT_API =
-"http://localhost:5000/students";
+"https://student-management-system-major.onrender.com/students";
 
 
 const RESULT_API =
-"http://localhost:5000/results";
+"https://student-management-system-major.onrender.com/results";
 
 
 

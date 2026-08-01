@@ -1,4 +1,4 @@
-const RESULT_API = "http://localhost:5000/results";
+const STUDENT_API = "https://student-management-system-major.onrender.com/";
 
 let resultData = [];
 

@@ -9,12 +9,9 @@ if(localStorage.getItem("loggedIn") !== "true"){
 }
 
 
-const STUDENT_API =
-"http://localhost:5000/students";
+const STUDENT_API = "https://student-management-system-major.onrender.com/students";
 
-
-const ATTENDANCE_API =
-"http://localhost:5000/attendance";
+const ATTENDANCE_API = "https://student-management-system-major.onrender.com/attendance";
 
 
 
