@@ -1,4 +1,5 @@
-const API = "https://student-management-system-693o.onrender.com/";
+const API = "https://onrender.com";
+
 
 const table=document.getElementById("studentTable");
 

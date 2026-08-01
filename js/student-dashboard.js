@@ -1,6 +1,7 @@
 const STUDENT_API =   "https://onrender.com"; 
 const RESULT_API =     "https://onrender.com";
-const ATTENDANCE_API =    "https://onrender.com";
+const ATTENDANCE_API = "https://onrender.com";
+
 
 
 

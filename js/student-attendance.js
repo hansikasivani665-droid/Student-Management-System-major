@@ -9,8 +9,8 @@ if(localStorage.getItem("loggedIn") !== "true"){
 }
 
 
-const STUDENT_API =    "https://onrender.com";
-const ATTENDANCE_API =  "https://onrender.com";
+const API = "https://onrender.com";
+const ATTENDANCE_API = "https://onrender.com";
 
 
 

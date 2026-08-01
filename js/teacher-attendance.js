@@ -4,7 +4,8 @@
 
 console.log("Teacher Attendance Module Loaded");
 
-const API  = "https://student-management-system-693o.onrender.com/";
+const API = "https://onrender.com";
+
 
 
 const studentTable = document.getElementById("studentTable");

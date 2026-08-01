@@ -1,4 +1,5 @@
-const STUDENT_API = "https://student-management-system-major.onrender.com/";
+const API = "https://onrender.com";
+
 
 let resultData = [];
 
