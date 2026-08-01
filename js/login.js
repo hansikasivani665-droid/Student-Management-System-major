@@ -1,16 +1,19 @@
 // ===============================
+// API URL
+// ===============================
+const API = "https://student-management-system-major-1.onrender.com";
+
+
+// ===============================
 // Show Password
 // ===============================
-
 document
 .getElementById("showPassword")
 .addEventListener("change", function () {
 
-    const password =
-        document.getElementById("password");
+    const password = document.getElementById("password");
 
-    password.type =
-        this.checked ? "text" : "password";
+    password.type = this.checked ? "text" : "password";
 
 });
 
@@ -18,7 +21,6 @@ document
 // ===============================
 // Remember Me
 // ===============================
-
 if (localStorage.getItem("rememberMe") === "true") {
 
     document.getElementById("rememberMe").checked = true;
@@ -32,37 +34,28 @@ if (localStorage.getItem("rememberMe") === "true") {
 // ===============================
 // Login
 // ===============================
-
 document
 .querySelector(".log")
 .addEventListener("submit", async function (e) {
 
-
     e.preventDefault();
-
 
     const role =
         document.getElementById("role").value;
 
-
     const email =
         document.getElementById("email").value.trim();
 
-
     const password =
         document.getElementById("password").value.trim();
-
-
 
     const remember =
         document.getElementById("rememberMe").checked;
 
 
-
     // ===========================
     // Validation
     // ===========================
-
 
     if (role === "") {
 
@@ -71,14 +64,12 @@ document
 
     }
 
-
     if (email === "") {
 
         alert("Please enter email.");
         return;
 
     }
-
 
     if (password.length < 4) {
 
@@ -88,180 +79,91 @@ document
     }
 
 
-
     // ===========================
     // Send Login Request
     // ===========================
-
-
     try {
 
+        const response = await fetch(`${API}/auth/login`, {
 
-        const response =
-        await fetch(
-            "http://localhost:5000/auth/login",
-            {
+            method: "POST",
 
-                method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                headers: {
+            body: JSON.stringify({
 
-                    "Content-Type":
-                    "application/json"
+                role: role,
+                email: email,
+                password: password
 
-                },
+            })
 
+        });
 
-                body: JSON.stringify({
-
-                    role: role,
-                    email: email,
-                    password: password
-
-                })
-
-            });
-
-
-
-        const result =
-        await response.json();
-
-
+        const result = await response.json();
 
         // ===========================
         // Login Failed
         // ===========================
-
-
         if (!result.success) {
-
 
             alert(result.message);
 
-
-            document
-            .getElementById("password")
-            .value = "";
-
+            document.getElementById("password").value = "";
 
             return;
 
-
         }
-
 
 
         // ===========================
         // Save Login
         // ===========================
-
-
-        localStorage.setItem(
-            "loggedIn",
-            "true"
-        );
-
-
-        localStorage.setItem(
-            "currentUser",
-            email
-        );
-
-
-        localStorage.setItem(
-            "userRole",
-            role
-        );
-
-
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("currentUser", email);
+        localStorage.setItem("userRole", role);
 
         if (remember) {
 
+            localStorage.setItem("rememberMe", "true");
+            localStorage.setItem("savedEmail", email);
 
-            localStorage.setItem(
-                "rememberMe",
-                "true"
-            );
+        } else {
 
-
-            localStorage.setItem(
-                "savedEmail",
-                email
-            );
-
+            localStorage.removeItem("rememberMe");
+            localStorage.removeItem("savedEmail");
 
         }
-
-        else {
-
-
-            localStorage.removeItem(
-                "rememberMe"
-            );
-
-
-            localStorage.removeItem(
-                "savedEmail"
-            );
-
-
-        }
-
 
 
         // ===========================
         // Redirect
         // ===========================
-
-
         if (role === "admin") {
 
-
-            window.location.href =
-            "dashboard.html";
-
+            window.location.href = "dashboard.html";
 
         }
-
-
         else if (role === "teacher") {
 
-
-            window.location.href =
-            "teacher-dashboard.html";
-
+            window.location.href = "teacher-dashboard.html";
 
         }
-
-
         else if (role === "student") {
 
-
-            window.location.href =
-            "student-dashboard.html";
-
+            window.location.href = "student-dashboard.html";
 
         }
 
+    }
+    catch (error) {
 
+        console.error(error);
+
+        alert("Server connection failed.");
 
     }
-
-
-    catch(error) {
-
-
-        console.log(error);
-
-
-        alert(
-            "Server connection failed. Start backend first."
-        );
-
-
-    }
-
-
 
 });
