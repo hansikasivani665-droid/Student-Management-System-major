@@ -6,7 +6,7 @@ require("dotenv").config();
 // ===============================
 // Database Connection
 // ===============================
-require("./models/database");
+const db = require("./models/database");
 
 // ===============================
 // Import Routes
@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
 });
 
 // ===============================
-// API Routes
+// API Routes Mounting
 // ===============================
 app.use("/auth", authRoutes);
 app.use("/students", studentRoutes);
@@ -69,7 +69,7 @@ app.use("/teachers", teacherRoutes);
 app.get("/health", (req, res) => {
     res.json({
         success: true,
-        message: "Server is running"
+        message: "Server is running smoothly"
     });
 });
 
@@ -102,7 +102,7 @@ const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, "0.0.0.0", () => {
     console.log("======================================");
-    console.log("🚀 Student Management System");
+    console.log("🚀 Student Management System Backend");
     console.log("======================================");
     console.log(`Server Running on Port ${PORT}`);
     console.log("======================================");
