@@ -3,8 +3,7 @@
 // =====================================
 
 
-const STUDENT_API = "https://student-management-system-major.onrender.com/students";
-
+const STUDENT_API =  "https://onrender.com";
 
 let allStudents = [];
 

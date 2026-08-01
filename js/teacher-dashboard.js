@@ -1,6 +1,6 @@
-const STUDENT_API = "https://student-management-system-major.onrender.com/students";
-const RESULT_API = "https://student-management-system-major.onrender.com/results";
-const ATTENDANCE_API = "https://student-management-system-major.onrender.com/attendance";
+const STUDENT_API = "https://onrender.com";
+const RESULT_API = "https://onrender.com";
+const ATTENDANCE_API =  "https://onrender.com";
 
 
 if(localStorage.getItem("loggedIn") !== "true"){

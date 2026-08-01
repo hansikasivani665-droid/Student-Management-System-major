@@ -10,7 +10,7 @@ if (localStorage.getItem("loggedIn") !== "true") {
 
 
 const STUDENT_API =
-"https://student-management-system-major.onrender.com/students";
+ "https://onrender.com";
 
 
 

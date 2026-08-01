@@ -13,7 +13,8 @@ if (localStorage.getItem("loggedIn") !== "true") {
 
 
 
-const API_URL = "http://localhost:5000/attendance";
+ const API_URL = "https://onrender.com";
+
 
 
 let attendanceData = [];

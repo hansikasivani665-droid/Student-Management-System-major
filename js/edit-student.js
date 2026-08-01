@@ -1,4 +1,4 @@
-const API = "https://student-management-system-major.onrender.com/";
+const API = "https://student-management-system-693o.onrender.com/";
 
 const id =
 new URLSearchParams(window.location.search).get("id");
