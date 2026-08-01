@@ -29,27 +29,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ===============================
-// Static Folder
+// Debug Middleware
+// ===============================
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+// ===============================
+// Static Files
 // ===============================
 app.use(express.static(path.join(__dirname, "..")));
-
-// ===============================
-// HTML
-// ===============================
 app.use("/html", express.static(path.join(__dirname, "../html")));
-
-// CSS
 app.use("/css", express.static(path.join(__dirname, "../css")));
-
-// JavaScript
 app.use("/js", express.static(path.join(__dirname, "../js")));
-
-// Assets
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
 // ===============================
-// HOME PAGE
-// Opens login.html
+// Home Page
 // ===============================
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../html/login.html"));
@@ -67,7 +64,17 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/teachers", teacherRoutes);
 
 // ===============================
-// 404
+// Health Check
+// ===============================
+app.get("/health", (req, res) => {
+    res.json({
+        success: true,
+        message: "Server is running"
+    });
+});
+
+// ===============================
+// 404 Handler
 // ===============================
 app.use((req, res) => {
     res.status(404).json({
@@ -80,20 +87,20 @@ app.use((req, res) => {
 // Error Handler
 // ===============================
 app.use((err, req, res, next) => {
-    console.error(err);
+    console.error("Server Error:", err);
 
     res.status(500).json({
         success: false,
-        message: "Internal Server Error"
+        message: err.message || "Internal Server Error"
     });
 });
 
 // ===============================
-// Server
+// Start Server
 // ===============================
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log("======================================");
     console.log("🚀 Student Management System");
     console.log("======================================");
