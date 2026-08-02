@@ -1,231 +1,523 @@
 const express = require("express");
 const router = express.Router();
+
 const db = require("../models/database");
 
+
 // ==========================================
-// GET TODAY ATTENDANCE
+// GET ATTENDANCE
 // ==========================================
 
 router.get("/", (req, res) => {
 
-    const today = new Date().toISOString().split("T")[0];
+    const {
+        department,
+        year,
+        subject,
+        teacherId,
+        date
+    } = req.query;
 
-    const query = `
-        SELECT
-            students.id,
-            students.roll,
-            students.name,
-            students.department,
-            students.year,
-            attendance.date,
-            attendance.status
-        FROM students
-        LEFT JOIN attendance
-            ON students.roll = attendance.roll
-            AND attendance.date = ?
-        ORDER BY students.id ASC
+
+    let query = `
+
+    SELECT
+
+    students.roll,
+    students.name,
+    students.department,
+    students.year,
+
+    attendance.subject,
+    attendance.teacherId,
+    attendance.date,
+    attendance.status
+
+
+    FROM students
+
+
+    LEFT JOIN attendance
+
+    ON students.roll = attendance.roll
+
+
+    WHERE 1=1
+
     `;
 
-    db.all(query, [today], (err, rows) => {
 
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: err.message
+    let params = [];
+
+
+    if(department){
+
+        query += " AND students.department=? ";
+        params.push(department);
+
+    }
+
+
+    if(year){
+
+        query += " AND students.year=? ";
+        params.push(year);
+
+    }
+
+
+    if(subject){
+
+        query += " AND attendance.subject=? ";
+        params.push(subject);
+
+    }
+
+
+    if(teacherId){
+
+        query += " AND attendance.teacherId=? ";
+        params.push(teacherId);
+
+    }
+
+
+    if(date){
+
+        query += " AND attendance.date=? ";
+        params.push(date);
+
+    }
+
+
+
+    db.all(
+        query,
+        params,
+        (err,rows)=>{
+
+
+            if(err){
+
+                return res.status(500).json({
+
+                    success:false,
+
+                    message:err.message
+
+                });
+
+            }
+
+
+
+            res.json({
+
+                success:true,
+
+                attendance:rows
+
             });
+
+
+
         }
 
-        let present = 0;
-        let absent = 0;
+    );
 
-        rows.forEach(row => {
-
-            if (row.status === "Present") {
-                present++;
-            } else if (row.status === "Absent") {
-                absent++;
-            }
-
-        });
-
-        res.json({
-            success: true,
-            attendance: rows,
-            summary: {
-                total: rows.length,
-                present,
-                absent
-            }
-        });
-
-    });
 
 });
+
+
+
 
 
 // ==========================================
 // SAVE / UPDATE ATTENDANCE
 // ==========================================
 
-router.post("/", (req, res) => {
 
-    const { roll, status } = req.body;
+router.post("/",(req,res)=>{
 
-    const date = new Date().toISOString().split("T")[0];
 
-    db.get(
-        "SELECT * FROM attendance WHERE roll=? AND date=?",
-        [roll, date],
-        (err, row) => {
+const {
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+roll,
 
-            if (row) {
+subject,
 
-                db.run(
-                    "UPDATE attendance SET status=? WHERE roll=? AND date=?",
-                    [status, roll, date],
-                    function (err) {
+teacherId,
 
-                        if (err) {
-                            return res.status(500).json({
-                                success: false,
-                                message: err.message
-                            });
-                        }
+date,
 
-                        res.json({
-                            success: true,
-                            message: "Attendance Updated Successfully"
-                        });
+status
 
-                    }
-                );
 
-            } else {
+}=req.body;
 
-                db.run(
-                    "INSERT INTO attendance(roll,date,status) VALUES(?,?,?)",
-                    [roll, date, status],
-                    function (err) {
 
-                        if (err) {
-                            return res.status(500).json({
-                                success: false,
-                                message: err.message
-                            });
-                        }
 
-                        res.json({
-                            success: true,
-                            message: "Attendance Saved Successfully"
-                        });
+if(
+!roll ||
+!subject ||
+!teacherId ||
+!date ||
+!status
 
-                    }
-                );
+){
 
-            }
+return res.status(400).json({
 
-        }
+success:false,
 
-    );
+message:"Missing Attendance Details"
 
 });
+
+
+}
+
+
+
+
+db.get(
+
+`
+
+SELECT *
+
+FROM attendance
+
+WHERE roll=?
+
+AND subject=?
+
+AND teacherId=?
+
+AND date=?
+
+`,
+
+[
+roll,
+subject,
+teacherId,
+date
+],
+
+
+(err,row)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+
+}
+
+
+
+
+// UPDATE EXISTING
+
+
+if(row){
+
+
+db.run(
+
+`
+
+UPDATE attendance
+
+SET status=?
+
+WHERE roll=?
+
+AND subject=?
+
+AND teacherId=?
+
+AND date=?
+
+`,
+
+[
+
+status,
+
+roll,
+
+subject,
+
+teacherId,
+
+date
+
+],
+
+
+(err)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+
+}
+
+
+
+res.json({
+
+success:true,
+
+message:"Attendance Updated"
+
+});
+
+
+}
+
+
+
+);
+
+
+
+}
+
+
+
+
+
+// INSERT NEW
+
+
+else{
+
+
+db.run(
+
+`
+
+INSERT INTO attendance
+
+(
+
+roll,
+
+subject,
+
+teacherId,
+
+date,
+
+status
+
+)
+
+VALUES(?,?,?,?,?)
+
+`,
+
+[
+
+roll,
+
+subject,
+
+teacherId,
+
+date,
+
+status
+
+],
+
+
+(err)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+
+}
+
+
+
+res.json({
+
+success:true,
+
+message:"Attendance Saved"
+
+});
+
+
+
+}
+
+
+);
+
+
+
+}
+
+
+
+
+}
+
+
+
+);
+
+
+
+});
+
+
 
 
 // ==========================================
 // STUDENT ATTENDANCE REPORT
 // ==========================================
 
-router.get("/student/:roll", (req, res) => {
 
-    const roll = req.params.roll;
+router.get("/student/:roll",(req,res)=>{
 
-    db.all(
-        `
-        SELECT *
-        FROM attendance
-        WHERE roll=?
-        ORDER BY date DESC
-        `,
-        [roll],
-        (err, rows) => {
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+const roll=req.params.roll;
 
-            const total = rows.length;
 
-            const present = rows.filter(
-                row => row.status === "Present"
-            ).length;
 
-            const absent = rows.filter(
-                row => row.status === "Absent"
-            ).length;
+db.all(
 
-            const percentage =
-                total > 0
-                    ? Math.round((present / total) * 100)
-                    : 0;
+`
 
-            res.json({
+SELECT *
 
-                success: true,
+FROM attendance
 
-                attendance: rows,
+WHERE roll=?
 
-                summary: {
-                    totalDays: total,
-                    present,
-                    absent,
-                    percentage
-                }
+ORDER BY date DESC
 
-            });
+`,
 
-        }
+[roll],
 
-    );
+
+(err,rows)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+}
+
+
+
+const total =
+rows.length;
+
+
+
+const present =
+rows.filter(
+a=>a.status==="Present"
+).length;
+
+
+
+const absent =
+rows.filter(
+a=>a.status==="Absent"
+).length;
+
+
+
+const percentage =
+total>0
+?
+Math.round(
+(present/total)*100
+)
+:
+0;
+
+
+
+res.json({
+
+success:true,
+
+attendance:rows,
+
+
+summary:{
+
+
+totalDays:total,
+
+present,
+
+absent,
+
+percentage
+
+
+}
+
+
 
 });
 
 
-// ==========================================
-// DELETE ATTENDANCE
-// ==========================================
 
-router.delete("/:id", (req, res) => {
+}
 
-    db.run(
-        "DELETE FROM attendance WHERE id=?",
-        [req.params.id],
-        function (err) {
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
 
-            res.json({
-                success: true,
-                message: "Attendance Deleted Successfully"
-            });
+);
 
-        }
-    );
+
 
 });
+
+
+
+
 
 module.exports = router;

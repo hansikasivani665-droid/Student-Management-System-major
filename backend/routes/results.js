@@ -5,96 +5,105 @@ const db = require("../models/database");
 
 
 
-// ===============================
-// GET RESULTS
-// ===============================
+// =====================================
+// GET ALL RESULTS
+// =====================================
 
-router.get("/", (req,res)=>{
-
-
-db.all(`
-
-SELECT
-
-results.id,
-results.roll,
-
-students.name,
-students.department,
-students.year,
-
-results.subject,
-results.marks,
-results.grade,
-results.status
+router.get("/", (req, res) => {
 
 
-FROM results
+    db.all(`
+
+    SELECT
+
+    results.id,
+    results.roll,
+
+    students.name,
+    students.department,
+    students.year,
+
+    results.teacherId,
+    results.subject,
+    results.marks,
+    results.grade,
+    results.status
 
 
-LEFT JOIN students
-
-ON results.roll = students.roll
+    FROM results
 
 
-ORDER BY results.id DESC
+    LEFT JOIN students
+
+    ON results.roll = students.roll
 
 
-`,
-[],
+    ORDER BY results.id DESC
 
 
-(err,rows)=>{
+    `,
+
+    [],
 
 
-if(err){
+    (err, rows) => {
 
-return res.status(500).json({
 
-success:false,
-message:err.message
+        if(err){
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:err.message
+
+            });
+
+        }
+
+
+
+        res.json({
+
+            success:true,
+
+            results:rows
+
+        });
+
+
+
+    });
+
 
 });
 
-}
-
-
-
-res.json({
-
-success:true,
-
-results:rows
-
-});
-
-
-});
-
-
-});
 
 
 
 
-
-
-
-// ===============================
+// =====================================
 // ADD RESULT
-// ===============================
+// =====================================
 
 
-router.post("/",(req,res)=>{
+router.post("/", (req,res)=>{
 
 
 const {
 
-roll,
-subject,
-marks,
-grade,
-status
+
+    roll,
+
+    teacherId,
+
+    subject,
+
+    marks,
+
+    grade,
+
+    status
 
 
 }=req.body;
@@ -102,56 +111,163 @@ status
 
 
 
-db.run(`
 
-INSERT INTO results
-
-(
-roll,
-subject,
-marks,
-grade,
-status
-)
-
-VALUES(?,?,?,?,?)
-
-`,
-
-[
-
-roll,
-subject,
-marks,
-grade,
-status
-
-],
+if(!roll || !subject || !marks){
 
 
-function(err){
+    return res.status(400).json({
 
+        success:false,
 
-if(err){
+        message:"Required fields missing"
 
-return res.status(500).json({
+    });
 
-success:false,
-message:err.message
-
-});
 
 }
 
 
 
-res.json({
 
-success:true,
+// Get student details automatically
 
-message:"Result Saved Successfully",
+db.get(
 
-id:this.lastID
+"SELECT name, department FROM students WHERE roll=?",
+
+[roll],
+
+
+(err,student)=>{
+
+
+    if(err){
+
+
+        return res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+
+    }
+
+
+
+
+    if(!student){
+
+
+        return res.status(404).json({
+
+            success:false,
+
+            message:"Student not found"
+
+        });
+
+
+    }
+
+
+
+
+
+    db.run(`
+
+
+    INSERT INTO results
+
+    (
+
+    roll,
+
+    teacherId,
+
+    name,
+
+    department,
+
+    subject,
+
+    marks,
+
+    grade,
+
+    status
+
+    )
+
+
+    VALUES(?,?,?,?,?,?,?,?)
+
+
+    `,
+
+
+    [
+
+
+    roll,
+
+    teacherId,
+
+    student.name,
+
+    student.department,
+
+    subject,
+
+    marks,
+
+    grade,
+
+    status
+
+
+    ],
+
+
+
+    function(err){
+
+
+        if(err){
+
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:err.message
+
+            });
+
+
+        }
+
+
+
+
+        res.json({
+
+            success:true,
+
+            message:"Result Saved Successfully",
+
+            id:this.lastID
+
+
+        });
+
+
+
+    });
+
+
 
 });
 
@@ -161,17 +277,11 @@ id:this.lastID
 
 
 
-});
 
 
-
-
-
-
-
-// ===============================
+// =====================================
 // DELETE RESULT
-// ===============================
+// =====================================
 
 
 router.delete("/:id",(req,res)=>{
@@ -180,6 +290,7 @@ router.delete("/:id",(req,res)=>{
 db.run(
 
 `
+
 DELETE FROM results
 
 WHERE id=?
@@ -189,41 +300,43 @@ WHERE id=?
 [req.params.id],
 
 
-(err)=>{
+
+function(err){
 
 
-if(err){
+    if(err){
 
-return res.status(500).json({
 
-success:false,
+        return res.status(500).json({
 
-message:err.message
+            success:false,
+
+            message:err.message
+
+        });
+
+
+    }
+
+
+
+    res.json({
+
+        success:true,
+
+        message:"Result Deleted Successfully"
+
+    });
+
+
 
 });
 
 
-}
-
-
-
-res.json({
-
-success:true,
-
-message:"Deleted Successfully"
-
-});
-
-
-});
-
-
-
 });
 
 
 
 
 
-module.exports=router;
+module.exports = router;
