@@ -3,36 +3,20 @@
 // =====================================================
 
 const API = "https://student-management-system-major-1.onrender.com";
-console.log("Student Dashboard JS Loaded");
-console.log("Current User:", localStorage.getItem("currentUser"));
-
-// ======================================
-// LOGIN CHECK
-// ======================================
 
 if (localStorage.getItem("loggedIn") !== "true") {
-
     window.location.href = "/html/login.html";
-
 }
 
 let studentRoll = "";
 
-
-// ======================================
-// PAGE LOAD
-// ======================================
-
 document.addEventListener("DOMContentLoaded", () => {
-
     loadStudentProfile();
-
 });
 
-
-// ======================================
-// LOAD STUDENT PROFILE
-// ======================================
+// =====================================================
+// LOAD PROFILE
+// =====================================================
 
 async function loadStudentProfile() {
 
@@ -40,188 +24,146 @@ async function loadStudentProfile() {
 
         const email = localStorage.getItem("currentUser");
 
-        if (!email) {
+        const response = await fetch(`${API}/students/email/${email}`);
 
-            alert("Login expired.");
+        const data = await response.json();
 
-            localStorage.clear();
-
-            window.location.href = "/html/login.html";
-
-            return;
-
-        }
-
-
-        const response =
-            await fetch(`${API}/students/email/${email}`);
-
-
-        const data =
-            await response.json();
-
-
-        console.log("Student Profile :", data);
-
+        console.log(data);
 
         if (!data.success) {
 
-            alert("Student not found.");
+            alert("Student not found");
 
             return;
 
         }
-
 
         const student = data.student;
 
         studentRoll = student.roll;
 
+        document.getElementById("studentName").textContent = student.name;
+        document.getElementById("studentRoll").textContent = student.roll;
+        document.getElementById("studentDepartment").textContent = student.department;
+        document.getElementById("studentYear").textContent = student.year;
+        document.getElementById("studentEmail").textContent = student.email;
+        document.getElementById("studentPhone").textContent = student.phone;
 
-        document.getElementById("studentName").innerHTML =
-            student.name;
+        await loadStudentResults();
 
-        document.getElementById("studentRoll").innerHTML =
-            student.roll;
-
-        document.getElementById("studentDepartment").innerHTML =
-            student.department;
-
-        document.getElementById("studentYear").innerHTML =
-            student.year;
-
-        document.getElementById("studentEmail").innerHTML =
-            student.email;
-
-        document.getElementById("studentPhone").innerHTML =
-            student.phone;
-
-
-        // Load remaining data
-
-        loadStudentResults();
-
-        loadStudentAttendance();
+        await loadStudentAttendance();
 
     }
 
-    catch (error) {
+    catch (err) {
 
-        console.error("Profile Error :", error);
+        console.error(err);
 
     }
 
 }
 
-// ======================================
-// LOAD STUDENT RESULTS
-// ======================================
+// =====================================================
+// LOAD RESULTS
+// =====================================================
 
 async function loadStudentResults() {
 
     try {
 
-        const response =
-            await fetch(`${API}/results`);
+        const response = await fetch(`${API}/results`);
 
-        const data =
-            await response.json();
-
-        console.log("Results :", data);
+        const data = await response.json();
 
         if (!data.success) return;
 
-        const results =
-            data.results.filter(r => r.roll === studentRoll);
+        const results = data.results.filter(r => r.roll === studentRoll);
 
-        document.getElementById("totalResults").innerHTML =
-            results.length;
+        document.getElementById("totalResults").textContent = results.length;
 
-        const subjects =
-            [...new Set(results.map(r => r.subject))];
+        const subjects = [...new Set(results.map(r => r.subject))];
 
-        document.getElementById("totalSubjects").innerHTML =
-            subjects.length;
+        document.getElementById("totalSubjects").textContent = subjects.length;
 
-        let totalMarks = 0;
-        let highestMarks = 0;
+        let total = 0;
 
-        results.forEach(result => {
+        let highest = 0;
 
-            const marks = Number(result.marks);
+        results.forEach(r => {
 
-            totalMarks += marks;
+            total += Number(r.marks);
 
-            if (marks > highestMarks) {
+            if (Number(r.marks) > highest) {
 
-                highestMarks = marks;
+                highest = Number(r.marks);
 
             }
 
         });
 
-        const average =
-            results.length > 0
-                ? (totalMarks / results.length).toFixed(2)
-                : 0;
+        const average = results.length
+            ? (total / results.length).toFixed(2)
+            : 0;
 
-        document.getElementById("averageMarks").innerHTML =
+        document.getElementById("averageMarks").textContent =
             average + "%";
 
-        document.getElementById("highestMarks").innerHTML =
-            highestMarks;
+        document.getElementById("highestMarks").textContent =
+            highest;
 
         const failed =
             results.filter(r => r.status === "Fail").length;
 
-        document.getElementById("resultStatus").innerHTML =
+        document.getElementById("resultStatus").textContent =
             failed === 0 ? "Pass" : "Fail";
 
-        const table =
+        const tbody =
             document.getElementById("studentResultBody");
 
-        table.innerHTML = "";
+        tbody.innerHTML = "";
 
         if (results.length === 0) {
 
-            table.innerHTML = `
-                <tr>
-                    <td colspan="4">No Results Available</td>
-                </tr>
-            `;
+            tbody.innerHTML =
+                `<tr><td colspan="4">No Results Found</td></tr>`;
 
             return;
 
         }
 
-        results.forEach(result => {
+        results.forEach(r => {
 
-            table.innerHTML += `
-                <tr>
-                    <td>${result.subject}</td>
-                    <td>${result.marks}</td>
-                    <td>${result.grade}</td>
-                    <td>${result.status}</td>
-                </tr>
+            tbody.innerHTML += `
+
+            <tr>
+
+            <td>${r.subject}</td>
+
+            <td>${r.marks}</td>
+
+            <td>${r.grade}</td>
+
+            <td>${r.status}</td>
+
+            </tr>
+
             `;
 
         });
 
     }
 
-    catch (error) {
+    catch (err) {
 
-        console.error("Results Error :", error);
+        console.error(err);
 
     }
 
 }
 
-
-
-// ======================================
-// LOAD STUDENT ATTENDANCE
-// ======================================
+// =====================================================
+// LOAD ATTENDANCE
+// =====================================================
 
 async function loadStudentAttendance() {
 
@@ -233,48 +175,40 @@ async function loadStudentAttendance() {
         const data =
             await response.json();
 
-        console.log("Attendance :", data);
-
         if (!data.success) return;
 
-        document.getElementById("totalDays").innerHTML =
+        document.getElementById("totalDays").textContent =
             data.summary.totalDays;
 
-        document.getElementById("presentDays").innerHTML =
+        document.getElementById("presentDays").textContent =
             data.summary.present;
 
-        document.getElementById("absentDays").innerHTML =
+        document.getElementById("absentDays").textContent =
             data.summary.absent;
 
-        document.getElementById("attendancePercentage").innerHTML =
+        document.getElementById("attendancePercentage").textContent =
             data.summary.percentage + "%";
 
     }
 
-    catch (error) {
+    catch (err) {
 
-        console.error("Attendance Error :", error);
+        console.error(err);
 
     }
 
 }
 
-
-
-// ======================================
+// =====================================================
 // LOGOUT
-// ======================================
+// =====================================================
 
 function logout() {
 
-    if (confirm("Are you sure you want to logout?")) {
+    localStorage.clear();
 
-        localStorage.clear();
+    sessionStorage.clear();
 
-        sessionStorage.clear();
-
-        window.location.href = "/html/login.html";
-
-    }
+    window.location.href = "/html/login.html";
 
 }
