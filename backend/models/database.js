@@ -974,73 +974,8 @@ db.get(
                     "Ph.D",
                     "8 Years",
                     "Lakshmi@123"
-                ],
+                ];
 
-
-
-                // ================= ECE =================
-
-
-                ["ECE001","Arjun","ECE","Digital Electronics","arjun.ece@gmail.com","9876501001","M.Tech","2 Years","1234"],
-                ["ECE002","Kavya","ECE","Digital Electronics","kavya.ece@gmail.com","9876501002","M.Tech","2 Years","1234"],
-                ["ECE003","Rohit","ECE","Digital Electronics","rohit.ece@gmail.com","9876501003","M.Tech","2 Years","1234"],
-                ["ECE004","Sneha","ECE","Digital Electronics","sneha.ece@gmail.com","9876501004","M.Tech","2 Years","1234"],
-                ["ECE005","Vikram","ECE","Digital Electronics","vikram.ece@gmail.com","9876501005","M.Tech","2 Years","1234"],
-                ["ECE006","Deepika","ECE","Digital Electronics","deepika.ece@gmail.com","9876501006","M.Tech","2 Years","1234"],
-                ["ECE007","Ajay","ECE","Digital Electronics","ajay.ece@gmail.com","9876501007","M.Tech","2 Years","1234"],
-                ["ECE008","Nandini","ECE","Digital Electronics","nandini.ece@gmail.com","9876501008","M.Tech","2 Years","1234"],
-                ["ECE009","Manoj","ECE","Digital Electronics","manoj.ece@gmail.com","9876501009","M.Tech","2 Years","1234"],
-                ["ECE010","Pooja","ECE","Digital Electronics","pooja.ece@gmail.com","9876501010","M.Tech","2 Years","1234"],
-
-
-
-                // ================= EEE =================
-
-
-                ["EEE001","Ramesh","EEE","Electrical Machines","ramesh.eee@gmail.com","9876502001","M.Tech","2 Years","1234"],
-                ["EEE002","Divya","EEE","Electrical Machines","divya.eee@gmail.com","9876502002","M.Tech","2 Years","1234"],
-                ["EEE003","Karthik","EEE","Electrical Machines","karthik.eee@gmail.com","9876502003","M.Tech","2 Years","1234"],
-                ["EEE004","Swathi","EEE","Electrical Machines","swathi.eee@gmail.com","9876502004","M.Tech","2 Years","1234"],
-                ["EEE005","Praveen","EEE","Electrical Machines","praveen.eee@gmail.com","9876502005","M.Tech","2 Years","1234"],
-                ["EEE006","Sravani","EEE","Electrical Machines","sravani.eee@gmail.com","9876502006","M.Tech","2 Years","1234"],
-                ["EEE007","Mahesh","EEE","Electrical Machines","mahesh.eee@gmail.com","9876502007","M.Tech","2 Years","1234"],
-                ["EEE008","Lavanya","EEE","Electrical Machines","lavanya.eee@gmail.com","9876502008","M.Tech","2 Years","1234"],
-                ["EEE009","Naresh","EEE","Electrical Machines","naresh.eee@gmail.com","9876502009","M.Tech","2 Years","1234"],
-                ["EEE010","Sindhu","EEE","Electrical Machines","sindhu.eee@gmail.com","9876502010","M.Tech","2 Years","1234"],
-
-
-
-                // ================= CIVIL =================
-
-
-                ["CIV001","Ravi","Civil","Structural Engineering","ravi.civil@gmail.com","9876503001","M.Tech","2 Years","1234"],
-                ["CIV002","Anusha","Civil","Structural Engineering","anusha.civil@gmail.com","9876503002","M.Tech","2 Years","1234"],
-                ["CIV003","Ganesh","Civil","Structural Engineering","ganesh.civil@gmail.com","9876503003","M.Tech","2 Years","1234"],
-                ["CIV004","Meghana","Civil","Structural Engineering","meghana.civil@gmail.com","9876503004","M.Tech","2 Years","1234"],
-                ["CIV005","Srinivas","Civil","Structural Engineering","srinivas.civil@gmail.com","9876503005","M.Tech","2 Years","1234"],
-                ["CIV006","Harini","Civil","Structural Engineering","harini.civil@gmail.com","9876503006","M.Tech","2 Years","1234"],
-                ["CIV007","Kishore","Civil","Structural Engineering","kishore.civil@gmail.com","9876503007","M.Tech","2 Years","1234"],
-                ["CIV008","Navya","Civil","Structural Engineering","navya.civil@gmail.com","9876503008","M.Tech","2 Years","1234"],
-                ["CIV009","Venu","Civil","Structural Engineering","venu.civil@gmail.com","9876503009","M.Tech","2 Years","1234"],
-                ["CIV010","Bhargavi","Civil","Structural Engineering","bhargavi.civil@gmail.com","9876503010","M.Tech","2 Years","1234"],
-
-
-
-                // ================= MECHANICAL =================
-
-
-                ["MEC001","Vamsi","Mechanical","Thermodynamics","vamsi.mech@gmail.com","9876504001","M.Tech","2 Years","1234"],
-                ["MEC002","Sowmya","Mechanical","Thermodynamics","sowmya.mech@gmail.com","9876504002","M.Tech","2 Years","1234"],
-                ["MEC003","Kiran","Mechanical","Thermodynamics","kiran.mech@gmail.com","9876504003","M.Tech","2 Years","1234"],
-                ["MEC004","Tejaswini","Mechanical","Thermodynamics","tejaswini.mech@gmail.com","9876504004","M.Tech","2 Years","1234"],
-                ["MEC005","Lokesh","Mechanical","Thermodynamics","lokesh.mech@gmail.com","9876504005","M.Tech","2 Years","1234"],
-                ["MEC006","Pavani","Mechanical","Thermodynamics","pavani.mech@gmail.com","9876504006","M.Tech","2 Years","1234"],
-                ["MEC007","Sairam","Mechanical","Thermodynamics","sairam.mech@gmail.com","9876504007","M.Tech","2 Years","1234"],
-                ["MEC008","Akhila","Mechanical","Thermodynamics","akhila.mech@gmail.com","9876504008","M.Tech","2 Years","1234"],
-                ["MEC009","Chandu","Mechanical","Thermodynamics","chandu.mech@gmail.com","9876504009","M.Tech","2 Years","1234"],
-                ["MEC010","Likitha","Mechanical","Thermodynamics","likitha.mech@gmail.com","9876504010","M.Tech","2 Years","1234"]
-
-            ];
 
 
 
