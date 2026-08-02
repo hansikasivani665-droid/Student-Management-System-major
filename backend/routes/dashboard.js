@@ -220,34 +220,114 @@ router.get("/", (req, res) => {
 
 });
 
-// ======================================
-// DEPARTMENT API
-// ======================================
+router.get("/department",(req,res)=>{
 
-router.get("/department", (req, res) => {
 
-    db.all(`
-        SELECT
-            department,
-            COUNT(*) AS totalStudents
-        FROM students
-        GROUP BY department
-        ORDER BY department
-    `, (err, rows) => {
+db.all(`
 
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: err.message
-            });
-        }
+SELECT
 
-        res.json({
-            success: true,
-            departments: rows
-        });
+s.department,
 
-    });
+COUNT(DISTINCT s.roll) AS totalStudents,
+
+
+ROUND(
+100.0 *
+SUM(CASE WHEN a.status='Present' THEN 1 ELSE 0 END)
+/
+COUNT(a.id),
+2
+)
+AS attendancePercentage,
+
+
+ROUND(
+AVG(r.marks),
+2
+)
+AS averageMarks,
+
+
+ROUND(
+100.0 *
+SUM(CASE WHEN r.status='Pass' THEN 1 ELSE 0 END)
+/
+COUNT(r.id),
+2
+)
+AS passPercentage,
+
+
+SUM(CASE WHEN a.status='Present'
+THEN 1 ELSE 0 END)
+AS presentStudents,
+
+
+SUM(CASE WHEN a.status='Absent'
+THEN 1 ELSE 0 END)
+AS absentStudents,
+
+
+COUNT(r.id)
+AS resultsCount
+
+
+
+FROM students s
+
+
+LEFT JOIN attendance a
+
+ON s.roll=a.roll
+
+
+
+LEFT JOIN results r
+
+ON s.roll=r.roll
+
+
+
+GROUP BY s.department
+
+
+
+ORDER BY s.department
+
+
+`,
+
+
+(err,rows)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+}
+
+
+
+res.json({
+
+success:true,
+
+departments:rows
+
+});
+
+
+
+});
+
 
 });
 
