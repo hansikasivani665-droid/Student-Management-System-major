@@ -1,350 +1,254 @@
 const express = require("express");
 const router = express.Router();
-
 const db = require("../models/database");
 
-
-// =====================================================
-// ADMIN DASHBOARD API
-// =====================================================
+// ======================================
+// ADMIN DASHBOARD
+// ======================================
 
 router.get("/", (req, res) => {
 
-
-    // ======================================
-    // TOTAL STUDENTS
-    // ======================================
-
-    db.get(
-        `
-        SELECT COUNT(*) AS totalStudents
+    // Total Students & Departments
+    db.get(`
+        SELECT
+            COUNT(*) AS totalStudents,
+            COUNT(DISTINCT department) AS totalDepartments
         FROM students
-        `,
-        [],
-        (err, studentData) => {
+    `, (err, studentData) => {
 
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        // Attendance
+        db.get(`
+            SELECT
+                COUNT(*) AS totalAttendance,
+                SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END) AS presentStudents,
+                SUM(CASE WHEN status='Absent' THEN 1 ELSE 0 END) AS absentStudents
+            FROM attendance
+        `, (err, attendanceData) => {
 
             if (err) {
-
                 return res.status(500).json({
-                    success:false,
-                    message:err.message
+                    success: false,
+                    message: err.message
                 });
-
             }
 
+            // Results
+            db.get(`
+                SELECT
+                    COUNT(*) AS resultsCount,
+                    AVG(marks) AS averageMarks,
+                    SUM(CASE WHEN status='Pass' THEN 1 ELSE 0 END) AS passStudents
+                FROM results
+            `, (err, resultData) => {
 
+                if (err) {
+                    return res.status(500).json({
+                        success: false,
+                        message: err.message
+                    });
+                }
 
-            // ======================================
-            // ATTENDANCE PRESENT
-            // ======================================
+                // Latest Student
+                db.get(`
+                    SELECT name
+                    FROM students
+                    ORDER BY id DESC
+                    LIMIT 1
+                `, (err, latestStudent) => {
 
-            db.get(
-                `
-                SELECT COUNT(*) AS presentStudents
-                FROM attendance
-                WHERE status='Present'
-                `,
-                [],
-                (err, presentData)=>{
-
-
-                    if(err){
-
+                    if (err) {
                         return res.status(500).json({
-                            success:false,
-                            message:err.message
+                            success: false,
+                            message: err.message
                         });
-
                     }
 
+                    // Department Statistics
+                    db.all(`
+                        SELECT
+                            department,
+                            COUNT(*) AS totalStudents
+                        FROM students
+                        GROUP BY department
+                        ORDER BY department
+                    `, (err, departmentStudents) => {
 
+                        if (err) {
+                            return res.status(500).json({
+                                success: false,
+                                message: err.message
+                            });
+                        }
 
+                        db.all(`
+                            SELECT
+                                s.department,
+                                ROUND(
+                                    100.0 *
+                                    SUM(CASE WHEN a.status='Present' THEN 1 ELSE 0 END)
+                                    / COUNT(a.id),2
+                                ) AS attendancePercentage
+                            FROM students s
+                            LEFT JOIN attendance a
+                            ON s.roll=a.roll
+                            GROUP BY s.department
+                        `, (err, attendanceDept) => {
 
-                    // ======================================
-                    // ATTENDANCE ABSENT
-                    // ======================================
-
-                    db.get(
-                        `
-                        SELECT COUNT(*) AS absentStudents
-                        FROM attendance
-                        WHERE status='Absent'
-                        `,
-                        [],
-                        (err, absentData)=>{
-
-
-                            if(err){
-
+                            if (err) {
                                 return res.status(500).json({
-                                    success:false,
-                                    message:err.message
+                                    success: false,
+                                    message: err.message
                                 });
-
                             }
 
-
-
-
-
-                            // ======================================
-                            // RESULTS DATA
-                            // ======================================
-
-                            db.get(
-                                `
-                                SELECT 
-                                COUNT(*) AS resultsCount,
-                                AVG(marks) AS averageMarks
-                                FROM results
-                                `,
-                                [],
-                                (err,resultData)=>{
-
-
-                                    if(err){
-
-                                        return res.status(500).json({
-                                            success:false,
-                                            message:err.message
-                                        });
-
-                                    }
-
-
-
-
-
-                                    // ======================================
-                                    // PASS COUNT
-                                    // ======================================
-
-
-                                    db.get(
-                                        `
-                                        SELECT COUNT(*) AS passCount
-                                        FROM results
-                                        WHERE status='Pass'
-                                        `,
-                                        [],
-                                        (err,passData)=>{
-
-
-                                            if(err){
-
-                                                return res.status(500).json({
-                                                    success:false,
-                                                    message:err.message
-                                                });
-
-                                            }
-
-
-
-
-
-                                            // ======================================
-                                            // LATEST STUDENT
-                                            // ======================================
-
-
-                                            db.get(
-                                                `
-                                                SELECT name
-                                                FROM students
-                                                ORDER BY id DESC
-                                                LIMIT 1
-                                                `,
-                                                [],
-                                                (err,latestStudent)=>{
-
-
-                                                    if(err){
-
-                                                        return res.status(500).json({
-                                                            success:false,
-                                                            message:err.message
-                                                        });
-
-                                                    }
-
-
-
-
-
-                                                    // ======================================
-                                                    // TOTAL DEPARTMENTS
-                                                    // STUDENTS + TEACHERS
-                                                    // ======================================
-
-
-                                                    db.get(
-                                                        `
-                                                        SELECT COUNT(DISTINCT department)
-                                                        AS totalDepartments
-                                                        FROM
-                                                        (
-                                                            SELECT department
-                                                            FROM students
-
-                                                            UNION
-
-                                                            SELECT department
-                                                            FROM teachers
-                                                        )
-                                                        `,
-                                                        [],
-                                                        (err,deptData)=>{
-
-
-                                                            if(err){
-
-                                                                return res.status(500).json({
-                                                                    success:false,
-                                                                    message:err.message
-                                                                });
-
-                                                            }
-
-
-
-
-
-                                                            const totalStudents =
-                                                            studentData.totalStudents || 0;
-
-
-
-                                                            const presentStudents =
-                                                            presentData.presentStudents || 0;
-
-
-
-                                                            const absentStudents =
-                                                            absentData.absentStudents || 0;
-
-
-
-                                                            const resultsCount =
-                                                            resultData.resultsCount || 0;
-
-
-
-                                                            const averageMarks =
-                                                            resultData.averageMarks
-                                                            ?
-                                                            Math.round(resultData.averageMarks)
-                                                            :
-                                                            0;
-
-
-
-                                                            const passCount =
-                                                            passData.passCount || 0;
-
-
-
-                                                            const passPercentage =
-                                                            resultsCount > 0
-                                                            ?
-                                                            Math.round(
-                                                                (passCount/resultsCount)*100
-                                                            )
-                                                            :
-                                                            0;
-
-
-
-
-                                                            res.json({
-
-                                                                success:true,
-
-
-                                                                totalStudents,
-
-
-                                                                presentStudents,
-
-
-                                                                absentStudents,
-
-
-                                                                attendancePercentage:
-                                                                totalStudents > 0
-                                                                ?
-                                                                Math.round(
-                                                                    (presentStudents /
-                                                                    (presentStudents+absentStudents))
-                                                                    *100
-                                                                )
-                                                                :
-                                                                0,
-
-
-
-                                                                averageMarks,
-
-
-                                                                passPercentage,
-
-
-                                                                resultsCount,
-
-
-                                                                totalDepartments:
-                                                                deptData.totalDepartments || 0,
-
-
-
-                                                                latestStudent:
-                                                                latestStudent
-                                                                ?
-                                                                latestStudent.name
-                                                                :
-                                                                "-"
-
-                                                            });
-
-
-
-                                                        }
-                                                    );
-
-
-
-                                                }
-                                            );
-
-
-
-                                        }
-                                    );
-
-
-
+                            db.all(`
+                                SELECT
+                                    s.department,
+                                    ROUND(AVG(r.marks),2) AS averageMarks,
+                                    ROUND(
+                                        100.0 *
+                                        SUM(CASE WHEN r.status='Pass' THEN 1 ELSE 0 END)
+                                        / COUNT(r.id),2
+                                    ) AS passPercentage
+                                FROM students s
+                                LEFT JOIN results r
+                                ON s.roll=r.roll
+                                GROUP BY s.department
+                            `, (err, resultDept) => {
+
+                                if (err) {
+                                    return res.status(500).json({
+                                        success: false,
+                                        message: err.message
+                                    });
                                 }
-                            );
 
+                                const departments = departmentStudents.map(d => {
 
+                                    const attendance =
+                                        attendanceDept.find(
+                                            a => a.department === d.department
+                                        );
 
-                        }
-                    );
+                                    const result =
+                                        resultDept.find(
+                                            r => r.department === d.department
+                                        );
 
+                                    return {
+                                        department: d.department,
+                                        totalStudents: d.totalStudents,
+                                        attendancePercentage:
+                                            attendance?.attendancePercentage || 0,
+                                        averageMarks:
+                                            result?.averageMarks || 0,
+                                        passPercentage:
+                                            result?.passPercentage || 0
+                                    };
 
+                                });
 
-                }
-            );
+                                res.json({
 
+                                    success: true,
 
+                                    totalStudents:
+                                        studentData.totalStudents,
 
-        }
-    );
+                                    totalDepartments:
+                                        studentData.totalDepartments,
 
+                                    presentStudents:
+                                        attendanceData.presentStudents || 0,
+
+                                    absentStudents:
+                                        attendanceData.absentStudents || 0,
+
+                                    attendancePercentage:
+                                        attendanceData.totalAttendance
+                                            ? Math.round(
+                                                attendanceData.presentStudents * 100 /
+                                                attendanceData.totalAttendance
+                                            )
+                                            : 0,
+
+                                    averageMarks:
+                                        resultData.averageMarks
+                                            ? Number(resultData.averageMarks).toFixed(2)
+                                            : 0,
+
+                                    passPercentage:
+                                        resultData.resultsCount
+                                            ? Math.round(
+                                                resultData.passStudents * 100 /
+                                                resultData.resultsCount
+                                            )
+                                            : 0,
+
+                                    resultsCount:
+                                        resultData.resultsCount,
+
+                                    latestStudent:
+                                        latestStudent
+                                            ? latestStudent.name
+                                            : "-",
+
+                                    departments
+
+                                });
+
+                            });
+
+                        });
+
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
 
 });
 
+// ======================================
+// DEPARTMENT API
+// ======================================
 
+router.get("/department", (req, res) => {
+
+    db.all(`
+        SELECT
+            department,
+            COUNT(*) AS totalStudents
+        FROM students
+        GROUP BY department
+        ORDER BY department
+    `, (err, rows) => {
+
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        res.json({
+            success: true,
+            departments: rows
+        });
+
+    });
+
+});
 
 module.exports = router;
