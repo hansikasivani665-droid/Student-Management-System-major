@@ -5,15 +5,11 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Teacher Attendance</title>
 
-
-<link rel="stylesheet"
-href="../css/teacher-attendance.css">
-
+<link rel="stylesheet" href="../css/teacher-attendance.css">
 
 </head>
 
@@ -21,59 +17,31 @@ href="../css/teacher-attendance.css">
 <body>
 
 
-<header>
-
-<h1>
-📅 Teacher Attendance Portal
-</h1>
+<div class="container">
 
 
-<p id="teacherName">
-Teacher Portal
-</p>
-
-
-<p id="teacherSubject">
-Subject:
-</p>
-
-
-</header>
+<h1>Mark Student Attendance</h1>
 
 
 
-
-
-<section class="attendance-container">
-
-
-<h2>
-Mark Student Attendance
-</h2>
-
-
-
-
-
-<!-- ========================= -->
-<!-- TEACHER DETAILS -->
-<!-- ========================= -->
-
-
-<div class="teacher-info">
+<div class="form-section">
 
 
 <div>
 
-<label>
-Teacher ID
-</label>
+<label>Teacher ID</label>
+
+<input id="teacherId" readonly>
+
+</div>
 
 
-<p id="teacherId">
--
-</p>
 
+<div>
+
+<label>Subject</label>
+
+<input id="subject" readonly>
 
 </div>
 
@@ -82,132 +50,66 @@ Teacher ID
 
 <div>
 
-<label>
-Subject
-</label>
-
-
-<p id="subjectName">
--
-</p>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-<!-- ========================= -->
-<!-- FILTER SECTION -->
-<!-- ========================= -->
-
-
-<div class="filter-container">
-
-
-
-<div class="filter-box">
-
-
-<label>
-Department
-</label>
-
+<label>Department</label>
 
 <select id="department">
-
 
 <option value="">
 Select Department
 </option>
 
-
 <option value="CSE">
 CSE
 </option>
-
 
 <option value="ECE">
 ECE
 </option>
 
-
 <option value="EEE">
 EEE
 </option>
-
 
 <option value="AIML">
 AIML
 </option>
 
-
 <option value="Data Science">
 Data Science
 </option>
 
-
-<option value="Civil">
-Civil
-</option>
-
-
-<option value="Mechanical">
-Mechanical
-</option>
-
-
 </select>
-
 
 </div>
 
 
 
 
+<div>
 
-
-<div class="filter-box">
-
-
-<label>
-Year
-</label>
-
+<label>Year</label>
 
 <select id="year">
-
 
 <option value="">
 Select Year
 </option>
 
-
 <option value="I">
-I Year
+I
 </option>
-
 
 <option value="II">
-II Year
+II
 </option>
-
 
 <option value="III">
-III Year
+III
 </option>
-
 
 <option value="IV">
-IV Year
+IV
 </option>
-
 
 
 </select>
@@ -218,31 +120,22 @@ IV Year
 
 
 
+<div>
 
+<label>Date</label>
 
-<div class="filter-box">
-
-
-<label>
-Date
-</label>
-
-
-<input
-
+<input 
 type="date"
-
 id="attendanceDate">
 
 
 </div>
 
 
+</div>
 
 
 
-
-<div class="filter-box button-box">
 
 
 <button id="loadStudents">
@@ -252,22 +145,7 @@ Load Students
 </button>
 
 
-</div>
 
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- ========================= -->
-<!-- STUDENT TABLE -->
-<!-- ========================= -->
 
 
 <table>
@@ -275,9 +153,7 @@ Load Students
 
 <thead>
 
-
 <tr>
-
 
 <th>
 Roll No
@@ -300,21 +176,13 @@ Year
 
 
 <th>
-Subject
-</th>
-
-
-<th>
 Status
 </th>
 
 
 </tr>
 
-
 </thead>
-
-
 
 
 
@@ -323,8 +191,7 @@ Status
 
 <tr>
 
-
-<td colspan="6">
+<td colspan="5">
 
 Select Department & Year
 
@@ -337,10 +204,7 @@ Select Department & Year
 </tbody>
 
 
-
 </table>
-
-
 
 
 
@@ -355,33 +219,17 @@ Save Attendance
 
 
 
-
 <p id="message"></p>
 
 
 
-</section>
+</div>
 
 
 
 
 
-
-
-<footer>
-
-
-© 2026 Student Management System
-
-
-</footer>
-
-
-
-
-
-
-<script src="/js/teacher-attendance.js"></script>
+<script src="../js/teacher-attendance.js"></script>
 
 
 </body>
