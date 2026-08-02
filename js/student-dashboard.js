@@ -1,518 +1,263 @@
-const STUDENT_API =   "https://onrender.com"; 
-const RESULT_API =     "https://onrender.com";
-const ATTENDANCE_API = "https://onrender.com";
+// =====================================================
+// STUDENT DASHBOARD
+// =====================================================
 
+const API = "https://student-management-system-major-1.onrender.com";
+console.log("Student Dashboard JS Loaded");
+console.log("Current User:", localStorage.getItem("currentUser"));
 
+// ======================================
+// LOGIN CHECK
+// ======================================
 
+if (localStorage.getItem("loggedIn") !== "true") {
 
-// Student Login Check
-
-if(localStorage.getItem("loggedIn") !== "true"){
-
-    location.href="login.html";
+    window.location.href = "/html/login.html";
 
 }
 
+let studentRoll = "";
 
 
+// ======================================
+// PAGE LOAD
+// ======================================
 
-let studentRoll = null;
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded",()=>{
-
+document.addEventListener("DOMContentLoaded", () => {
 
     loadStudentProfile();
 
-
 });
 
 
-
-
 // ======================================
-// STUDENT PROFILE
+// LOAD STUDENT PROFILE
 // ======================================
 
+async function loadStudentProfile() {
 
-async function loadStudentProfile(){
+    try {
 
+        const email = localStorage.getItem("currentUser");
 
-try{
+        if (!email) {
 
+            alert("Login expired.");
 
-const email =
-localStorage.getItem("currentUser");
+            localStorage.clear();
 
+            window.location.href = "/html/login.html";
 
+            return;
 
-let response =
-await fetch(`${STUDENT_API}/email/${email}`);
-
-
-
-let data =
-await response.json();
+        }
 
 
-
-if(data.success){
-
-
-
-let student =
-data.student;
+        const response =
+            await fetch(`${API}/students/email/${email}`);
 
 
-
-studentRoll =
-student.roll;
-
+        const data =
+            await response.json();
 
 
-
-document.getElementById("studentName").innerHTML =
-student.name;
+        console.log("Student Profile :", data);
 
 
+        if (!data.success) {
 
-document.getElementById("studentRoll").innerHTML =
-student.roll;
+            alert("Student not found.");
 
+            return;
 
-
-document.getElementById("studentDepartment").innerHTML =
-student.department;
-
+        }
 
 
-document.getElementById("studentYear").innerHTML =
-student.year;
+        const student = data.student;
+
+        studentRoll = student.roll;
 
 
+        document.getElementById("studentName").innerHTML =
+            student.name;
 
-document.getElementById("studentEmail").innerHTML =
-student.email;
+        document.getElementById("studentRoll").innerHTML =
+            student.roll;
+
+        document.getElementById("studentDepartment").innerHTML =
+            student.department;
+
+        document.getElementById("studentYear").innerHTML =
+            student.year;
+
+        document.getElementById("studentEmail").innerHTML =
+            student.email;
+
+        document.getElementById("studentPhone").innerHTML =
+            student.phone;
 
 
+        // Load remaining data
 
-document.getElementById("studentPhone").innerHTML =
-student.phone;
+        loadStudentResults();
 
+        loadStudentAttendance();
 
+    }
 
+    catch (error) {
 
-// Now that we have the roll, load the rest
+        console.error("Profile Error :", error);
 
-loadStudentResults();
-
-loadStudentAttendance();
-
-
-
-}
-
-else{
-
-console.log("Student not found");
+    }
 
 }
-
-
-
-}
-
-catch(error){
-
-console.log("Profile Error:",error);
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // ======================================
-// RESULTS
+// LOAD STUDENT RESULTS
 // ======================================
 
+async function loadStudentResults() {
 
-async function loadStudentResults(){
+    try {
 
+        const response =
+            await fetch(`${API}/results`);
 
-try{
+        const data =
+            await response.json();
 
+        console.log("Results :", data);
 
-let response =
-await fetch(RESULT_API);
+        if (!data.success) return;
 
+        const results =
+            data.results.filter(r => r.roll === studentRoll);
 
+        document.getElementById("totalResults").innerHTML =
+            results.length;
 
-let data =
-await response.json();
+        const subjects =
+            [...new Set(results.map(r => r.subject))];
 
+        document.getElementById("totalSubjects").innerHTML =
+            subjects.length;
 
+        let totalMarks = 0;
+        let highestMarks = 0;
 
+        results.forEach(result => {
 
-if(data.success){
+            const marks = Number(result.marks);
 
+            totalMarks += marks;
 
+            if (marks > highestMarks) {
 
-let results =
-data.results.filter(
-r=>r.roll===studentRoll
-);
+                highestMarks = marks;
 
+            }
 
+        });
 
+        const average =
+            results.length > 0
+                ? (totalMarks / results.length).toFixed(2)
+                : 0;
 
+        document.getElementById("averageMarks").innerHTML =
+            average + "%";
 
+        document.getElementById("highestMarks").innerHTML =
+            highestMarks;
 
+        const failed =
+            results.filter(r => r.status === "Fail").length;
 
-// Total Results
+        document.getElementById("resultStatus").innerHTML =
+            failed === 0 ? "Pass" : "Fail";
 
-document.getElementById("totalResults").innerHTML =
-results.length;
+        const table =
+            document.getElementById("studentResultBody");
 
+        table.innerHTML = "";
 
+        if (results.length === 0) {
 
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4">No Results Available</td>
+                </tr>
+            `;
 
+            return;
 
+        }
 
+        results.forEach(result => {
 
+            table.innerHTML += `
+                <tr>
+                    <td>${result.subject}</td>
+                    <td>${result.marks}</td>
+                    <td>${result.grade}</td>
+                    <td>${result.status}</td>
+                </tr>
+            `;
 
-// Subjects
+        });
 
+    }
 
-let subjects =
-[
-...new Set(
-results.map(
-r=>r.subject
-)
-)
-];
+    catch (error) {
 
+        console.error("Results Error :", error);
 
-
-document.getElementById("totalSubjects").innerHTML =
-subjects.length;
-
-
-
-
-
-
-
-
-// Average Marks
-
-
-let total = 0;
-
-
-
-results.forEach(r=>{
-
-
-total += Number(r.marks);
-
-
-});
-
-
-
-
-let average = 0;
-
-
-
-if(results.length>0){
-
-
-average =
-(
-total/results.length
-)
-.toFixed(2);
-
+    }
 
 }
-
-
-
-
-document.getElementById("averageMarks").innerHTML =
-average+"%";
-
-
-
-
-
-
-
-
-// Highest Marks
-
-
-let highest = 0;
-
-
-
-results.forEach(r=>{
-
-
-if(Number(r.marks)>highest){
-
-highest = Number(r.marks);
-
-}
-
-
-});
-
-
-
-document.getElementById("highestMarks").innerHTML =
-highest;
-
-
-
-
-
-
-
-// Result Status
-
-
-let failed =
-results.filter(
-r=>r.status==="Fail"
-).length;
-
-
-
-if(failed===0){
-
-
-document.getElementById("resultStatus").innerHTML =
-"Pass";
-
-
-}
-
-else{
-
-
-document.getElementById("resultStatus").innerHTML =
-"Fail";
-
-
-}
-
-
-
-
-
-
-
-
-// Results Table
-
-
-let table =
-document.getElementById("studentResultBody");
-
-
-
-table.innerHTML="";
-
-
-
-results.forEach(r=>{
-
-
-table.innerHTML += `
-
-<tr>
-
-<td>${r.subject}</td>
-
-<td>${r.marks}</td>
-
-<td>${r.grade}</td>
-
-<td>${r.status}</td>
-
-</tr>
-
-`;
-
-
-});
-
-
-
-}
-
-
-
-}
-
-catch(error){
-
-console.log("Result Error:",error);
-
-}
-
-
-
-}
-
-
-
-
-
-
 
 
 
 // ======================================
-// ATTENDANCE
+// LOAD STUDENT ATTENDANCE
 // ======================================
 
+async function loadStudentAttendance() {
 
-async function loadStudentAttendance(){
+    try {
 
+        const response =
+            await fetch(`${API}/attendance/student/${studentRoll}`);
 
+        const data =
+            await response.json();
 
-try{
+        console.log("Attendance :", data);
 
+        if (!data.success) return;
 
-let response =
-await fetch(ATTENDANCE_API);
+        document.getElementById("totalDays").innerHTML =
+            data.summary.totalDays;
 
+        document.getElementById("presentDays").innerHTML =
+            data.summary.present;
 
+        document.getElementById("absentDays").innerHTML =
+            data.summary.absent;
 
-let data =
-await response.json();
+        document.getElementById("attendancePercentage").innerHTML =
+            data.summary.percentage + "%";
 
+    }
 
+    catch (error) {
 
+        console.error("Attendance Error :", error);
 
-
-if(data.success){
-
-
-
-let attendance =
-data.attendance.filter(
-a=>a.roll===studentRoll
-);
-
-
-
-
-
-
-let totalDays =
-attendance.length;
-
-
-
-let presentDays =
-attendance.filter(
-a=>a.status==="Present"
-).length;
-
-
-
-let absentDays =
-attendance.filter(
-a=>a.status==="Absent"
-).length;
-
-
-
-
-
-
-
-let percentage = 0;
-
-
-
-if(totalDays>0){
-
-
-percentage =
-(
-presentDays /
-totalDays *
-100
-)
-.toFixed(2);
-
-
+    }
 
 }
-
-
-
-
-
-
-document.getElementById("totalDays").innerHTML =
-totalDays;
-
-
-
-document.getElementById("presentDays").innerHTML =
-presentDays;
-
-
-
-document.getElementById("absentDays").innerHTML =
-absentDays;
-
-
-
-document.getElementById("attendancePercentage").innerHTML =
-percentage+"%";
-
-
-
-}
-
-
-
-}
-
-catch(error){
-
-console.log("Attendance Error:",error);
-
-}
-
-
-
-}
-
-
-
-
 
 
 
@@ -520,14 +265,16 @@ console.log("Attendance Error:",error);
 // LOGOUT
 // ======================================
 
+function logout() {
 
-function logout(){
+    if (confirm("Are you sure you want to logout?")) {
 
+        localStorage.clear();
 
-localStorage.clear();
+        sessionStorage.clear();
 
+        window.location.href = "/html/login.html";
 
-location.href="login.html";
-
+    }
 
 }

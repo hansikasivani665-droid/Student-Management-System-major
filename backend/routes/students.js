@@ -1,423 +1,207 @@
-const express = require("express");
-const router = express.Router();
-const db = require("../models/database");
+// ======================================
+// API URL
+// ======================================
+
+const API = "https://student-management-system-major-1.onrender.com";
 
 
-// ====================================
-// GET ALL STUDENTS
-// ====================================
-router.get("/", (req, res) => {
+// ======================================
+// Student Login Check
+// ======================================
 
-    db.all(
-        "SELECT * FROM students ORDER BY id DESC",
-        [],
-        (err, rows) => {
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "/html/login.html";
+}
 
-            if (err) {
+let studentRoll = null;
 
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-                success: true,
-                students: rows
-            });
-
-        }
-    );
-
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudentProfile();
 });
 
 
+// ======================================
+// STUDENT PROFILE
+// ======================================
 
-// ====================================
-// GET STUDENT BY EMAIL
-// IMPORTANT: KEEP ABOVE /:id
-// ====================================
-router.get("/email/:email", (req, res) => {
+async function loadStudentProfile() {
 
+    try {
 
-    const email = req.params.email;
+        const email = localStorage.getItem("currentUser");
 
+        const response = await fetch(`${API}/students/email/${email}`);
 
-    db.get(
+        const data = await response.json();
 
-        "SELECT * FROM students WHERE email=?",
-
-        [email],
-
-        (err, student) => {
-
-
-            if (err) {
-
-                return res.status(500).json({
-
-                    success:false,
-                    message:err.message
-
-                });
-
-            }
-
-
-            if (!student) {
-
-                return res.status(404).json({
-
-                    success:false,
-                    message:"Student not found"
-
-                });
-
-            }
-
-
-            res.json({
-
-                success:true,
-                student:student
-
-            });
-
-
+        if (!data.success) {
+            alert("Student not found.");
+            return;
         }
 
-    );
+        const student = data.student;
 
+        studentRoll = student.roll;
 
-});
+        document.getElementById("studentName").innerHTML = student.name;
+        document.getElementById("studentRoll").innerHTML = student.roll;
+        document.getElementById("studentDepartment").innerHTML = student.department;
+        document.getElementById("studentYear").innerHTML = student.year;
+        document.getElementById("studentEmail").innerHTML = student.email;
+        document.getElementById("studentPhone").innerHTML = student.phone;
 
-
-
-// ====================================
-// GET SINGLE STUDENT BY ID
-// ====================================
-router.get("/:id", (req, res) => {
-
-
-    db.get(
-
-        "SELECT * FROM students WHERE id=?",
-
-        [req.params.id],
-
-        (err, row) => {
-
-
-            if (err) {
-
-                return res.status(500).json({
-
-                    success:false,
-                    message:err.message
-
-                });
-
-            }
-
-
-            if (!row) {
-
-                return res.status(404).json({
-
-                    success:false,
-                    message:"Student not found"
-
-                });
-
-            }
-
-
-            res.json({
-
-                success:true,
-                student:row
-
-            });
-
-
-        }
-
-    );
-
-
-});
-
-
-
-// ====================================
-// ADD STUDENT
-// ====================================
-router.post("/", (req, res) => {
-
-
-    const {
-
-        name,
-        roll,
-        department,
-        year,
-        email,
-        phone,
-        password
-
-    } = req.body;
-
-
-
-    if (
-        !name ||
-        !roll ||
-        !department ||
-        !year ||
-        !email ||
-        !phone
-    ) {
-
-
-        return res.status(400).json({
-
-            success:false,
-            message:"All fields are required."
-
-        });
-
+        loadStudentResults();
+        loadStudentAttendance();
 
     }
 
+    catch (error) {
+
+        console.error("Profile Error:", error);
+
+    }
+
+}
 
 
-    db.get(
+// ======================================
+// STUDENT RESULTS
+// ======================================
 
-        "SELECT * FROM students WHERE roll=? OR email=?",
+async function loadStudentResults() {
 
-        [
-            roll,
-            email
-        ],
+    try {
 
-        (err,row)=>{
+        const response = await fetch(`${API}/results`);
 
+        const data = await response.json();
 
-            if(err){
+        if (!data.success) return;
 
-                return res.status(500).json({
+        const results = data.results.filter(r => r.roll === studentRoll);
 
-                    success:false,
-                    message:err.message
+        document.getElementById("totalResults").innerHTML = results.length;
 
-                });
+        const subjects = [...new Set(results.map(r => r.subject))];
 
-            }
+        document.getElementById("totalSubjects").innerHTML = subjects.length;
 
+        let total = 0;
 
+        results.forEach(r => {
+            total += Number(r.marks);
+        });
 
-            if(row){
+        const average =
+            results.length > 0
+                ? (total / results.length).toFixed(2)
+                : 0;
 
-                return res.status(400).json({
+        document.getElementById("averageMarks").innerHTML = average + "%";
 
-                    success:false,
-                    message:"Roll Number or Email already exists."
+        let highest = 0;
 
-                });
+        results.forEach(r => {
 
-            }
+            if (Number(r.marks) > highest) {
 
-
-
-            db.run(
-
-                `
-                INSERT INTO students
-                (
-                name,
-                roll,
-                department,
-                year,
-                email,
-                phone,
-                password
-                )
-                VALUES(?,?,?,?,?,?,?)
-                `,
-
-                [
-                    name,
-                    roll,
-                    department,
-                    year,
-                    email,
-                    phone,
-                    password || "1234"
-                ],
-
-                function(err){
-
-
-                    if(err){
-
-                        return res.status(500).json({
-
-                            success:false,
-                            message:err.message
-
-                        });
-
-                    }
-
-
-
-                    res.json({
-
-                        success:true,
-                        message:"Student Added Successfully",
-                        studentId:this.lastID
-
-                    });
-
-
-                }
-
-            );
-
-
-        }
-
-    );
-
-
-});
-
-
-
-// ====================================
-// UPDATE STUDENT
-// ====================================
-router.put("/:id", (req,res)=>{
-
-
-    const {
-
-        name,
-        roll,
-        department,
-        year,
-        email,
-        phone
-
-    } = req.body;
-
-
-
-    db.run(
-
-        `
-        UPDATE students
-        SET
-        name=?,
-        roll=?,
-        department=?,
-        year=?,
-        email=?,
-        phone=?
-        WHERE id=?
-        `,
-
-        [
-
-            name,
-            roll,
-            department,
-            year,
-            email,
-            phone,
-            req.params.id
-
-        ],
-
-        function(err){
-
-
-            if(err){
-
-                return res.status(500).json({
-
-                    success:false,
-                    message:err.message
-
-                });
+                highest = Number(r.marks);
 
             }
 
+        });
+
+        document.getElementById("highestMarks").innerHTML = highest;
+
+        const failed = results.filter(r => r.status === "Fail").length;
+
+        document.getElementById("resultStatus").innerHTML =
+            failed === 0 ? "Pass" : "Fail";
+
+        const table = document.getElementById("studentResultBody");
+
+        table.innerHTML = "";
+
+        results.forEach(r => {
+
+            table.innerHTML += `
+                <tr>
+                    <td>${r.subject}</td>
+                    <td>${r.marks}</td>
+                    <td>${r.grade}</td>
+                    <td>${r.status}</td>
+                </tr>
+            `;
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error("Result Error:", error);
+
+    }
+
+}
 
 
-            res.json({
+// ======================================
+// ATTENDANCE
+// ======================================
 
-                success:true,
-                message:"Student Updated Successfully"
+async function loadStudentAttendance() {
 
-            });
+    try {
 
+        const response = await fetch(`${API}/attendance`);
 
-        }
+        const data = await response.json();
 
-    );
+        if (!data.success) return;
 
+        const attendance =
+            data.attendance.filter(a => a.roll === studentRoll);
 
-});
+        const totalDays = attendance.length;
 
+        const presentDays =
+            attendance.filter(a => a.status === "Present").length;
 
+        const absentDays =
+            attendance.filter(a => a.status === "Absent").length;
 
-// ====================================
-// DELETE STUDENT
-// ====================================
-router.delete("/:id",(req,res)=>{
+        const percentage =
+            totalDays > 0
+                ? ((presentDays / totalDays) * 100).toFixed(2)
+                : 0;
 
+        document.getElementById("totalDays").innerHTML = totalDays;
+        document.getElementById("presentDays").innerHTML = presentDays;
+        document.getElementById("absentDays").innerHTML = absentDays;
+        document.getElementById("attendancePercentage").innerHTML =
+            percentage + "%";
 
-    db.run(
+    }
 
-        "DELETE FROM students WHERE id=?",
+    catch (error) {
 
-        [
-            req.params.id
-        ],
+        console.error("Attendance Error:", error);
 
-        function(err){
+    }
 
-
-            if(err){
-
-                return res.status(500).json({
-
-                    success:false,
-                    message:err.message
-
-                });
-
-            }
-
-
-
-            res.json({
-
-                success:true,
-                message:"Student Deleted Successfully"
-
-            });
+}
 
 
-        }
+// ======================================
+// LOGOUT
+// ======================================
 
-    );
+function logout() {
 
+    localStorage.clear();
+    sessionStorage.clear();
 
-});
+    window.location.href = "/html/login.html";
 
-
-
-module.exports = router;
+}
