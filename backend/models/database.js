@@ -882,8 +882,7 @@ db.get(
 
     }
 
-);
-// ======================================
+);// ======================================
 // INSERT SAMPLE TEACHERS
 // ======================================
 
@@ -900,17 +899,16 @@ db.get(
         }
 
 
-        if(row.count === 0){
+        if(row.count===0){
 
 
             console.log("📥 Adding Sample Teachers...");
 
 
-            const teachers = [
+            const teachers=[
 
 
                 // ================= MAIN TEACHERS =================
-
 
                 [
                     "T001",
@@ -974,8 +972,133 @@ db.get(
                     "Ph.D",
                     "8 Years",
                     "Lakshmi@123"
-                ];
+                ],
 
+
+
+                // ================= ECE =================
+
+                [
+                    "ECE001",
+                    "Arjun",
+                    "ECE",
+                    "Digital Electronics",
+                    "arjun.ece@gmail.com",
+                    "9876501001",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+                [
+                    "ECE002",
+                    "Kavya",
+                    "ECE",
+                    "Digital Electronics",
+                    "kavya.ece@gmail.com",
+                    "9876501002",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+                [
+                    "ECE003",
+                    "Rohit",
+                    "ECE",
+                    "Digital Electronics",
+                    "rohit.ece@gmail.com",
+                    "9876501003",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+
+
+                // ================= EEE =================
+
+                [
+                    "EEE001",
+                    "Ramesh",
+                    "EEE",
+                    "Electrical Machines",
+                    "ramesh.eee@gmail.com",
+                    "9876502001",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+                [
+                    "EEE002",
+                    "Divya",
+                    "EEE",
+                    "Electrical Machines",
+                    "divya.eee@gmail.com",
+                    "9876502002",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+
+
+                // ================= CIVIL =================
+
+                [
+                    "CIV001",
+                    "Ravi",
+                    "Civil",
+                    "Structural Engineering",
+                    "ravi.civil@gmail.com",
+                    "9876503001",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+                [
+                    "CIV002",
+                    "Anusha",
+                    "Civil",
+                    "Structural Engineering",
+                    "anusha.civil@gmail.com",
+                    "9876503002",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+
+
+                // ================= MECHANICAL =================
+
+                [
+                    "MEC001",
+                    "Vamsi",
+                    "Mechanical",
+                    "Thermodynamics",
+                    "vamsi.mech@gmail.com",
+                    "9876504001",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ],
+
+                [
+                    "MEC002",
+                    "Sowmya",
+                    "Mechanical",
+                    "Thermodynamics",
+                    "sowmya.mech@gmail.com",
+                    "9876504002",
+                    "M.Tech",
+                    "2 Years",
+                    "1234"
+                ]
+
+            ];
 
 
 
@@ -984,50 +1107,52 @@ db.get(
 
                 db.run(
 
-`
-INSERT INTO teachers
-(
-teacherId,
-name,
-department,
-subject,
-email,
-phone,
-qualification,
-experience,
-password
-)
+                    `
+                    INSERT INTO teachers
+                    (
+                        teacherId,
+                        name,
+                        department,
+                        subject,
+                        email,
+                        phone,
+                        qualification,
+                        experience,
+                        password
+                    )
 
-VALUES(?,?,?,?,?,?,?,?,?)
+                    VALUES(?,?,?,?,?,?,?,?,?)
+                    `,
 
-`,
+                    teacher,
 
-teacher,
+                    (err)=>{
 
-(err)=>{
+                        if(err){
 
-if(err){
+                            console.log(err.message);
 
-console.log(err.message);
+                        }
 
-}
+                    }
 
-}
+                );
+
+
+            });
+
+
+
+            console.log("✅ Sample Teachers Inserted");
+
+
+        }
+
+
+    }
 
 );
 
-
-});
-
-
-console.log("✅ Sample Teachers Inserted");
-
-
-}
-
-}
-
-);
 
 // ======================================
 // INSERT SAMPLE ATTENDANCE
