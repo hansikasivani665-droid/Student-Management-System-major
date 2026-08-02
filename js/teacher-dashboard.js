@@ -13,7 +13,7 @@ console.log("Teacher Dashboard Loaded");
 // ======================================
 
 const API =
-"https://student-management-system-backend.onrender.com";
+"https://student-management-system-major-1.onrender.com";
 
 
 
