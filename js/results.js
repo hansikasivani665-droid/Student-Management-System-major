@@ -1,239 +1,136 @@
-const API = "https://student-management-system-major-1.onrender.com";
-
+// ===============================
+// API
+// ===============================
+console.log("RESULT JS FILE LOADED");
+const RESULT_API = "https://student-management-system-major-1.onrender.com/results";
 
 let resultData = [];
 
 
-// ===============================
-// LOAD PAGE
-// ===============================
+// =============================================
+// PAGE LOAD
+// =============================================
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     loadResults();
 
-
 });
 
 
+async function loadResults() {
 
+    try {
 
-// ===============================
-// FETCH RESULTS
-// ===============================
+        const response = await fetch(RESULT_API);
 
-async function loadResults(){
+        const data = await response.json();
 
+        console.log(data);
 
-try{
+        if (data.success) {
 
+            resultData = data.results;
 
-const response = await fetch(RESULT_API);
+            displayResults(resultData);
 
+            calculateCards(resultData);
 
-const data = await response.json();
+        } else {
 
+            console.log("No Results Found");
 
+        }
 
-console.log(data);
+    }
 
+    catch (error) {
 
+        console.error("Fetch Error:", error);
 
-if(data.success){
-
-
-resultData = data.results;
-
-
-displayResults(resultData);
-
-
-calculateCards(resultData);
-
+    }
 
 }
 
 
-}
+// =============================================
+// DISPLAY RESULTS
+// =============================================
 
-catch(error){
+function displayResults(results) {
 
-console.log(error);
+    const tbody = document.getElementById("resultTableBody");
 
-}
+    if (!tbody) return;
 
+    tbody.innerHTML = "";
 
-}
+    results.forEach((student, index) => {
 
+        tbody.innerHTML += `
+            <tr>
 
+                <td>${index + 1}</td>
 
+                <td>${student.roll}</td>
 
+                <td>${student.name}</td>
 
+                <td>${student.department}</td>
 
+                <td>${student.year}</td>
 
-// ===============================
-// DISPLAY TABLE
-// ===============================
+                <td>${student.subject}</td>
 
-function displayResults(results){
+                <td>${student.marks}</td>
 
+                <td>${student.grade}</td>
 
+                <td>${student.status}</td>
 
-const tbody = document.getElementById("resultTableBody");
+            </tr>
+        `;
 
-
-
-if(!tbody){
-
-console.log("resultTableBody not found");
-
-return;
-
-}
-
-
-
-tbody.innerHTML="";
-
-
-
-
-results.forEach((student,index)=>{
-
-
-
-tbody.innerHTML += `
-
-
-<tr>
-
-<td>${index+1}</td>
-
-
-<td>${student.roll}</td>
-
-
-<td>${student.name}</td>
-
-
-<td>${student.department}</td>
-
-
-<td>${student.year}</td>
-
-
-<td>${student.subject}</td>
-
-
-<td>${student.marks}</td>
-
-
-<td>${student.grade}</td>
-
-
-<td>${student.status}</td>
-
-
-</tr>
-
-
-`;
-
-
-
-});
-
-
+    });
 
 }
 
 
-
-
-
-
-
-
-
-// ===============================
+// =============================================
 // DASHBOARD CARDS
-// ===============================
+// =============================================
 
+function calculateCards(results) {
 
-function calculateCards(results){
+    const total = results.length;
 
+    let totalMarks = 0;
+    let pass = 0;
 
+    results.forEach(result => {
 
-let total = results.length;
+        totalMarks += Number(result.marks);
 
+        if (result.status === "Pass") {
 
+            pass++;
 
-let totalMarks = 0;
+        }
 
+    });
 
-let pass = 0;
+    const average =
+        total > 0
+            ? (totalMarks / total).toFixed(2)
+            : 0;
 
+    const passPercentage =
+        total > 0
+            ? ((pass / total) * 100).toFixed(2)
+            : 0;
 
-
-results.forEach(r=>{
-
-
-totalMarks += Number(r.marks);
-
-
-
-if(r.status==="Pass"){
-
-pass++;
-
-}
-
-
-});
-
-
-
-
-let average = 0;
-
-
-if(total>0){
-
-average =
-(totalMarks/total).toFixed(2);
-
-}
-
-
-
-
-let passPercentage=0;
-
-
-if(total>0){
-
-passPercentage =
-((pass/total)*100).toFixed(2);
-
-}
-
-
-
-
-
-document.getElementById("totalResults").innerHTML =
-total;
-
-
-
-document.getElementById("averageMarks").innerHTML =
-average+"%";
-
-
-
-document.getElementById("passPercentage").innerHTML =
-passPercentage+"%";
-
-
+    document.getElementById("totalResults").innerHTML = total;
+    document.getElementById("averageMarks").innerHTML = average + "%";
+    document.getElementById("passPercentage").innerHTML = passPercentage + "%";
 
 }

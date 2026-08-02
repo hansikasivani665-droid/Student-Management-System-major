@@ -3,777 +3,358 @@
 // Attendance Module
 // =============================================
 
-
+// =============================================
 // Login Check
+// =============================================
+
 if (localStorage.getItem("loggedIn") !== "true") {
 
     window.location.href = "/html/login.html";
 
 }
 
+// =============================================
+// API
+// =============================================
 
-
- const API_URL = "https://student-management-system-major-1.onrender.com";
-
-
+const API_URL = "https://student-management-system-major-1.onrender.com/attendance";
 
 let attendanceData = [];
-
-
-
 
 // =============================================
 // PAGE LOAD
 // =============================================
 
+document.addEventListener("DOMContentLoaded", () => {
 
-document.addEventListener("DOMContentLoaded",()=>{
+    document.getElementById("todayDate").innerHTML =
+        new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        });
 
+    loadAttendance();
 
-document.getElementById("todayDate").innerHTML =
+    document
+        .getElementById("searchStudent")
+        .addEventListener("keyup", filterStudents);
 
-new Date().toLocaleDateString("en-GB",{
+    document
+        .getElementById("departmentFilter")
+        .addEventListener("change", filterStudents);
 
-day:"2-digit",
-month:"long",
-year:"numeric"
+    document
+        .getElementById("yearFilter")
+        .addEventListener("change", filterStudents);
 
-});
+    document
+        .getElementById("markPresent")
+        .addEventListener("click", markAllPresent);
 
+    document
+        .getElementById("markAbsent")
+        .addEventListener("click", markAllAbsent);
 
-
-loadAttendance();
-
-
-
-document
-.getElementById("searchStudent")
-.addEventListener("keyup",filterStudents);
-
-
-
-document
-.getElementById("departmentFilter")
-.addEventListener("change",filterStudents);
-
-
-
-document
-.getElementById("yearFilter")
-.addEventListener("change",filterStudents);
-
-
-
-document
-.getElementById("markPresent")
-.addEventListener("click",markAllPresent);
-
-
-
-document
-.getElementById("markAbsent")
-.addEventListener("click",markAllAbsent);
-
-
-
-document
-.getElementById("attendanceForm")
-.addEventListener("submit",saveAttendance);
-
-
+    document
+        .getElementById("attendanceForm")
+        .addEventListener("submit", saveAttendance);
 
 });
-
-
-
-
-
-
-
 
 // =============================================
 // LOAD ATTENDANCE
 // =============================================
 
+async function loadAttendance() {
 
-async function loadAttendance(){
+    const table = document.getElementById("attendanceBody");
 
+    table.innerHTML = `
+        <tr>
+            <td colspan="5">Loading Students...</td>
+        </tr>
+    `;
 
+    try {
 
-const table =
-document.getElementById("attendanceBody");
+        const response = await fetch(API_URL);
 
+        const data = await response.json();
 
+        console.log(data);
 
-table.innerHTML = `
+        if (data.success) {
 
-<tr>
+            attendanceData = data.attendance;
 
-<td colspan="5">
+            attendanceData.forEach(student => {
 
-Loading Students...
+                if (!student.status) {
 
-</td>
+                    student.status = "Absent";
 
-</tr>
+                }
 
-`;
+            });
 
+            renderTable(attendanceData);
 
+        }
 
-try{
+        else {
 
+            table.innerHTML = `
+                <tr>
+                    <td colspan="5">No Data Found</td>
+                </tr>
+            `;
 
-let response =
-await fetch(API_URL);
+        }
 
+    }
 
+    catch (error) {
 
-let data =
-await response.json();
+        console.error(error);
 
+        table.innerHTML = `
+            <tr>
+                <td colspan="5">Backend Connection Failed</td>
+            </tr>
+        `;
 
-
-console.log(data);
-
-
-
-if(data.success){
-
-
-attendanceData =
-data.attendance;
-
-
-
-// Default absent if no record
-
-attendanceData.forEach(student=>{
-
-
-if(student.status===null){
-
-student.status="Absent";
-
-}
-
-
-});
-
-
-
-renderTable(attendanceData);
-
-
+    }
 
 }
-
-
-else{
-
-
-table.innerHTML=
-
-`
-<tr>
-<td colspan="5">
-No Data Found
-</td>
-</tr>
-`
-
-}
-
-
-
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-table.innerHTML=
-
-`
-<tr>
-<td colspan="5">
-Backend Connection Failed
-</td>
-</tr>
-`
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =============================================
 // DISPLAY TABLE
 // =============================================
 
+function renderTable(students) {
 
-function renderTable(students){
+    const table = document.getElementById("attendanceBody");
 
+    table.innerHTML = "";
 
+    students.forEach(student => {
 
-const table =
-document.getElementById("attendanceBody");
+        table.innerHTML += `
+        <tr>
 
+            <td>${student.roll}</td>
 
+            <td>${student.name}</td>
 
-table.innerHTML="";
+            <td>${student.department}</td>
 
+            <td>${student.year}</td>
 
+            <td>
 
-students.forEach(student=>{
+                <label>
 
+                    <input
+                        type="radio"
+                        name="attendance_${student.roll}"
+                        value="Present"
+                        data-roll="${student.roll}"
+                        class="attendanceRadio"
+                        ${student.status === "Present" ? "checked" : ""}
+                    >
 
+                    Present
 
-table.innerHTML += `
+                </label>
 
+                <label>
 
-<tr>
+                    <input
+                        type="radio"
+                        name="attendance_${student.roll}"
+                        value="Absent"
+                        data-roll="${student.roll}"
+                        class="attendanceRadio"
+                        ${student.status === "Absent" ? "checked" : ""}
+                    >
 
+                    Absent
 
-<td>
+                </label>
 
-${student.roll}
+            </td>
 
-</td>
+        </tr>
+        `;
 
+    });
 
+    updateStatistics(students);
 
-<td>
+    document.querySelectorAll(".attendanceRadio").forEach(input => {
 
-${student.name}
+        input.addEventListener("change", () => {
 
-</td>
+            const student = attendanceData.find(
+                s => s.roll === input.dataset.roll
+            );
 
+            if (student) {
 
+                student.status = input.value;
 
-<td>
+            }
 
-${student.department}
+            updateStatistics(attendanceData);
 
-</td>
+        });
 
-
-
-<td>
-
-${student.year}
-
-</td>
-
-
-
-
-<td>
-
-
-
-<label>
-
-
-<input
-
-type="radio"
-
-name="attendance_${student.roll}"
-
-class="attendanceRadio"
-
-data-roll="${student.roll}"
-
-value="Present"
-
-${student.status==="Present" ? "checked":""}
-
->
-
-Present
-
-
-</label>
-
-
-
-
-<label>
-
-
-<input
-
-type="radio"
-
-name="attendance_${student.roll}"
-
-class="attendanceRadio"
-
-data-roll="${student.roll}"
-
-value="Absent"
-
-${student.status==="Absent" ? "checked":""}
-
->
-
-Absent
-
-
-</label>
-
-
-
-</td>
-
-
-
-</tr>
-
-
-`;
-
-
-
-});
-
-
-
-updateStatistics(students);
-
-
-
-
-
-// Store changes
-
-
-document
-.querySelectorAll(".attendanceRadio")
-.forEach(input=>{
-
-
-input.addEventListener("change",()=>{
-
-
-let roll =
-input.dataset.roll;
-
-
-
-let student =
-attendanceData.find(
-s=>s.roll===roll
-);
-
-
-
-if(student){
-
-
-student.status=input.value;
-
+    });
 
 }
-
-
-
-});
-
-
-});
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =============================================
-// UPDATE CARDS
+// UPDATE DASHBOARD CARDS
 // =============================================
 
+function updateStatistics(data) {
 
-function updateStatistics(data){
+    const total = data.length;
 
+    const present = data.filter(
+        s => s.status === "Present"
+    ).length;
 
+    const absent = total - present;
 
-let total =
-data.length;
+    const percentage =
+        total === 0
+            ? 0
+            : Math.round((present / total) * 100);
 
-
-
-let present =
-data.filter(
-s=>s.status==="Present"
-).length;
-
-
-
-let absent =
-total-present;
-
-
-
-let percentage =
-
-total===0
-
-?
-0
-
-:
-
-Math.round(
-(present/total)*100
-);
-
-
-
-document
-.getElementById("totalStudents")
-.innerHTML=total;
-
-
-
-document
-.getElementById("presentCount")
-.innerHTML=present;
-
-
-
-document
-.getElementById("absentCount")
-.innerHTML=absent;
-
-
-
-document
-.getElementById("attendancePercentage")
-.innerHTML=
-percentage+"%";
-
-
+    document.getElementById("totalStudents").innerHTML = total;
+    document.getElementById("presentCount").innerHTML = present;
+    document.getElementById("absentCount").innerHTML = absent;
+    document.getElementById("attendancePercentage").innerHTML =
+        percentage + "%";
 
 }
-
-
-
-
-
-
-
-
 
 // =============================================
 // SEARCH FILTER
 // =============================================
 
+function filterStudents() {
 
-function filterStudents(){
+    const keyword =
+        document.getElementById("searchStudent").value.toLowerCase();
 
+    const dept =
+        document.getElementById("departmentFilter").value;
 
+    const year =
+        document.getElementById("yearFilter").value;
 
-let keyword =
+    const filtered = attendanceData.filter(student => {
 
-document
-.getElementById("searchStudent")
-.value
-.toLowerCase();
+        const search =
+            student.name.toLowerCase().includes(keyword) ||
+            student.roll.toLowerCase().includes(keyword);
 
+        const department =
+            dept === "All" || dept === "" ||
+            student.department === dept;
 
+        const studyYear =
+            year === "All" || year === "" ||
+            student.year === year;
 
-let dept =
+        return search && department && studyYear;
 
-document
-.getElementById("departmentFilter")
-.value;
+    });
 
-
-
-let year =
-
-document
-.getElementById("yearFilter")
-.value;
-
-
-
-let filtered =
-
-attendanceData.filter(student=>{
-
-
-let search =
-
-
-student.name
-.toLowerCase()
-.includes(keyword)
-
-
-||
-
-student.roll
-.toLowerCase()
-.includes(keyword);
-
-
-
-
-let department =
-
-dept==="All"
-
-||
-
-student.department===dept;
-
-
-
-let studyYear =
-
-year==="All"
-
-||
-
-student.year===year;
-
-
-
-return search && department && studyYear;
-
-
-
-});
-
-
-
-renderTable(filtered);
-
-
+    renderTable(filtered);
 
 }
-
-
-
-
-
-
-
-
 
 // =============================================
 // MARK ALL PRESENT
 // =============================================
 
+function markAllPresent() {
 
-function markAllPresent(){
+    attendanceData.forEach(student => {
 
+        student.status = "Present";
 
+    });
 
-document
-.querySelectorAll('input[value="Present"]')
-.forEach(input=>{
-
-
-input.checked=true;
-
-
-
-let roll =
-input.dataset.roll;
-
-
-
-let student =
-attendanceData.find(
-s=>s.roll===roll
-);
-
-
-
-if(student){
-
-student.status="Present";
+    renderTable(attendanceData);
 
 }
-
-
-
-});
-
-
-
-updateStatistics(attendanceData);
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =============================================
 // MARK ALL ABSENT
 // =============================================
 
+function markAllAbsent() {
 
-function markAllAbsent(){
+    attendanceData.forEach(student => {
 
+        student.status = "Absent";
 
+    });
 
-document
-.querySelectorAll('input[value="Absent"]')
-.forEach(input=>{
-
-
-input.checked=true;
-
-
-
-let roll =
-input.dataset.roll;
-
-
-
-let student =
-attendanceData.find(
-s=>s.roll===roll
-);
-
-
-
-if(student){
-
-student.status="Absent";
+    renderTable(attendanceData);
 
 }
-
-
-
-});
-
-
-
-updateStatistics(attendanceData);
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =============================================
 // SAVE ATTENDANCE
 // =============================================
 
+async function saveAttendance(e) {
 
-async function saveAttendance(e){
+    e.preventDefault();
 
+    try {
 
+        for (const student of attendanceData) {
 
-e.preventDefault();
+            await fetch(API_URL, {
 
+                method: "POST",
 
+                headers: {
 
-try{
+                    "Content-Type": "application/json"
 
+                },
 
+                body: JSON.stringify({
 
-for(let student of attendanceData){
+                    roll: student.roll,
+                    status: student.status
 
+                })
 
+            });
 
-await fetch(API_URL,{
+        }
 
-method:"POST",
+        alert("Attendance Saved Successfully");
 
+        loadAttendance();
 
-headers:{
+    }
 
+    catch (error) {
 
-"Content-Type":
-"application/json"
+        console.error(error);
 
-},
+        alert("Attendance Save Failed");
 
-
-body:JSON.stringify({
-
-roll:student.roll,
-
-status:student.status
-
-
-})
-
-
-});
-
-
-
-}
-
-
-
-alert(
-"Attendance Saved Successfully"
-);
-
-
-
-loadAttendance();
-
-
-
-}
-
-
-catch(error){
-
-
-console.log(error);
-
-
-alert(
-"Attendance Save Failed"
-);
-
-
-
-}
-
-
+    }
 
 }

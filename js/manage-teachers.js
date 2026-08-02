@@ -7,7 +7,7 @@ location.href="/html/index.html";
 
 
 
-const API = "https://student-management-system-major-1.onrender.com";
+const API = "https://student-management-system-major-1.onrender.com/teachers";
 
 
 
