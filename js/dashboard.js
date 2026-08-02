@@ -313,6 +313,73 @@ displayDepartmentCards(
 data.departments
 );
 
+function updateFixedDepartmentCards(departments){
+
+
+departments.forEach(dep=>{
+
+
+let dept =
+dep.department.toLowerCase();
+
+
+
+if(dept==="cse"){
+
+document.getElementById("cseStudents").innerHTML = dep.totalStudents;
+document.getElementById("csePresent").innerHTML = dep.presentStudents || 0;
+document.getElementById("cseAbsent").innerHTML = dep.absentStudents || 0;
+document.getElementById("cseAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
+document.getElementById("cseResults").innerHTML = dep.resultsCount || 0;
+document.getElementById("cseAverage").innerHTML = dep.averageMarks || 0;
+
+}
+
+
+if(dept==="ece"){
+
+document.getElementById("eceStudents").innerHTML = dep.totalStudents;
+document.getElementById("ecePresent").innerHTML = dep.presentStudents || 0;
+document.getElementById("eceAbsent").innerHTML = dep.absentStudents || 0;
+document.getElementById("eceAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
+document.getElementById("eceResults").innerHTML = dep.resultsCount || 0;
+document.getElementById("eceAverage").innerHTML = dep.averageMarks || 0;
+
+}
+
+
+if(dept==="eee"){
+
+document.getElementById("eeeStudents").innerHTML = dep.totalStudents;
+document.getElementById("eeePresent").innerHTML = dep.presentStudents || 0;
+document.getElementById("eeeAbsent").innerHTML = dep.absentStudents || 0;
+document.getElementById("eeeAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
+document.getElementById("eeeResults").innerHTML = dep.resultsCount || 0;
+document.getElementById("eeeAverage").innerHTML = dep.averageMarks || 0;
+
+}
+
+
+if(dept==="mechanical"){
+
+document.getElementById("mechStudents").innerHTML = dep.totalStudents;
+document.getElementById("mechPresent").innerHTML = dep.presentStudents || 0;
+document.getElementById("mechAbsent").innerHTML = dep.absentStudents || 0;
+document.getElementById("mechAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
+document.getElementById("mechResults").innerHTML = dep.resultsCount || 0;
+document.getElementById("mechAverage").innerHTML = dep.averageMarks || 0;
+
+}
+
+
+});
+
+}
+
+updateFixedDepartmentCards(
+data.departments
+);
+
 
 
 }
