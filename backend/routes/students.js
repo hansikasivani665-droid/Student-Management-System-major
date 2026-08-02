@@ -103,72 +103,72 @@ router.get("/", (req, res) => {
 
 
 
-// ====================================
+// ======================================
 // GET STUDENT BY EMAIL
-// ====================================
+// ======================================
+
+router.get("/email/:email", (req,res)=>{
+
+    const email = req.params.email;
 
 
-router.get("/email/:email",(req,res)=>{
+    db.get(
+
+        `SELECT *
+         FROM students
+         WHERE email = ?`,
+
+        [email],
+
+        (err,row)=>{
 
 
-db.get(
+            if(err){
 
-"SELECT * FROM students WHERE email=?",
-
-[req.params.email],
-
-
-(err,student)=>{
+                console.log(
+                    "Student Email Error:",
+                    err.message
+                );
 
 
-if(err){
+                return res.status(500).json({
 
-return res.status(500).json({
+                    success:false,
+                    message:err.message
 
-success:false,
+                });
 
-message:err.message
+            }
+
+
+
+            if(!row){
+
+                return res.status(404).json({
+
+                    success:false,
+                    message:"Student Not Found"
+
+                });
+
+            }
+
+
+
+            res.json({
+
+                success:true,
+                student:row
+
+            });
+
+
+        }
+
+    );
+
 
 });
-
-}
-
-
-
-if(!student){
-
-return res.status(404).json({
-
-success:false,
-
-message:"Student not found"
-
-});
-
-}
-
-
-
-res.json({
-
-success:true,
-
-student
-
-});
-
-
-}
-
-
-);
-
-
-});
-
-
-
-
 
 
 
