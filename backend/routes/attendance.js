@@ -1,414 +1,503 @@
-const express = require("express");
-const router = express.Router();
+// =====================================================
+// STUDENT MANAGEMENT SYSTEM
+// ADMIN DASHBOARD
+// Developer : Hansika Sivani
+// =====================================================
 
-const db = require("../models/database");
+const API = "https://student-management-system-major-1.onrender.com";
+
+// ======================================
+// Chart Instances
+// ======================================
+
+let studentChartInstance = null;
+let attendanceChartInstance = null;
+
+// =====================================================
+// DATE & TIME
+// =====================================================
+
+function updateDateTime() {
+
+    const now = new Date();
+
+    const dateOptions = {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    };
+
+    const date = document.getElementById("currentDate");
+    const time = document.getElementById("currentTime");
+
+    if (date) {
+        date.textContent = now.toLocaleDateString("en-IN", dateOptions);
+    }
+
+    if (time) {
+        time.textContent = now.toLocaleTimeString();
+    }
+}
+
+setInterval(updateDateTime, 1000);
+updateDateTime();
 
 
-// ==========================================
-// GET ALL ATTENDANCE (TODAY ONLY)
-// ==========================================
+// =====================================================
+// LOAD DASHBOARD
+// =====================================================
 
-router.get("/", (req,res)=>{
+async function loadDashboard() {
+
+    try {
+
+        const response = await fetch(`${API}/dashboard`);
+        const data = await response.json();
+
+        console.log("Dashboard :", data);
+
+        if (!data.success) return;
+
+        const update = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) element.innerHTML = value;
+        };
+
+        update("totalStudents", data.totalStudents);
+        update("attendancePercentage", data.attendancePercentage + "%");
+        update("presentStudents", data.presentStudents);
+        update("averageMarks", data.averageMarks + "%");
+        update("passPercentage", data.passPercentage + "%");
+        update("resultsCount", data.resultsCount);
+        update("totalDepartments", data.totalDepartments);
+        update("latestStudent", data.latestStudent);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadDashboard();
 
 
-    const today = new Date().toISOString().split("T")[0];
+// =====================================================
+// LOAD RECENT STUDENTS
+// =====================================================
 
+async function loadStudents() {
 
-    let query = `
+    try {
 
-    SELECT
+        const response = await fetch(`${API}/students`);
+        const data = await response.json();
 
-    students.id,
-    students.roll,
-    students.name,
-    students.department,
-    students.year,
+        console.log("Students :", data);
 
-    attendance.date,
-    attendance.status
+        const tbody = document.getElementById("recentStudentTable");
 
-    FROM students
+        if (!tbody) return;
 
-    LEFT JOIN attendance
+        tbody.innerHTML = "";
 
-    ON students.roll = attendance.roll
-    AND attendance.date = ?
+        if (!data.students || data.students.length === 0) {
 
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="5">No Students Found</td>
+            </tr>
+            `;
 
-    ORDER BY students.id DESC
-
-    `;
-
-
-
-    db.all(query,[today],(err,rows)=>{
-
-
-        if(err){
-
-            return res.status(500).json({
-
-            success:false,
-            message:err.message
-
-            });
+            return;
 
         }
 
+        data.students.slice(0, 5).forEach(student => {
 
-        res.json({
+            tbody.innerHTML += `
+            <tr>
 
-        success:true,
-        attendance:rows
+                <td>${student.name}</td>
+
+                <td>${student.roll}</td>
+
+                <td>${student.department}</td>
+
+                <td>${student.year}</td>
+
+                <td>
+                    <span class="success">Active</span>
+                </td>
+
+            </tr>
+            `;
 
         });
 
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadStudents();
+
+
+// =====================================================
+// LOAD ATTENDANCE (FOR PIE CHART ONLY)
+// =====================================================
+
+async function loadAttendance() {
+
+    try {
+
+        const response = await fetch(`${API}/attendance`);
+        const data = await response.json();
+
+        console.log("Attendance :", data);
+
+        if (!data.success) return;
+
+        let present = 0;
+        let absent = 0;
+
+        data.attendance.forEach(item => {
+
+            if (item.status === "Present") {
+
+                present++;
+
+            }
+
+            else if (item.status === "Absent") {
+
+                absent++;
+
+            }
+
+        });
+
+        createAttendanceChart(present, absent);
+
+    }
+
+    catch (err) {
+
+        console.log("Attendance Error :", err);
+
+    }
+
+}
+
+loadAttendance();
+
+
+// =====================================================
+// LOAD RESULTS
+// =====================================================
+
+async function loadResults() {
+
+    try {
+
+        const response = await fetch(`${API}/results`);
+        const data = await response.json();
+
+        console.log("Results :", data);
+
+        if (!data.success) return;
+
+        let pass = 0;
+        let fail = 0;
+
+        data.results.forEach(result => {
+
+            if (result.status === "Pass") {
+
+                pass++;
+
+            }
+
+            else {
+
+                fail++;
+
+            }
+
+        });
+
+        createStudentChart(pass, fail);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadResults();
+
+// =====================================================
+// STUDENT RESULT CHART
+// =====================================================
+
+function createStudentChart(pass, fail) {
+
+    const canvas = document.getElementById("studentChart");
+
+    if (!canvas) return;
+
+    if (studentChartInstance) {
+        studentChartInstance.destroy();
+    }
+
+    studentChartInstance = new Chart(canvas, {
+
+        type: "bar",
+
+        data: {
+
+            labels: ["Pass", "Fail"],
+
+            datasets: [{
+
+                label: "Students",
+
+                data: [pass, fail],
+
+                backgroundColor: [
+                    "#16a34a",
+                    "#dc2626"
+                ],
+
+                borderRadius: 10
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
 
     });
 
-
-});
-
+}
 
 
 
+// =====================================================
+// ATTENDANCE CHART
+// =====================================================
 
-// ==========================================
-// SAVE ATTENDANCE
-// ==========================================
+function createAttendanceChart(present, absent) {
 
-router.post("/",(req,res)=>{
+    const canvas = document.getElementById("attendanceChart");
 
+    if (!canvas) return;
 
-const {
+    if (attendanceChartInstance) {
+        attendanceChartInstance.destroy();
+    }
 
-roll,
-status
+    attendanceChartInstance = new Chart(canvas, {
 
-}=req.body;
+        type: "doughnut",
 
+        data: {
 
+            labels: [
+                "Present",
+                "Absent"
+            ],
 
-const date =
-new Date().toISOString().split("T")[0];
+            datasets: [{
 
+                data: [
+                    present,
+                    absent
+                ],
 
+                backgroundColor: [
+                    "#16a34a",
+                    "#dc2626"
+                ],
 
+                borderWidth: 1
 
+            }]
 
-db.get(
+        },
 
-`
+        options: {
 
-SELECT *
+            responsive: true,
 
-FROM attendance
+            maintainAspectRatio: false,
 
-WHERE roll=? AND date=?
+            plugins: {
 
-`,
+                legend: {
 
-[roll,date],
+                    position: "bottom"
 
-(err,row)=>{
+                }
 
+            }
 
-if(err){
+        }
 
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
+    });
 
 }
 
 
 
+// =====================================================
+// CARD ANIMATION
+// =====================================================
+
+function animateCards() {
+
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach((card, index) => {
+
+        card.style.opacity = "0";
+        card.style.transform = "translateY(40px)";
+
+        setTimeout(() => {
+
+            card.style.transition = ".5s";
+
+            card.style.opacity = "1";
+
+            card.style.transform = "translateY(0px)";
+
+        }, index * 120);
+
+    });
+
+}
+
+animateCards();
 
 
-// UPDATE
 
-if(row){
+// =====================================================
+// WELCOME MESSAGE
+// =====================================================
 
+const welcome = document.getElementById("welcomeMessage");
 
-db.run(
+if (welcome) {
 
-`
+    const hour = new Date().getHours();
 
-UPDATE attendance
+    if (hour < 12) {
 
-SET status=?
+        welcome.innerHTML = "Good Morning, Administrator ☀️";
 
-WHERE roll=? AND date=?
+    }
 
-`,
+    else if (hour < 17) {
 
-[
+        welcome.innerHTML = "Good Afternoon, Administrator 🌤️";
 
-status,
-roll,
-date
+    }
 
-],
+    else {
 
+        welcome.innerHTML = "Good Evening, Administrator 🌙";
 
-(err)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
+    }
 
 }
 
 
 
-res.json({
+// =====================================================
+// AUTO REFRESH
+// =====================================================
 
-success:true,
-message:"Attendance Updated"
+setInterval(() => {
 
-});
+    loadDashboard();
+    loadStudents();
+    loadAttendance();
+    loadResults();
 
-
-});
-
-
-}
-
-
+}, 30000);
 
 
-// INSERT
 
-else{
+// =====================================================
+// LOGOUT
+// =====================================================
 
+const logout = document.getElementById("logout");
 
-db.run(
+if (logout) {
 
-`
+    logout.addEventListener("click", function (e) {
 
-INSERT INTO attendance
+        e.preventDefault();
 
-(
-roll,
-date,
-status
-)
+        if (confirm("Are you sure you want to logout?")) {
 
-VALUES(?,?,?)
+            localStorage.clear();
+            sessionStorage.clear();
 
-`,
+            window.location.href = "login.html";
 
-[
+        }
 
-roll,
-date,
-status
-
-],
-
-
-(err)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
+    });
 
 }
 
 
 
-res.json({
-
-success:true,
-message:"Attendance Saved"
-
-});
-
-
-});
-
-
-}
-
-
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-// ==========================================
-// STUDENT ATTENDANCE REPORT
-// ==========================================
-
-
-router.get("/student/:roll",(req,res)=>{
-
-
-const roll=req.params.roll;
-
-
-
-db.all(
-
-`
-
-SELECT *
-
-FROM attendance
-
-WHERE roll=?
-
-ORDER BY date DESC
-
-`,
-
-[roll],
-
-
-(err,rows)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-
-let total = rows.length;
-
-
-let present =
-rows.filter(
-a=>a.status==="Present"
-).length;
-
-
-
-let percentage =
-total===0
-?
-0
-:
-((present/total)*100).toFixed(2);
-
-
-
-res.json({
-
-success:true,
-
-attendance:rows,
-
-summary:{
-
-
-totalDays:total,
-
-present,
-
-absent:total-present,
-
-percentage
-
-
-}
-
-
-});
-
-
-
-});
-
-
-});
-
-
-
-
-
-
-// ==========================================
-// DELETE
-// ==========================================
-
-router.delete("/:id",(req,res)=>{
-
-
-db.run(
-
-`
-
-DELETE FROM attendance
-
-WHERE id=?
-
-`,
-
-[req.params.id],
-
-
-(err)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-
-res.json({
-
-success:true,
-message:"Attendance Deleted"
-
-});
-
-
-});
-
-
-});
-
-
-
-
-
-module.exports = router;
+// =====================================================
+// CONSOLE
+// =====================================================
+
+console.log("======================================");
+console.log("Student Management Dashboard Loaded");
+console.log("======================================");
