@@ -1,320 +1,177 @@
-// =====================================
-// Teacher Results Module (Render Version)
-// =====================================
+```html
+<!DOCTYPE html>
+<html lang="en">
 
-const BASE_URL = "https://student-management-system-major-1.onrender.com";
+<head>
 
-const department = document.getElementById("department");
-const year = document.getElementById("year");
-const loadStudentsBtn = document.getElementById("loadStudents");
+<meta charset="UTF-8">
 
-const studentTable = document.getElementById("studentTable");
-const saveResultsBtn = document.getElementById("saveResults");
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const message = document.getElementById("message");
+<title>Teacher Results</title>
 
-let students = [];
+<link rel="stylesheet" href="../css/teacher-results.css">
 
+</head>
 
-// =====================================
-// Load Students
-// =====================================
 
-loadStudentsBtn.addEventListener("click", async () => {
+<body>
 
-    const dept = department.value;
-    const selectedYear = year.value;
 
+<div class="container">
 
-    if (!dept || !selectedYear) {
 
-        message.style.color = "red";
-        message.innerHTML = "❌ Select Department and Year";
+<h1>Enter Student Results</h1>
 
-        return;
-    }
 
+<div class="form-section">
 
-    try {
 
-        const response = await fetch(
-            `${BASE_URL}/students`
-        );
+<label>Teacher ID</label>
 
+<input 
+type="text"
+id="teacherId"
+placeholder="Enter Teacher ID">
 
-        const data = await response.json();
 
 
-        if(data.success){
+<label>Subject</label>
 
-            students = data.students.filter(student => 
-                student.department === dept &&
-                student.year === selectedYear
-            );
+<input 
+type="text"
+id="subject"
+placeholder="Enter Subject">
 
 
-            displayStudents();
 
-        }
-        else{
+<label>Department</label>
 
-            message.innerHTML="❌ No students found";
+<select id="department">
 
-        }
+<option value="">
+Select Department
+</option>
 
+<option value="CSE">CSE</option>
 
-    }
-    catch(error){
+<option value="ECE">ECE</option>
 
-        console.error(error);
+<option value="EEE">EEE</option>
 
-        message.style.color="red";
-        message.innerHTML="❌ Failed to load students";
+<option value="AIML">AIML</option>
 
-    }
+<option value="Data Science">
+Data Science
+</option>
 
-});
+</select>
 
 
 
-// =====================================
-// Display Students
-// =====================================
 
-function displayStudents(){
+<label>Year</label>
 
+<select id="year">
 
-    studentTable.innerHTML="";
+<option value="">
+Select Year
+</option>
 
+<option value="I">I</option>
 
-    if(students.length===0){
+<option value="II">II</option>
 
-        studentTable.innerHTML=
-        `
-        <tr>
-        <td colspan="6">
-        No students available
-        </td>
-        </tr>
-        `;
+<option value="III">III</option>
 
-        return;
+<option value="IV">IV</option>
 
-    }
+</select>
 
 
 
-    students.forEach(student=>{
+<button id="loadStudents">
 
+Load Students
 
-        studentTable.innerHTML +=
+</button>
 
-        `
-        <tr>
 
-        <td>
-        ${student.roll}
-        </td>
+</div>
 
 
-        <td>
-        ${student.name}
-        </td>
 
 
-        <td>
-        ${student.department}
-        </td>
 
+<table>
 
-        <td>
-        ${student.year}
-        </td>
 
+<thead>
 
-        <td>
+<tr>
 
-        <input 
-        type="text"
-        class="subject"
-        data-roll="${student.roll}"
-        placeholder="Subject">
+<th>
+Roll No
+</th>
 
-        </td>
 
+<th>
+Name
+</th>
 
 
-        <td>
+<th>
+Marks
+</th>
 
-        <input 
-        type="number"
-        class="marks"
-        data-roll="${student.roll}"
-        min="0"
-        max="100"
-        placeholder="Marks">
 
-        </td>
+</tr>
 
+</thead>
 
-        </tr>
-        `;
 
 
-    });
+<tbody id="studentTable">
 
+<tr>
 
-}
+<td colspan="3">
 
+Select details and load students
 
+</td>
 
-// =====================================
-// Save Results
-// =====================================
+</tr>
 
-saveResultsBtn.addEventListener("click", async()=>{
 
+</tbody>
 
-    const subjects =
-    document.querySelectorAll(".subject");
 
+</table>
 
-    const marksInputs =
-    document.querySelectorAll(".marks");
 
 
 
-    let results=[];
 
+<button id="saveResults">
 
+Save Results
 
-    for(let i=0;i<subjects.length;i++){
+</button>
 
 
-        let subject =
-        subjects[i].value.trim();
 
+<p id="message"></p>
 
-        let marks =
-        Number(marksInputs[i].value);
 
+</div>
 
 
-        if(!subject || isNaN(marks)){
 
-            continue;
+<script src="../js/teacher-results.js"></script>
 
-        }
 
+</body>
 
-
-        let grade="";
-
-
-        if(marks>=90)
-            grade="A+";
-
-        else if(marks>=80)
-            grade="A";
-
-        else if(marks>=70)
-            grade="B";
-
-        else if(marks>=60)
-            grade="C";
-
-        else if(marks>=50)
-            grade="D";
-
-        else
-            grade="F";
-
-
-
-        let status =
-        marks>=35 ? "Pass":"Fail";
-
-
-
-        results.push({
-
-            roll: marksInputs[i].dataset.roll,
-
-            subject,
-
-            marks,
-
-            grade,
-
-            status
-
-        });
-
-
-
-    }
-
-
-
-    if(results.length===0){
-
-        message.style.color="red";
-        message.innerHTML=
-        "❌ Enter subject and marks";
-
-        return;
-
-    }
-
-
-
-    try{
-
-
-        for(let result of results){
-
-
-            await fetch(
-                `${BASE_URL}/results`,
-                {
-
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-
-                body:JSON.stringify(result)
-
-                }
-
-            );
-
-
-        }
-
-
-
-        message.style.color="green";
-        message.innerHTML=
-        "✅ Results saved successfully";
-
-
-    }
-
-    catch(error){
-
-
-        console.error(error);
-
-        message.style.color="red";
-
-        message.innerHTML=
-        "❌ Server connection failed";
-
-
-    }
-
-
-});
+</html>
+```

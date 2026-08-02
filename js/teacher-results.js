@@ -1,208 +1,313 @@
 // =====================================
-// Teacher Result Module
+// Teacher Results Module
 // =====================================
 
+console.log("Teacher Results Module Loaded");
+
+
+// =====================================
+// API
+// =====================================
 
 const API =
-"https://student-management-system-major-1.onrender.com/results";
-
+"https://student-management-system-major-1.onrender.com";
 
 
 // =====================================
 // DOM
 // =====================================
 
+const teacherIdInput =
+document.getElementById("teacherId");
 
-const form =
-document.getElementById("resultForm");
+const subjectInput =
+document.getElementById("subject");
 
+const department =
+document.getElementById("department");
+
+const year =
+document.getElementById("year");
+
+const loadButton =
+document.getElementById("loadStudents");
+
+const studentTable =
+document.getElementById("studentTable");
+
+const saveButton =
+document.getElementById("saveResults");
 
 const message =
 document.getElementById("message");
 
 
 
+
 // =====================================
-// GET LOGGED TEACHER DATA
+// LOAD STUDENTS
 // =====================================
 
-
-const teacher =
-JSON.parse(
-localStorage.getItem("teacher")
+loadButton.addEventListener(
+"click",
+loadStudents
 );
 
 
 
-let teacherId = "";
-
-let teacherSubject = "";
+async function loadStudents(){
 
 
-
-if(teacher){
-
-    teacherId =
-    teacher.teacherId;
+const dept =
+department.value;
 
 
-    teacherSubject =
-    teacher.subject;
-
-}
+const yr =
+year.value;
 
 
 
-// =====================================
-// LOAD SUBJECT AUTOMATICALLY
-// =====================================
+if(
+!teacherIdInput.value ||
+!subjectInput.value ||
+!dept ||
+!yr
+){
 
+alert(
+"Enter Teacher ID, Subject, Department and Year"
+);
 
-const subjectInput =
-document.getElementById("subject");
-
-
-
-if(subjectInput && teacherSubject){
-
-    subjectInput.value =
-    teacherSubject;
-
-
-    subjectInput.readOnly =
-    true;
+return;
 
 }
 
 
 
-// =====================================
-// SUBMIT RESULT
-// =====================================
+try{
 
 
-form.addEventListener(
+const response =
+await fetch(
 
-"submit",
+`${API}/students?department=${dept}&year=${yr}`
 
-async(e)=>{
-
-
-e.preventDefault();
-
-
-
-// =====================================
-// GET INPUT VALUES
-// =====================================
-
-
-const roll =
-document.getElementById("roll")
-.value
-.trim();
-
-
-
-const subject =
-subjectInput.value
-.trim();
-
-
-
-const marks =
-Number(
-document.getElementById("marks")
-.value
 );
 
 
 
-
-// =====================================
-// VALIDATION
-// =====================================
-
-
-if(!roll || !subject || isNaN(marks)){
-
-
-    message.style.color="red";
-
-
-    message.innerHTML =
-    "❌ Please fill all fields.";
-
-
-    return;
-
-}
+const data =
+await response.json();
 
 
 
-
-if(marks < 0 || marks > 100){
-
-
-    message.style.color="red";
+if(data.success){
 
 
-    message.innerHTML =
-    "❌ Marks should be between 0 and 100";
+displayStudents(
+data.students
+);
 
-
-    return;
-
-}
-
-
-
-
-
-// =====================================
-// GRADE CALCULATION
-// =====================================
-
-
-let grade="";
-
-
-if(marks >= 90){
-
-    grade="A+";
-
-}
-
-else if(marks >= 80){
-
-    grade="A";
-
-}
-
-else if(marks >= 70){
-
-    grade="B+";
-
-}
-
-else if(marks >= 60){
-
-    grade="B";
-
-}
-
-else if(marks >= 50){
-
-    grade="C";
 
 }
 
 else{
 
-    grade="F";
+
+studentTable.innerHTML = `
+
+<tr>
+
+<td colspan="3">
+
+No Students Found
+
+</td>
+
+</tr>
+
+`;
 
 }
 
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+message.innerHTML =
+"❌ Unable to load students";
+
+
+}
+
+
+}
+
+
+
+
+
+
+// =====================================
+// DISPLAY STUDENTS
+// =====================================
+
+
+function displayStudents(students){
+
+
+studentTable.innerHTML = "";
+
+
+
+students.forEach(student=>{
+
+
+studentTable.innerHTML += `
+
+
+<tr>
+
+
+<td>
+${student.roll}
+</td>
+
+
+<td>
+${student.name}
+</td>
+
+
+<td>
+
+<input 
+
+type="number"
+
+class="marks"
+
+data-roll="${student.roll}"
+
+placeholder="Enter Marks"
+
+min="0"
+
+max="100">
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+// =====================================
+// SAVE RESULTS
+// =====================================
+
+
+saveButton.addEventListener(
+
+"click",
+
+async()=>{
+
+
+const marksInputs =
+document.querySelectorAll(".marks");
+
+
+
+if(marksInputs.length===0){
+
+alert(
+"Load Students First"
+);
+
+return;
+
+}
+
+
+
+let count = 0;
+
+
+
+for(
+const input of marksInputs
+){
+
+
+
+const marks =
+Number(input.value);
+
+
+
+if(
+isNaN(marks)
+){
+
+continue;
+
+}
+
+
+
+let grade = "";
+
+
+
+if(marks >= 90){
+
+grade = "A+";
+
+}
+else if(marks >= 80){
+
+grade = "A";
+
+}
+else if(marks >= 70){
+
+grade = "B+";
+
+}
+else if(marks >= 60){
+
+grade = "B";
+
+}
+else if(marks >= 50){
+
+grade = "C";
+
+}
+else{
+
+grade = "F";
+
+}
 
 
 
@@ -216,34 +321,30 @@ marks >= 35
 
 
 
-// =====================================
-// SEND RESULT DATA
-// =====================================
-
 
 const result = {
 
 
-    roll,
+roll:
+input.dataset.roll,
 
 
-    teacherId,
+subject:
+subjectInput.value,
 
 
-    subject,
+teacherId:
+teacherIdInput.value,
 
 
-    marks,
+marks,
 
+grade,
 
-    grade,
-
-
-    status
+status
 
 
 };
-
 
 
 
@@ -254,32 +355,25 @@ try{
 const response =
 await fetch(
 
-API,
+`${API}/results`,
 
 {
 
-
 method:"POST",
 
-
 headers:{
-
 
 "Content-Type":
 "application/json"
 
-
 },
-
 
 body:
 JSON.stringify(result)
 
-
 }
 
 );
-
 
 
 
@@ -288,38 +382,45 @@ await response.json();
 
 
 
+console.log(data);
+
 
 
 if(data.success){
 
+count++;
 
-    message.style.color="green";
-
-
-    message.innerHTML =
-    "✅ Result Saved Successfully";
+}
 
 
 
-    form.reset();
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+}
 
 
 
-    // restore teacher subject after reset
-
-    if(subjectInput && teacherSubject){
+}
 
 
-        subjectInput.value =
-        teacherSubject;
 
 
-        subjectInput.readOnly =
-        true;
+if(count === marksInputs.length){
 
 
-    }
+message.style.color =
+"green";
 
+
+message.innerHTML =
+
+`✅ Results Saved For ${count} Students`;
 
 
 }
@@ -327,34 +428,13 @@ if(data.success){
 else{
 
 
-    message.style.color="red";
-
-
-    message.innerHTML =
-    data.message ||
-    "❌ Failed to save result";
-
-
-}
-
-
-
-}
-
-
-
-catch(error){
-
-
-console.error(error);
-
-
-
-message.style.color="red";
+message.style.color =
+"red";
 
 
 message.innerHTML =
-"❌ Server Connection Failed";
+
+"❌ Some Results Failed";
 
 
 }
