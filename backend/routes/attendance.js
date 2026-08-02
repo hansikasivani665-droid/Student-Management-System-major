@@ -4,126 +4,172 @@ const router = express.Router();
 const db = require("../models/database");
 
 
+
 // ==========================================
-// GET ATTENDANCE
+// GET ATTENDANCE WITH ALL STUDENTS
 // ==========================================
 
-router.get("/", (req, res) => {
 
-    const {
-        department,
-        year,
-        subject,
-        teacherId,
-        date
-    } = req.query;
+router.get("/",(req,res)=>{
 
 
-    let query = `
+const {
+department,
+year,
+subject,
+teacherId,
+date
 
-    SELECT
-
-    students.roll,
-    students.name,
-    students.department,
-    students.year,
-
-    attendance.subject,
-    attendance.teacherId,
-    attendance.date,
-    attendance.status
-
-
-    FROM students
-
-
-    LEFT JOIN attendance
-
-    ON students.roll = attendance.roll
-
-
-    WHERE 1=1
-
-    `;
-
-
-    let params = [];
-
-
-    if(department){
-
-        query += " AND students.department=? ";
-        params.push(department);
-
-    }
-
-
-    if(year){
-
-        query += " AND students.year=? ";
-        params.push(year);
-
-    }
-
-
-    if(subject){
-
-        query += " AND attendance.subject=? ";
-        params.push(subject);
-
-    }
-
-
-    if(teacherId){
-
-        query += " AND attendance.teacherId=? ";
-        params.push(teacherId);
-
-    }
-
-
-    if(date){
-
-        query += " AND attendance.date=? ";
-        params.push(date);
-
-    }
+}=req.query;
 
 
 
-    db.all(
-        query,
-        params,
-        (err,rows)=>{
+
+let query = `
 
 
-            if(err){
-
-                return res.status(500).json({
-
-                    success:false,
-
-                    message:err.message
-
-                });
-
-            }
+SELECT
 
 
+students.roll,
 
-            res.json({
+students.name,
 
-                success:true,
+students.department,
 
-                attendance:rows
+students.year,
 
-            });
+
+attendance.subject,
+
+attendance.teacherId,
+
+attendance.date,
+
+attendance.status
 
 
 
-        }
+FROM students
 
-    );
+
+
+LEFT JOIN attendance
+
+
+ON students.roll = attendance.roll
+
+
+
+WHERE 1=1
+
+
+
+`;
+
+
+
+let params=[];
+
+
+
+if(department){
+
+query += 
+" AND LOWER(students.department)=LOWER(?) ";
+
+params.push(department);
+
+}
+
+
+
+if(year){
+
+query +=
+" AND LOWER(students.year)=LOWER(?) ";
+
+params.push(year);
+
+}
+
+
+
+if(subject){
+
+query +=
+" AND LOWER(attendance.subject)=LOWER(?) ";
+
+params.push(subject);
+
+}
+
+
+
+if(teacherId){
+
+query +=
+" AND attendance.teacherId=? ";
+
+params.push(teacherId);
+
+}
+
+
+
+if(date){
+
+query +=
+" AND attendance.date=? ";
+
+params.push(date);
+
+}
+
+
+
+
+query +=
+" ORDER BY students.id DESC";
+
+
+
+
+
+db.all(
+
+query,
+
+params,
+
+(err,rows)=>{
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+}
+
+
+
+
+// If attendance not marked
+
+rows.forEach(student=>{
+
+
+if(!student.status){
+
+student.status="Absent";
+
+}
 
 
 });
@@ -132,8 +178,34 @@ router.get("/", (req, res) => {
 
 
 
+res.json({
+
+success:true,
+
+attendance:rows
+
+});
+
+
+
+
+}
+
+
+);
+
+
+
+});
+
+
+
+
+
+
+
 // ==========================================
-// SAVE / UPDATE ATTENDANCE
+// SAVE ATTENDANCE
 // ==========================================
 
 
@@ -143,17 +215,14 @@ router.post("/",(req,res)=>{
 const {
 
 roll,
-
 subject,
-
 teacherId,
-
 date,
-
 status
 
 
 }=req.body;
+
 
 
 
@@ -163,7 +232,6 @@ if(
 !teacherId ||
 !date ||
 !status
-
 ){
 
 return res.status(400).json({
@@ -174,141 +242,10 @@ message:"Missing Attendance Details"
 
 });
 
-
 }
 
 
 
-
-db.get(
-
-`
-
-SELECT *
-
-FROM attendance
-
-WHERE roll=?
-
-AND subject=?
-
-AND teacherId=?
-
-AND date=?
-
-`,
-
-[
-roll,
-subject,
-teacherId,
-date
-],
-
-
-(err,row)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-
-message:err.message
-
-});
-
-
-}
-
-
-
-
-// UPDATE EXISTING
-
-
-if(row){
-
-
-db.run(
-
-`
-
-UPDATE attendance
-
-SET status=?
-
-WHERE roll=?
-
-AND subject=?
-
-AND teacherId=?
-
-AND date=?
-
-`,
-
-[
-
-status,
-
-roll,
-
-subject,
-
-teacherId,
-
-date
-
-],
-
-
-(err)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-
-message:err.message
-
-});
-
-
-}
-
-
-
-res.json({
-
-success:true,
-
-message:"Attendance Updated"
-
-});
-
-
-}
-
-
-
-);
-
-
-
-}
-
-
-
-
-
-// INSERT NEW
-
-
-else{
 
 
 db.run(
@@ -318,17 +255,11 @@ db.run(
 INSERT INTO attendance
 
 (
-
 roll,
-
 subject,
-
 teacherId,
-
 date,
-
 status
-
 )
 
 VALUES(?,?,?,?,?)
@@ -338,13 +269,9 @@ VALUES(?,?,?,?,?)
 [
 
 roll,
-
 subject,
-
 teacherId,
-
 date,
-
 status
 
 ],
@@ -362,7 +289,6 @@ success:false,
 message:err.message
 
 });
-
 
 }
 
@@ -377,21 +303,7 @@ message:"Attendance Saved"
 });
 
 
-
 }
-
-
-);
-
-
-
-}
-
-
-
-
-}
-
 
 
 );
@@ -403,16 +315,16 @@ message:"Attendance Saved"
 
 
 
+
+
+
+
 // ==========================================
 // STUDENT ATTENDANCE REPORT
 // ==========================================
 
 
 router.get("/student/:roll",(req,res)=>{
-
-
-const roll=req.params.roll;
-
 
 
 db.all(
@@ -429,7 +341,7 @@ ORDER BY date DESC
 
 `,
 
-[roll],
+[req.params.roll],
 
 
 (err,rows)=>{
@@ -449,33 +361,33 @@ message:err.message
 
 
 
-const total =
-rows.length;
+
+let total=rows.length;
 
 
-
-const present =
+let present =
 rows.filter(
 a=>a.status==="Present"
 ).length;
 
 
 
-const absent =
+let absent =
 rows.filter(
 a=>a.status==="Absent"
 ).length;
 
 
 
-const percentage =
-total>0
+let percentage =
+total
 ?
 Math.round(
 (present/total)*100
 )
 :
 0;
+
 
 
 
@@ -509,9 +421,7 @@ percentage
 }
 
 
-
 );
-
 
 
 });
