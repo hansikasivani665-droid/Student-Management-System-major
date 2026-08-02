@@ -190,49 +190,173 @@ db.get("SELECT COUNT(*) AS count FROM teachers", (err, row) => {
         return;
     }
 
+
     if (row.count === 0) {
 
         console.log("📥 Adding Sample Teachers...");
 
+
         const teachers = [
 
-            ["T001", "Dr. Ramesh", "CSE", "ramesh@gmail.com", "9876500001", "M.Tech", "5 Years", "1234"],
-            ["T002", "Dr. Suresh", "CSE", "suresh@gmail.com", "9876500002", "Ph.D", "8 Years", "1234"],
-            ["T003", "Mrs. Lakshmi", "CSE", "lakshmi@gmail.com", "9876500003", "M.Tech", "6 Years", "1234"],
-            ["T004", "Mr. Rajesh", "CSE", "rajesh@gmail.com", "9876500004", "M.Tech", "4 Years", "1234"],
-            ["T005", "Mrs. Anitha", "CSE", "anitha@gmail.com", "9876500005", "Ph.D", "10 Years", "1234"]
+            [
+                "T001",
+                "Ravi Kumar",
+                "CSE",
+                "DBMS",
+                "ravi.kumar@gmail.com",
+                "9876543210",
+                "M.Tech",
+                "5 Years",
+                "Ravi@123"
+            ],
+
+            [
+                "T002",
+                "Suresh Reddy",
+                "ECE",
+                "Computer Networks",
+                "suresh.reddy@gmail.com",
+                "9876543211",
+                "M.Tech",
+                "6 Years",
+                "Suresh@123"
+            ],
+
+            [
+                "T003",
+                "Priya Sharma",
+                "EEE",
+                "Operating Systems",
+                "priya.sharma@gmail.com",
+                "9876543212",
+                "M.Tech",
+                "4 Years",
+                "Priya@123"
+            ],
+
+            [
+                "T004",
+                "Anil Kumar",
+                "Mechanical",
+                "Java Programming",
+                "anil.kumar@gmail.com",
+                "9876543213",
+                "M.Tech",
+                "5 Years",
+                "Anil@123"
+            ],
+
+            [
+                "T005",
+                "Lakshmi Devi",
+                "Civil",
+                "Machine Learning",
+                "lakshmi.devi@gmail.com",
+                "9876543214",
+                "Ph.D",
+                "8 Years",
+                "Lakshmi@123"
+            ],
+
+            [
+                "T006",
+                "Kiran Rao",
+                "CSE",
+                "Web Technologies",
+                "kiran.rao@gmail.com",
+                "9876543215",
+                "M.Tech",
+                "3 Years",
+                "Kiran@123"
+            ],
+
+            [
+                "T007",
+                "Divya Rani",
+                "ECE",
+                "Data Structures",
+                "divya.rani@gmail.com",
+                "9876543216",
+                "M.Tech",
+                "4 Years",
+                "Divya@123"
+            ],
+
+            [
+                "T008",
+                "Vijay Kumar",
+                "EEE",
+                "Software Engineering",
+                "vijay.kumar@gmail.com",
+                "9876543217",
+                "M.Tech",
+                "6 Years",
+                "Vijay@123"
+            ],
+
+            [
+                "T009",
+                "Sneha Patel",
+                "CSE",
+                "Artificial Intelligence",
+                "sneha.patel@gmail.com",
+                "9876543218",
+                "Ph.D",
+                "7 Years",
+                "Sneha@123"
+            ],
+
+            [
+                "T010",
+                "Arjun Singh",
+                "Mechanical",
+                "Cyber Security",
+                "arjun.singh@gmail.com",
+                "9876543219",
+                "M.Tech",
+                "5 Years",
+                "Arjun@123"
+            ]
 
         ];
+
 
         teachers.forEach(teacher => {
 
             db.run(
+
                 `
                 INSERT INTO teachers
                 (
                     teacherId,
                     name,
                     department,
+                    subject,
                     email,
                     phone,
                     qualification,
                     experience,
                     password
                 )
-                VALUES
-                (?,?,?,?,?,?,?,?)
-                `,
-                teacher,
-                (err) => {
 
-                    if (err) {
+                VALUES(?,?,?,?,?,?,?,?,?)
+
+                `,
+
+                teacher,
+
+                (err)=>{
+
+                    if(err){
                         console.log(err.message);
                     }
 
                 }
+
             );
 
         });
+
 
         console.log("✅ Sample Teachers Inserted");
 
