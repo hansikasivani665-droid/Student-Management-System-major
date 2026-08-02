@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require("../models/database");
 
 
+
 // ==========================================
 // GET ATTENDANCE
 // ==========================================
@@ -48,7 +49,7 @@ WHERE 1=1
 
 
 
-let params=[];
+let params = [];
 
 
 
@@ -118,7 +119,10 @@ params,
 
 if(err){
 
-console.log("ATTENDANCE ERROR:",err.message);
+console.log(
+"ATTENDANCE GET ERROR:",
+err.message
+);
 
 
 return res.status(500).json({
@@ -167,10 +171,12 @@ attendance:rows
 
 
 
-// ==========================================
-// SAVE ATTENDANCE
-// ==========================================
 
+
+
+// ==========================================
+// SAVE / UPDATE ATTENDANCE
+// ==========================================
 
 router.post("/",(req,res)=>{
 
@@ -207,6 +213,137 @@ message:"Missing Attendance Details"
 
 
 
+
+// Check existing attendance
+
+db.get(
+
+`
+
+SELECT id
+
+FROM attendance
+
+WHERE roll=?
+
+AND subject=?
+
+AND date=?
+
+AND teacherId=?
+
+`,
+
+[
+
+roll,
+subject,
+date,
+teacherId
+
+],
+
+
+(err,row)=>{
+
+
+if(err){
+
+console.log(
+"CHECK ATTENDANCE ERROR:",
+err.message
+);
+
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+}
+
+
+
+
+// ==========================================
+// UPDATE EXISTING ATTENDANCE
+// ==========================================
+
+
+if(row){
+
+
+db.run(
+
+`
+
+UPDATE attendance
+
+SET status=?
+
+WHERE id=?
+
+`,
+
+[
+
+status,
+row.id
+
+],
+
+
+(err)=>{
+
+
+if(err){
+
+console.log(
+"UPDATE ATTENDANCE ERROR:",
+err.message
+);
+
+
+return res.status(500).json({
+
+success:false,
+
+message:err.message
+
+});
+
+}
+
+
+
+res.json({
+
+success:true,
+
+message:"Attendance Updated"
+
+});
+
+
+});
+
+
+}
+
+
+
+
+// ==========================================
+// INSERT NEW ATTENDANCE
+// ==========================================
+
+
+else{
+
+
 db.run(
 
 `
@@ -214,11 +351,17 @@ db.run(
 INSERT INTO attendance
 
 (
+
 roll,
+
 subject,
+
 teacherId,
+
 date,
+
 status
+
 )
 
 VALUES(?,?,?,?,?)
@@ -226,20 +369,25 @@ VALUES(?,?,?,?,?)
 `,
 
 [
+
 roll,
 subject,
 teacherId,
 date,
 status
+
 ],
 
 
-function(err){
+(err)=>{
 
 
 if(err){
 
-console.log("SAVE ATTENDANCE ERROR:",err.message);
+console.log(
+"INSERT ATTENDANCE ERROR:",
+err.message
+);
 
 
 return res.status(500).json({
@@ -266,7 +414,16 @@ message:"Attendance Saved"
 });
 
 
+}
+
+
+
 });
+
+
+});
+
+
 
 
 
