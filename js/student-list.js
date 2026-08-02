@@ -2,19 +2,17 @@
 // Student List Module
 // =====================================
 
-
-const STUDENT_API =  "https://onrender.com";
+const STUDENT_API =
+"https://student-management-system-major-1.onrender.com/students";
 
 let allStudents = [];
-
-
 
 
 // =====================================
 // LOGIN CHECK
 // =====================================
 
-if(localStorage.getItem("loggedIn") !== "true"){
+if (localStorage.getItem("loggedIn") !== "true") {
 
     window.location.href = "login.html";
 
@@ -22,28 +20,20 @@ if(localStorage.getItem("loggedIn") !== "true"){
 
 
 
-
-
-
 // =====================================
 // PAGE LOAD
 // =====================================
 
-document.addEventListener("DOMContentLoaded",()=>{
-
+document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Student List Loaded");
 
-
     loadStudents();
 
-
-
     const search =
-    document.getElementById("searchStudent");
+        document.getElementById("searchStudent");
 
-
-    if(search){
+    if (search) {
 
         search.addEventListener(
             "input",
@@ -52,14 +42,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     }
 
-
-
-
     const department =
-    document.getElementById("departmentFilter");
+        document.getElementById("departmentFilter");
 
-
-    if(department){
+    if (department) {
 
         department.addEventListener(
             "change",
@@ -68,15 +54,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     }
 
-
-
-
-
     const year =
-    document.getElementById("yearFilter");
+        document.getElementById("yearFilter");
 
-
-    if(year){
+    if (year) {
 
         year.addEventListener(
             "change",
@@ -85,13 +66,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     }
 
-
 });
-
-
-
-
-
 
 
 
@@ -100,76 +75,42 @@ document.addEventListener("DOMContentLoaded",()=>{
 // LOAD STUDENTS
 // =====================================
 
+async function loadStudents() {
 
-async function loadStudents(){
-
-
-    try{
-
+    try {
 
         const response =
-        await fetch(STUDENT_API);
-
-
+            await fetch(STUDENT_API);
 
         const data =
-        await response.json();
+            await response.json();
 
+        console.log("Students:", data);
 
-
-        console.log(
-            "Student API:",
-            data
-        );
-
-
-
-
-
-        if(data.success){
-
+        if (data.success) {
 
             allStudents = data.students;
 
-
             displayStudents(allStudents);
 
-
         }
-        else{
-
+        else {
 
             displayStudents([]);
 
-
         }
-
-
 
     }
 
+    catch (error) {
 
-    catch(error){
-
-
-        console.error(
-            "Fetch Error:",
-            error
-        );
-
+        console.error("Fetch Error:", error);
 
         displayStudents([]);
 
-
     }
 
-
-
 }
-
-
-
-
 
 
 
@@ -179,46 +120,26 @@ async function loadStudents(){
 // DISPLAY STUDENTS
 // =====================================
 
-
-function displayStudents(students){
-
-
+function displayStudents(students) {
 
     const table =
-    document.getElementById("studentTableBody");
+        document.getElementById("studentTableBody");
 
+    if (!table) {
 
-
-    if(!table){
-
-        console.error(
-            "studentTableBody not found"
-        );
+        console.error("studentTableBody not found");
 
         return;
 
     }
 
-
-
-
-
-
-    let rows = "";
-
-
-
-
-
-
-    if(students.length === 0){
-
+    if (students.length === 0) {
 
         table.innerHTML = `
 
         <tr>
 
-            <td colspan="10" class="loading">
+            <td colspan="10">
 
                 No Students Found
 
@@ -228,33 +149,19 @@ function displayStudents(students){
 
         `;
 
-
         return;
-
 
     }
 
+    let rows = "";
 
-
-
-
-
-
-    students.forEach((student,index)=>{
-
-
+    students.forEach((student, index) => {
 
         rows += `
 
         <tr>
 
-
-            <td>
-                ${index+1}
-            </td>
-
-
-
+            <td>${index + 1}</td>
 
             <td>
 
@@ -266,57 +173,17 @@ function displayStudents(students){
 
             </td>
 
+            <td>${student.name}</td>
 
+            <td>${student.roll}</td>
 
+            <td>${student.department}</td>
 
+            <td>${student.year}</td>
 
-            <td>
-                ${student.name || "-"}
-            </td>
+            <td>${student.email}</td>
 
-
-
-
-
-            <td>
-                ${student.roll || "-"}
-            </td>
-
-
-
-
-
-            <td>
-                ${student.department || "-"}
-            </td>
-
-
-
-
-
-            <td>
-                ${student.year || "-"}
-            </td>
-
-
-
-
-
-            <td>
-                ${student.email || "-"}
-            </td>
-
-
-
-
-
-            <td>
-                ${student.phone || "-"}
-            </td>
-
-
-
-
+            <td>${student.phone}</td>
 
             <td>
 
@@ -326,225 +193,97 @@ function displayStudents(students){
 
                 </span>
 
-
             </td>
-
-
-
-
 
             <td>
 
-
                 <button
-                class="edit-btn"
-                onclick="editStudent(${student.id})">
-
+                    class="edit-btn"
+                    onclick="editStudent(${student.id})">
 
                     <i class="fa-solid fa-pen"></i>
 
-
                 </button>
 
-
-
-
-
                 <button
-                class="delete-btn"
-                onclick="deleteStudent(${student.id})">
-
+                    class="delete-btn"
+                    onclick="deleteStudent(${student.id})">
 
                     <i class="fa-solid fa-trash"></i>
 
-
                 </button>
-
-
 
             </td>
 
-
-
-
         </tr>
-
 
         `;
 
-
-
     });
-
-
-
-
-
-
 
     table.innerHTML = rows;
 
-
-
 }
 
 
 
 
 
-
-
-
-
 // =====================================
-// SEARCH + FILTER
+// SEARCH & FILTER
 // =====================================
 
+function filterStudents() {
 
-function filterStudents(){
+    const search =
+        document
+            .getElementById("searchStudent")
+            .value
+            .toLowerCase();
 
+    const department =
+        document
+            .getElementById("departmentFilter")
+            .value;
 
+    const year =
+        document
+            .getElementById("yearFilter")
+            .value;
 
-    let search =
+    const filtered =
 
-    document
-    .getElementById("searchStudent")
-    .value
-    .toLowerCase();
+        allStudents.filter(student => {
 
+            const name =
+                student.name.toLowerCase();
 
+            const roll =
+                student.roll.toLowerCase();
 
+            const searchMatch =
+                name.includes(search) ||
+                roll.includes(search);
 
-    let department =
+            const departmentMatch =
+                department === "" ||
+                student.department === department;
 
-    document
-    .getElementById("departmentFilter")
-    .value;
+            const yearMatch =
+                year === "" ||
+                student.year === year;
 
+            return (
+                searchMatch &&
+                departmentMatch &&
+                yearMatch
+            );
 
-
-
-
-    let year =
-
-    document
-    .getElementById("yearFilter")
-    .value;
-
-
-
-
-
-
-
-
-    let filtered =
-
-    allStudents.filter(student=>{
-
-
-
-
-
-        let name =
-
-        (student.name || "")
-        .toLowerCase();
-
-
-
-
-
-        let roll =
-
-        (student.roll || "")
-        .toLowerCase();
-
-
-
-
-
-
-
-        let searchMatch =
-
-        name.includes(search)
-
-        ||
-
-        roll.includes(search);
-
-
-
-
-
-
-
-
-        let departmentMatch =
-
-
-        department === ""
-
-        ||
-
-        student.department === department;
-
-
-
-
-
-
-
-
-        let yearMatch =
-
-
-        year === ""
-
-        ||
-
-        student.year === year;
-
-
-
-
-
-
-
-
-        return (
-
-            searchMatch
-
-            &&
-
-            departmentMatch
-
-            &&
-
-            yearMatch
-
-        );
-
-
-
-    });
-
-
-
-
-
+        });
 
     displayStudents(filtered);
 
-
-
 }
-
-
-
-
 
 
 
@@ -554,72 +293,42 @@ function filterStudents(){
 // DELETE STUDENT
 // =====================================
 
+async function deleteStudent(id) {
 
-async function deleteStudent(id){
-
-
-
-    const confirmDelete =
-
-    confirm(
+    const confirmDelete = confirm(
         "Are you sure you want to delete this student?"
     );
 
+    if (!confirmDelete) return;
 
+    try {
 
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-
-
-
-    try{
-
-
-        await fetch(
+        const response = await fetch(
 
             `${STUDENT_API}/${id}`,
 
             {
-
-                method:"DELETE"
-
+                method: "DELETE"
             }
 
         );
 
+        const data =
+            await response.json();
 
-
+        alert(data.message);
 
         loadStudents();
 
-
-
     }
 
+    catch (error) {
 
-    catch(error){
-
-
-        console.error(
-            "Delete Error:",
-            error
-        );
-
+        console.error("Delete Error:", error);
 
     }
-
-
 
 }
-
-
-
-
 
 
 
@@ -629,9 +338,9 @@ async function deleteStudent(id){
 // EDIT STUDENT
 // =====================================
 
+function editStudent(id) {
 
-function editStudent(id){
-
-    window.location.href = `edit-student.html?id=${id}`;
+    window.location.href =
+        `edit-student.html?id=${id}`;
 
 }

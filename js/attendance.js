@@ -7,13 +7,13 @@
 // Login Check
 if (localStorage.getItem("loggedIn") !== "true") {
 
-    window.location.href = "login.html";
+    window.location.href = "/html/login.html";
 
 }
 
 
 
- const API_URL = "https://onrender.com";
+ const API_URL = "https://student-management-system-major-1.onrender.com";
 
 
 

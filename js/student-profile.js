@@ -9,18 +9,19 @@ if (localStorage.getItem("loggedIn") !== "true") {
 }
 
 
-const STUDENT_API =
- "https://onrender.com";
+// ===============================
+// API
+// ===============================
 
+const STUDENT_API =
+"https://student-management-system-major-1.onrender.com/students";
 
 
 // ===============================
 // Load Profile
 // ===============================
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     loadProfile();
 
@@ -28,95 +29,57 @@ document.addEventListener(
 
 
 
+async function loadProfile() {
 
+    try {
 
-async function loadProfile(){
+        const email =
+            localStorage.getItem("currentUser");
 
+        const response =
+            await fetch(`${STUDENT_API}/email/${email}`);
 
-try{
+        const data =
+            await response.json();
 
+        console.log(data);
 
-const email =
-localStorage.getItem("currentUser");
+        if (data.success) {
 
+            const student = data.student;
 
+            document.getElementById("studentName").innerHTML =
+                student.name;
 
-const response =
-await fetch(
-`${STUDENT_API}/email/${email}`
-);
+            document.getElementById("roll").innerHTML =
+                student.roll;
 
+            document.getElementById("department").innerHTML =
+                student.department;
 
+            document.getElementById("year").innerHTML =
+                student.year;
 
-const data =
-await response.json();
+            document.getElementById("email").innerHTML =
+                student.email;
 
+            document.getElementById("phone").innerHTML =
+                student.phone;
 
+        }
 
-if(data.success){
+        else {
 
+            alert("Student details not found");
 
-const student =
-data.student;
+        }
 
+    }
 
+    catch (error) {
 
-document.getElementById("studentName")
-.innerHTML =
-student.name;
+        console.error("Profile Error:", error);
 
-
-
-document.getElementById("roll")
-.innerHTML =
-student.roll;
-
-
-
-document.getElementById("department")
-.innerHTML =
-student.department;
-
-
-
-document.getElementById("year")
-.innerHTML =
-student.year;
-
-
-
-document.getElementById("email")
-.innerHTML =
-student.email;
-
-
-
-document.getElementById("phone")
-.innerHTML =
-student.phone;
-
-
-
-}
-
-else{
-
-
-alert("Student details not found");
-
-
-}
-
-
-
-}
-
-
-catch(error){
-
-console.log(error);
-
-}
-
+    }
 
 }

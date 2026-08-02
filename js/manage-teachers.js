@@ -1,13 +1,13 @@
 if(localStorage.getItem("loggedIn")!=="true")
 {
 
-location.href="index.html";
+location.href="/html/index.html";
 
 }
 
 
 
-const API = "https://onrender.com";
+const API = "https://student-management-system-major-1.onrender.com";
 
 
 

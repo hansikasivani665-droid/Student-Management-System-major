@@ -1,45 +1,125 @@
-const API = "https://onrender.com";
+// =====================================
+// Teacher Student List
+// =====================================
+
+const API = "https://student-management-system-major-1.onrender.com";
+
+const table = document.getElementById("studentTable");
+const search = document.getElementById("search");
+
+let students = [];
 
 
-const table=document.getElementById("studentTable");
+// =====================================
+// Load Students
+// =====================================
 
-const search=document.getElementById("search");
+async function loadStudents() {
 
-let students=[];
+    try {
 
-async function loadStudents(){
+        const response = await fetch(`${API}/students`);
 
-    const response=await fetch(`${API}/students`);
+        const data = await response.json();
 
-    const data=await response.json();
+        console.log(data);
 
-    students=data.students;
+        if (data.success) {
 
-    displayStudents(students);
+            students = data.students;
 
-}
+            displayStudents(students);
 
-function displayStudents(list){
+        }
 
-    table.innerHTML="";
+        else {
 
-    list.forEach(student=>{
+            table.innerHTML = `
 
-        table.innerHTML+=`
+            <tr>
+
+                <td colspan="6">
+
+                    No Students Found
+
+                </td>
+
+            </tr>
+
+            `;
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        table.innerHTML = `
 
         <tr>
 
-        <td>${student.roll}</td>
+            <td colspan="6">
 
-        <td>${student.name}</td>
+                Unable to Load Students
 
-        <td>${student.department}</td>
+            </td>
 
-        <td>${student.year}</td>
+        </tr>
 
-        <td>${student.email}</td>
+        `;
 
-        <td>${student.phone}</td>
+    }
+
+}
+
+
+// =====================================
+// Display Students
+// =====================================
+
+function displayStudents(list) {
+
+    table.innerHTML = "";
+
+    if (list.length === 0) {
+
+        table.innerHTML = `
+
+        <tr>
+
+            <td colspan="6">
+
+                No Students Found
+
+            </td>
+
+        </tr>
+
+        `;
+
+        return;
+
+    }
+
+    list.forEach(student => {
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${student.roll}</td>
+
+            <td>${student.name}</td>
+
+            <td>${student.department}</td>
+
+            <td>${student.year}</td>
+
+            <td>${student.email}</td>
+
+            <td>${student.phone}</td>
 
         </tr>
 
@@ -49,11 +129,16 @@ function displayStudents(list){
 
 }
 
-search.addEventListener("keyup",()=>{
 
-    const value=search.value.toLowerCase();
+// =====================================
+// Search Student
+// =====================================
 
-    const filtered=students.filter(student=>
+search.addEventListener("keyup", () => {
+
+    const value = search.value.toLowerCase();
+
+    const filtered = students.filter(student =>
 
         student.name.toLowerCase().includes(value) ||
 
@@ -64,5 +149,10 @@ search.addEventListener("keyup",()=>{
     displayStudents(filtered);
 
 });
+
+
+// =====================================
+// Initial Load
+// =====================================
 
 loadStudents();

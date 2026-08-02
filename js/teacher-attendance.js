@@ -4,9 +4,11 @@
 
 console.log("Teacher Attendance Module Loaded");
 
-const API = "https://onrender.com";
+// =====================================
+// API
+// =====================================
 
-
+const API = "https://student-management-system-major-1.onrender.com";
 
 const studentTable = document.getElementById("studentTable");
 const saveButton = document.getElementById("saveAttendance");
@@ -19,8 +21,11 @@ const attendanceDate = document.getElementById("attendanceDate");
 // =====================================
 
 const today = new Date().toISOString().split("T")[0];
-attendanceDate.value = today;
-attendanceDate.readOnly = true;
+
+if (attendanceDate) {
+    attendanceDate.value = today;
+    attendanceDate.readOnly = true;
+}
 
 
 // =====================================
@@ -41,6 +46,14 @@ async function loadStudents() {
 
             displayStudents(data.students);
 
+        } else {
+
+            studentTable.innerHTML = `
+            <tr>
+                <td colspan="4">No Students Found</td>
+            </tr>
+            `;
+
         }
 
     }
@@ -50,7 +63,7 @@ async function loadStudents() {
         console.error(error);
 
         message.style.color = "red";
-        message.innerHTML = "❌ Unable to load students";
+        message.innerHTML = "❌ Unable to load students.";
 
     }
 
@@ -83,13 +96,9 @@ function displayStudents(students) {
                     class="status"
                     data-roll="${student.roll}">
 
-                    <option value="Present">
-                        Present
-                    </option>
+                    <option value="Present">Present</option>
 
-                    <option value="Absent">
-                        Absent
-                    </option>
+                    <option value="Absent">Absent</option>
 
                 </select>
 
@@ -126,16 +135,12 @@ saveButton.addEventListener("click", async () => {
                 method: "POST",
 
                 headers: {
-
                     "Content-Type": "application/json"
-
                 },
 
                 body: JSON.stringify({
-
-                    roll: roll,
-                    status: status
-
+                    roll,
+                    status
                 })
 
             });
@@ -144,7 +149,7 @@ saveButton.addEventListener("click", async () => {
 
             console.log(result);
 
-            if (response.ok) {
+            if (result.success) {
 
                 successCount++;
 
@@ -163,7 +168,6 @@ saveButton.addEventListener("click", async () => {
     if (successCount === statusList.length) {
 
         message.style.color = "green";
-
         message.innerHTML =
             `✅ Attendance Saved Successfully (${successCount} Students)`;
 
@@ -172,7 +176,6 @@ saveButton.addEventListener("click", async () => {
     else {
 
         message.style.color = "red";
-
         message.innerHTML =
             "❌ Some attendance records could not be saved.";
 
@@ -182,7 +185,7 @@ saveButton.addEventListener("click", async () => {
 
 
 // =====================================
-// Load Data
+// Initial Load
 // =====================================
 
 loadStudents();

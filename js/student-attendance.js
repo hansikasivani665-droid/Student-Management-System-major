@@ -1,148 +1,126 @@
 // ===============================
-// Check Login
+// CHECK LOGIN
 // ===============================
 
-if(localStorage.getItem("loggedIn") !== "true"){
+if (localStorage.getItem("loggedIn") !== "true") {
 
-    location.href="login.html";
+    window.location.href = "/html/login.html";
 
 }
 
 
-const API = "https://onrender.com";
-const ATTENDANCE_API = "https://onrender.com";
+// ===============================
+// API
+// ===============================
 
+const API = "https://student-management-system-major-1.onrender.com";
 
 
 // ===============================
-// Load Attendance
+// LOAD PAGE
 // ===============================
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     loadAttendance();
 
 });
 
 
+// ===============================
+// LOAD ATTENDANCE
+// ===============================
 
+async function loadAttendance() {
 
-async function loadAttendance(){
+    try {
 
+        const email = localStorage.getItem("currentUser");
 
-try{
+        // Get Student Details
 
+        const studentResponse =
+            await fetch(`${API}/students/email/${email}`);
 
-const email =
-localStorage.getItem("currentUser");
+        const studentData =
+            await studentResponse.json();
 
+        console.log(studentData);
 
+        if (!studentData.success) {
 
-// Get student details
+            alert("Student not found");
 
-let studentResponse =
-await fetch(
-`${STUDENT_API}/email/${email}`
-);
+            return;
 
+        }
 
+        const roll =
+            studentData.student.roll;
 
-let studentData =
-await studentResponse.json();
 
+        // Get Attendance
 
+        const attendanceResponse =
+            await fetch(`${API}/attendance/student/${roll}`);
 
-if(!studentData.success){
+        const attendanceData =
+            await attendanceResponse.json();
 
-    alert("Student details not found");
-    return;
+        console.log(attendanceData);
 
-}
+        const table =
+            document.getElementById("attendanceTable");
 
+        table.innerHTML = "";
 
+        if (
+            attendanceData.success &&
+            attendanceData.attendance.length > 0
+        ) {
 
-const roll =
-studentData.student.roll;
+            attendanceData.attendance.forEach(record => {
 
+                table.innerHTML += `
 
+                <tr>
 
-// Get attendance using roll
+                    <td>${record.date}</td>
 
-let response =
-await fetch(
-`${ATTENDANCE_API}/student/${roll}`
-);
+                    <td>${record.status}</td>
 
+                </tr>
 
+                `;
 
-let data =
-await response.json();
+            });
 
+        }
 
+        else {
 
-const table =
-document.getElementById("attendanceTable");
+            table.innerHTML = `
 
+            <tr>
 
+                <td colspan="2">
 
-table.innerHTML="";
+                    No Attendance Records Found
 
+                </td>
 
+            </tr>
 
-if(data.success && data.attendance.length>0){
+            `;
 
+        }
 
-data.attendance.forEach(record=>{
+    }
 
+    catch (error) {
 
-table.innerHTML += `
+        console.error(error);
 
-<tr>
-
-<td>${record.date}</td>
-
-<td>${record.status}</td>
-
-</tr>
-
-`;
-
-
-});
-
-
-}
-
-else{
-
-
-table.innerHTML=`
-
-<tr>
-
-<td colspan="2">
-No Attendance Records Found
-</td>
-
-</tr>
-
-`;
-
-
-}
-
-
-
-}
-
-
-catch(error){
-
-console.log(error);
-
-}
-
+    }
 
 }

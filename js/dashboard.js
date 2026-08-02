@@ -370,8 +370,7 @@ try{
 
 
 const response =
-await fetch(`${API}/attendance`);
-
+fetch(`${API}/attendance/student/${studentRoll}`)
 
 
 const data =

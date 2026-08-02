@@ -2,108 +2,81 @@
 // Check Login
 // ===============================
 
-if(localStorage.getItem("loggedIn") !== "true"){
+if (localStorage.getItem("loggedIn") !== "true") {
 
-    location.href="login.html";
+    location.href = "login.html";
 
 }
 
 
+// ===============================
+// API
+// ===============================
 
 const STUDENT_API =
- "https://onrender.com";
+"https://student-management-system-major-1.onrender.com/students";
 
 const RESULT_API =
- "https://onrender.com";
+"https://student-management-system-major-1.onrender.com/results";
 
 
 // ===============================
 // Load Results
 // ===============================
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     loadResults();
 
 });
 
 
+async function loadResults() {
 
+    try {
 
+        const email =
+            localStorage.getItem("currentUser");
 
-async function loadResults(){
+        // Get student details
+        const studentResponse =
+            await fetch(`${STUDENT_API}/email/${email}`);
 
+        const studentData =
+            await studentResponse.json();
 
-try{
+        if (!studentData.success) {
 
+            alert("Student details not found");
+            return;
 
-const email =
-localStorage.getItem("currentUser");
+        }
 
+        const roll =
+            studentData.student.roll;
 
+        // Get all results
+        const response =
+            await fetch(RESULT_API);
 
-// Get student details
+        const data =
+            await response.json();
 
-let studentResponse =
-await fetch(
-`${STUDENT_API}/email/${email}`
-);
+        const table =
+            document.getElementById("resultTable");
 
+        table.innerHTML = "";
 
+        if (data.success) {
 
-let studentData =
-await studentResponse.json();
+            const results =
+                data.results.filter(result => result.roll === roll);
 
+            if (results.length > 0) {
 
+                results.forEach(result => {
 
-if(!studentData.success){
-
-    alert("Student details not found");
-    return;
-
-}
-
-
-
-const roll =
-studentData.student.roll;
-
-
-
-
-// Get results
-
-let response =
-await fetch(
-`${RESULT_API}/student/${roll}`
-);
-
-
-
-let data =
-await response.json();
-
-
-
-const table =
-document.getElementById("resultTable");
-
-
-
-table.innerHTML="";
-
-
-
-if(data.success && data.results.length>0){
-
-
-
-data.results.forEach(result=>{
-
-
-table.innerHTML += `
+                    table.innerHTML += `
 
 <tr>
 
@@ -119,17 +92,13 @@ table.innerHTML += `
 
 `;
 
+                });
 
+            }
 
-});
+            else {
 
-
-}
-
-else{
-
-
-table.innerHTML=`
+                table.innerHTML = `
 
 <tr>
 
@@ -143,18 +112,16 @@ No Results Found
 
 `;
 
-}
+            }
 
+        }
 
+    }
 
-}
+    catch (error) {
 
+        console.log("Result Error:", error);
 
-catch(error){
-
-console.log(error);
-
-}
-
+    }
 
 }
