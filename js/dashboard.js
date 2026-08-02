@@ -359,6 +359,7 @@ loadStudents();
 
 
 // =====================================================
+// =====================================================
 // LOAD ATTENDANCE
 // =====================================================
 
@@ -370,7 +371,8 @@ try{
 
 
 const response =
-fetch(`${API}/attendance/student/${studentRoll}`)
+await fetch(`${API}/attendance`);
+
 
 
 const data =
@@ -385,13 +387,9 @@ data
 
 
 
-
-
 let present = 0;
 
 let absent = 0;
-
-
 
 
 
@@ -401,7 +399,7 @@ if(data.attendance){
 data.attendance.forEach(item=>{
 
 
-if(item.status==="Present"){
+if(item.status === "Present"){
 
 
 present++;
@@ -409,7 +407,7 @@ present++;
 
 }
 
-else{
+else if(item.status === "Absent"){
 
 
 absent++;
@@ -427,56 +425,7 @@ absent++;
 
 
 
-let total =
-present + absent;
-
-
-
-let percentage = 0;
-
-
-
-if(total>0){
-
-
-percentage =
-Math.round(
-(present / total) * 100
-);
-
-
-}
-
-
-
-
-
-// Attendance Percentage Card
-
-
-const attendanceCard =
-document.getElementById(
-"attendancePercentage"
-);
-
-
-
-if(attendanceCard){
-
-
-attendanceCard.innerHTML =
-percentage+"%";
-
-
-}
-
-
-
-
-
-
-// Present Today Card
-
+// Update Present Students Card
 
 const presentCard =
 document.getElementById(
@@ -498,6 +447,8 @@ present;
 
 
 
+// Create Attendance Chart
+
 createAttendanceChart(
 present,
 absent
@@ -509,12 +460,12 @@ absent
 
 
 
-catch(err){
+catch(error){
 
 
 console.log(
 "Attendance Error:",
-err
+error
 );
 
 
@@ -527,12 +478,6 @@ err
 
 
 loadAttendance();
-
-
-
-
-
-
 
 
 // =====================================================
