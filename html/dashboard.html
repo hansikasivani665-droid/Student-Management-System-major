@@ -7,44 +7,78 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Student Management System | Admin Dashboard</title>
+
+<title>
+Student Management System | Admin Dashboard
+</title>
+
 
 <link rel="stylesheet" href="../css/dashboard.css">
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
+
 </head>
+
+
 
 <body>
 
+
+
 <div class="container">
 
-<!-- ===================== SIDEBAR ===================== -->
+
+
+<!-- =================================================
+SIDEBAR
+================================================= -->
+
 
 <aside class="sidebar">
 
+
+
 <div class="logo">
+
 
 <i class="fa-solid fa-graduation-cap"></i>
 
+
 <div>
 
-<h2>SMS</h2>
+<h2>
+SMS
+</h2>
 
-<p>Enterprise ERP</p>
+
+<p>
+Enterprise ERP
+</p>
+
 
 </div>
 
+
 </div>
+
+
+
+
 
 <ul>
+
+
 
 <li class="active">
 
@@ -52,11 +86,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-house"></i>
 
-<span>Dashboard</span>
+<span>
+Dashboard
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -64,11 +104,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-users"></i>
 
-<span>Students</span>
+<span>
+Students
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -76,11 +122,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-user-plus"></i>
 
-<span>Add Student</span>
+<span>
+Add Student
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -88,11 +140,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-calendar-check"></i>
 
-<span>Attendance</span>
+<span>
+Attendance
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -100,11 +158,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-square-poll-vertical"></i>
 
-<span>Results</span>
+<span>
+Results
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -112,11 +176,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-chalkboard-user"></i>
 
-<span>Teachers</span>
+<span>
+Teachers
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -124,11 +194,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-gear"></i>
 
-<span>Settings</span>
+<span>
+Settings
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -136,11 +212,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-user-tie"></i>
 
-<span>Profile</span>
+<span>
+Profile
+</span>
 
 </a>
 
 </li>
+
+
+
+
 
 <li>
 
@@ -148,25 +230,49 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
-<span>Logout</span>
+<span>
+Logout
+</span>
 
 </a>
 
 </li>
 
+
+
 </ul>
+
+
 
 </aside>
 
-<!-- ===================== MAIN CONTENT ===================== -->
+
+
+
+
+<!-- =================================================
+MAIN CONTENT
+================================================= -->
+
 
 <main class="main-content">
 
+
+
+
+
 <header class="top-header">
+
+
 
 <div>
 
-<h1>Dashboard</h1>
+
+<h1>
+Dashboard
+</h1>
+
+
 
 <p id="welcomeMessage">
 
@@ -174,49 +280,103 @@ Welcome back Administrator 👋
 
 </p>
 
+
 </div>
+
+
+
+
+
+
 
 <div class="header-right">
 
+
+
+
+
 <div class="header-box">
+
 
 <i class="fa-solid fa-calendar-days"></i>
 
-<span id="currentDate"></span>
+
+<span id="currentDate">
+
+</span>
+
 
 </div>
+
+
+
+
 
 <div class="header-box">
 
+
 <i class="fa-solid fa-clock"></i>
 
-<span id="currentTime"></span>
+
+<span id="currentTime">
+
+</span>
+
 
 </div>
+
+
+
+
+
 
 <div class="profile-box">
 
+
 <i class="fa-solid fa-user-circle"></i>
+
+
 
 <div>
 
-<h4>Hansika Sivani</h4>
 
-<p>Administrator</p>
+<h4>
+Hansika Sivani
+</h4>
+
+
+<p>
+Administrator
+</p>
+
 
 </div>
 
-</div>
+
 
 </div>
+
+
+
+
+
+</div>
+
+
 
 </header>
 
-<!-- ===================== CARDS ===================== -->
+<!-- =================================================
+MAIN DASHBOARD CARDS
+================================================= -->
+
 
 <section class="cards">
 
+
+
 <div class="card blue">
+
 
 <div class="icon">
 
@@ -224,17 +384,30 @@ Welcome back Administrator 👋
 
 </div>
 
+
 <div>
 
-<h4>Total Students</h4>
+<h4>
+Total Students
+</h4>
 
-<h2 id="totalStudents">0</h2>
+
+<h2 id="totalStudents">
+0
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
 
 <div class="card green">
+
 
 <div class="icon">
 
@@ -242,17 +415,31 @@ Welcome back Administrator 👋
 
 </div>
 
+
 <div>
 
-<h4>Attendance</h4>
+<h4>
+Attendance
+</h4>
 
-<h2 id="attendancePercentage">0%</h2>
+
+<h2 id="attendancePercentage">
+0%
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
+
 
 <div class="card orange">
+
 
 <div class="icon">
 
@@ -260,17 +447,31 @@ Welcome back Administrator 👋
 
 </div>
 
+
 <div>
 
-<h4>Average Marks</h4>
+<h4>
+Average Marks
+</h4>
 
-<h2 id="averageMarks">0%</h2>
+
+<h2 id="averageMarks">
+0%
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
+
 
 <div class="card purple">
+
 
 <div class="icon">
 
@@ -278,17 +479,31 @@ Welcome back Administrator 👋
 
 </div>
 
+
 <div>
 
-<h4>Pass Percentage</h4>
+<h4>
+Pass Percentage
+</h4>
 
-<h2 id="passPercentage">0%</h2>
+
+<h2 id="passPercentage">
+0%
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
+
 
 <div class="card red">
+
 
 <div class="icon">
 
@@ -296,17 +511,31 @@ Welcome back Administrator 👋
 
 </div>
 
+
 <div>
 
-<h4>Departments</h4>
+<h4>
+Departments
+</h4>
 
-<h2 id="totalDepartments">0</h2>
+
+<h2 id="totalDepartments">
+0
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
+
 
 <div class="card cyan">
+
 
 <div class="icon">
 
@@ -314,470 +543,1183 @@ Welcome back Administrator 👋
 
 </div>
 
-<div>
-
-<h4>Results Published</h4>
-
-<h2 id="resultsCount">0</h2>
-
-</div>
-
-</div>
-
-<div class="card dark">
-
-<div class="icon">
-
-<i class="fa-solid fa-user-clock"></i>
-
-</div>
 
 <div>
 
-<h4>Latest Student</h4>
+<h4>
+Results Published
+</h4>
 
-<h2 id="latestStudent">Loading...</h2>
+
+<h2 id="resultsCount">
+0
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
+
+
 
 <div class="card yellow">
 
+
 <div class="icon">
 
-<i class="fa-solid fa-circle-check"></i>
+<i class="fa-solid fa-user-check"></i>
 
 </div>
+
 
 <div>
 
-<h4>Present Today</h4>
+<h4>
+Present Today
+</h4>
 
-<h2 id="presentStudents">0</h2>
+
+<h2 id="presentStudents">
+0
+</h2>
+
 
 </div>
 
+
 </div>
+
+
+
+
 
 </section>
 
-<!-- ===================== QUICK ACTIONS ===================== -->
+
+
+
+
+
+
+
+
+<!-- =================================================
+DEPARTMENT ANALYTICS
+================================================= -->
+
+
+<section class="department-section">
+
+
+
+<h2>
+
+<i class="fa-solid fa-building-columns"></i>
+
+Department Performance
+
+</h2>
+
+
+
+
+
+<div class="department-cards">
+
+
+
+
+
+
+<!-- CSE -->
+
+<div class="dept-card">
+
+
+<h3>
+CSE
+</h3>
+
+
+
+<div class="dept-row">
+
+<span>
+Students
+</span>
+
+<b id="cseStudents">
+0
+</b>
+
+</div>
+
+
+
+
+
+<div class="dept-row">
+
+<span>
+Present
+</span>
+
+<b id="csePresent">
+0
+</b>
+
+</div>
+
+
+
+
+
+<div class="dept-row">
+
+<span>
+Absent
+</span>
+
+<b id="cseAbsent">
+0
+</b>
+
+</div>
+
+
+
+
+
+<div class="dept-row">
+
+<span>
+Attendance
+</span>
+
+<b id="cseAttendance">
+0%
+</b>
+
+</div>
+
+
+
+
+
+<div class="dept-row">
+
+<span>
+Results
+</span>
+
+<b id="cseResults">
+0
+</b>
+
+</div>
+
+
+
+
+
+<div class="dept-row">
+
+<span>
+Average Marks
+</span>
+
+<b id="cseAverage">
+0
+</b>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ECE -->
+
+<div class="dept-card">
+
+
+<h3>
+ECE
+</h3>
+
+
+
+<div class="dept-row">
+
+<span>
+Students
+</span>
+
+<b id="eceStudents">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Present
+</span>
+
+<b id="ecePresent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Absent
+</span>
+
+<b id="eceAbsent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Attendance
+</span>
+
+<b id="eceAttendance">
+0%
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Results
+</span>
+
+<b id="eceResults">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Average Marks
+</span>
+
+<b id="eceAverage">
+0
+</b>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- EEE -->
+
+<div class="dept-card">
+
+
+<h3>
+EEE
+</h3>
+
+
+
+<div class="dept-row">
+
+<span>
+Students
+</span>
+
+<b id="eeeStudents">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Present
+</span>
+
+<b id="eeePresent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Absent
+</span>
+
+<b id="eeeAbsent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Attendance
+</span>
+
+<b id="eeeAttendance">
+0%
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Results
+</span>
+
+<b id="eeeResults">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Average Marks
+</span>
+
+<b id="eeeAverage">
+0
+</b>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- MECHANICAL -->
+
+<div class="dept-card">
+
+
+<h3>
+Mechanical
+</h3>
+
+
+
+<div class="dept-row">
+
+<span>
+Students
+</span>
+
+<b id="mechStudents">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Present
+</span>
+
+<b id="mechPresent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Absent
+</span>
+
+<b id="mechAbsent">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Attendance
+</span>
+
+<b id="mechAttendance">
+0%
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Results
+</span>
+
+<b id="mechResults">
+0
+</b>
+
+</div>
+
+
+
+
+<div class="dept-row">
+
+<span>
+Average Marks
+</span>
+
+<b id="mechAverage">
+0
+</b>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+</section>
+
+<!-- =================================================
+QUICK ACTIONS
+================================================= -->
+
 
 <section class="quick-actions">
 
-<h2>Quick Actions</h2>
+
+<h2>
+Quick Actions
+</h2>
+
+
 
 <div class="quick-grid">
+
+
 
 <a href="/html/add-student.html" class="action">
 
 <i class="fa-solid fa-user-plus"></i>
 
-<span>Add Student</span>
+<span>
+Add Student
+</span>
 
 </a>
+
+
+
+
 
 <a href="/html/student-list.html" class="action">
 
 <i class="fa-solid fa-users"></i>
 
-<span>Student List</span>
+<span>
+Student List
+</span>
 
 </a>
+
+
+
+
 
 <a href="/html/attendance.html" class="action">
 
 <i class="fa-solid fa-calendar-check"></i>
 
-<span>Attendance</span>
+<span>
+Attendance
+</span>
 
 </a>
+
+
+
+
 
 <a href="/html/results.html" class="action">
 
 <i class="fa-solid fa-chart-column"></i>
 
-<span>Results</span>
+<span>
+Results
+</span>
 
 </a>
+
+
+
+
 
 <a href="/html/manage-teachers.html" class="action">
 
 <i class="fa-solid fa-chalkboard-user"></i>
 
-<span>Teachers</span>
+<span>
+Teachers
+</span>
 
 </a>
 
-<a href="/html/settings.html" class="action">
 
-<i class="fa-solid fa-gear"></i>
 
-<span>Settings</span>
 
-</a>
 
 </div>
 
+
 </section>
 
-<!-- ===================== DASHBOARD CONTENT ===================== -->
+
+
+
+
+
+
+<!-- =================================================
+CHART SECTION
+================================================= -->
+
 
 <section class="dashboard-grid">
 
-    <!-- ================= Charts ================= -->
 
-    
+<div class="panel">
 
-        <div class="panel-header">
 
-            <h2>
-                <i class="fa-solid fa-chart-simple"></i>
-                Student Statistics
-            </h2>
+<div class="panel-header">
 
-        </div>
+<h2>
 
-        <canvas id="studentChart"></canvas>
+<i class="fa-solid fa-chart-simple"></i>
 
-    
+Result Analysis
 
-    <div class="panel large-panel">
-
-        <div class="panel-header">
-
-            <h2>
-                <i class="fa-solid fa-chart-pie"></i>
-                Attendance Overview
-            </h2>
-
-        </div>
-
-        <canvas id="attendanceChart"></canvas>
-
-    </div>
-
-</section>
-
-<!-- ================= RECENT STUDENTS ================= -->
-
-<section class="panel">
-
-    <div class="panel-header">
-
-        <h2>
-
-            <i class="fa-solid fa-users"></i>
-
-            Recent Students
-
-        </h2>
-
-    </div>
-
-    <table class="table">
-
-        <thead>
-
-            <tr>
-
-                <th>Name</th>
-
-                <th>Roll No</th>
-
-                <th>Department</th>
-
-                <th>Year</th>
-
-                <th>Status</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody id="recentStudentTable">
-
-            <tr>
-
-                <td colspan="5">
-
-                    Loading Students...
-
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</section>
-
-<!-- ================= LOWER PANELS ================= -->
-
-<section class="bottom-panels">
-
-    <!-- Notifications -->
-
-    <div class="panel">
-
-        <div class="panel-header">
-
-            <h2>
-
-                <i class="fa-solid fa-bell"></i>
-
-                Notifications
-
-            </h2>
-
-        </div>
-
-        <ul class="notification-list">
-
-            <li>
-
-                <i class="fa-solid fa-circle-check"></i>
-
-                Attendance Updated Successfully
-
-            </li>
-
-            <li>
-
-                <i class="fa-solid fa-user-plus"></i>
-
-                New Student Registration
-
-            </li>
-
-            <li>
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                Results Published
-
-            </li>
-
-            <li>
-
-                <i class="fa-solid fa-envelope"></i>
-
-                Welcome Administrator
-
-            </li>
-
-        </ul>
-
-    </div>
-
-    <!-- Administrator -->
-
-    <div class="panel">
-
-        <div class="panel-header">
-
-            <h2>
-
-                <i class="fa-solid fa-user-shield"></i>
-
-                Administrator
-
-            </h2>
-
-        </div>
-
-        <div class="admin-card">
-
-            <div class="admin-avatar">
-
-                <i class="fa-solid fa-user-tie"></i>
-
-            </div>
-
-            <h3>
-
-                Hansika Sivani
-
-            </h3>
-
-            <p>
-
-                System Administrator
-
-            </p>
-
-            <span class="badge">
-
-                Active
-
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= RECENT ACTIVITIES ================= -->
-
-<section class="panel">
-
-    <div class="panel-header">
-
-        <h2>
-
-            <i class="fa-solid fa-clock-rotate-left"></i>
-
-            Recent Activities
-
-        </h2>
-
-    </div>
-
-    <table class="table">
-
-        <thead>
-
-            <tr>
-
-                <th>Date</th>
-
-                <th>Activity</th>
-
-                <th>Status</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <tr>
-
-                <td>Today</td>
-
-                <td>Student Registration</td>
-
-                <td>
-
-                    <span class="success">
-
-                        Completed
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>Today</td>
-
-                <td>Attendance Updated</td>
-
-                <td>
-
-                    <span class="success">
-
-                        Completed
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>Yesterday</td>
-
-                <td>Results Published</td>
-
-                <td>
-
-                    <span class="success">
-
-                        Completed
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>Yesterday</td>
-
-                <td>Database Backup</td>
-
-                <td>
-
-                    <span class="pending">
-
-                        Pending
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</section>
-
-<!-- ================= FOOTER ================= -->
-
-<footer>
-
-    <div>
-
-        <h3>
-
-            Student Management System
-
-        </h3>
-
-        <p>
-
-            Enterprise Edition v2.0
-
-        </p>
-
-    </div>
-
-    <div>
-
-        <p>
-
-            Developed by <strong>Hansika Sivani</strong>
-
-        </p>
-
-        <p>
-
-            © 2026 All Rights Reserved
-
-        </p>
-
-    </div>
-
-</footer>
-
-</main>
+</h2>
 
 </div>
 
+
+<canvas id="studentChart"></canvas>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="panel large-panel">
+
+
+<div class="panel-header">
+
+<h2>
+
+<i class="fa-solid fa-chart-pie"></i>
+
+Attendance Overview
+
+</h2>
+
+</div>
+
+
+
+<canvas id="attendanceChart"></canvas>
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- =================================================
+RECENT STUDENTS
+================================================= -->
+
+
+<section class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>
+
+<i class="fa-solid fa-users"></i>
+
+Recent Students
+
+</h2>
+
+
+
+</div>
+
+
+
+
+
+<table class="table">
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+Name
+</th>
+
+
+<th>
+Roll No
+</th>
+
+
+<th>
+Department
+</th>
+
+
+<th>
+Year
+</th>
+
+
+<th>
+Status
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="recentStudentTable">
+
+
+<tr>
+
+<td colspan="5">
+
+Loading Students...
+
+</td>
+
+</tr>
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- =================================================
+LOWER PANELS
+================================================= -->
+
+
+<section class="bottom-panels">
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>
+
+<i class="fa-solid fa-bell"></i>
+
+Notifications
+
+</h2>
+
+
+
+</div>
+
+
+
+
+<ul class="notification-list">
+
+
+<li>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Attendance Updated Successfully
+
+</li>
+
+
+<li>
+
+<i class="fa-solid fa-user-plus"></i>
+
+New Student Added
+
+</li>
+
+
+
+<li>
+
+<i class="fa-solid fa-chart-line"></i>
+
+Results Published
+
+</li>
+
+
+</ul>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>
+
+<i class="fa-solid fa-user-shield"></i>
+
+Administrator
+
+</h2>
+
+
+</div>
+
+
+
+
+
+<div class="admin-card">
+
+
+<div class="admin-avatar">
+
+<i class="fa-solid fa-user-tie"></i>
+
+</div>
+
+
+
+<h3>
+Hansika Sivani
+</h3>
+
+
+<p>
+System Administrator
+</p>
+
+
+
+<span class="badge">
+Active
+</span>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- =================================================
+ACTIVITY TABLE
+================================================= -->
+
+
+<section class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+Recent Activities
+
+</h2>
+
+
+</div>
+
+
+
+
+<table class="table">
+
+
+<thead>
+
+<tr>
+
+<th>
+Date
+</th>
+
+
+<th>
+Activity
+</th>
+
+
+<th>
+Status
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody>
+
+
+
+<tr>
+
+<td>
+Today
+</td>
+
+
+<td>
+Student Registration
+</td>
+
+
+<td>
+
+<span class="success">
+Completed
+</span>
+
+</td>
+
+
+</tr>
+
+
+
+
+
+<tr>
+
+<td>
+Today
+</td>
+
+
+<td>
+Attendance Updated
+</td>
+
+
+<td>
+
+<span class="success">
+Completed
+</span>
+
+</td>
+
+
+</tr>
+
+
+
+
+
+
+<tr>
+
+<td>
+Today
+</td>
+
+
+<td>
+Results Published
+</td>
+
+
+<td>
+
+<span class="success">
+Completed
+</span>
+
+</td>
+
+
+</tr>
+
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- =================================================
+FOOTER
+================================================= -->
+
+
+<footer>
+
+
+
+<div>
+
+<h3>
+Student Management System
+</h3>
+
+
+<p>
+Enterprise Edition v2.0
+</p>
+
+
+</div>
+
+
+
+
+
+<div>
+
+
+<p>
+Developed by <strong>Hansika Sivani</strong>
+</p>
+
+
+<p>
+© 2026 All Rights Reserved
+</p>
+
+
+
+</div>
+
+
+
+
+</footer>
+
+
+
+
+
+
+</main>
+
+
+
+</div>
+
+
+
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <script src="../js/dashboard.js"></script>
 
+
+
+
 </body>
+
 
 </html>

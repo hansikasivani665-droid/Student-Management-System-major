@@ -1,16 +1,24 @@
 // ======================================
-// Teacher Dashboard
+// STUDENT MANAGEMENT SYSTEM
+// TEACHER DASHBOARD
 // ======================================
 
-console.log("Teacher Dashboard Loaded");
+
+console.log(
+"Teacher Dashboard Loaded"
+);
+
 
 
 // ======================================
 // API
 // ======================================
 
+
 const API =
 "https://student-management-system-major-1.onrender.com";
+
+
 
 
 
@@ -18,22 +26,30 @@ const API =
 // LOGIN CHECK
 // ======================================
 
-if(localStorage.getItem("loggedIn") !== "true"){
 
-    location.href="login.html";
+if(
+localStorage.getItem("loggedIn") !== "true"
+){
+
+location.href="login.html";
 
 }
 
 
 
+
+
+
 // ======================================
-// GET TEACHER DATA
+// GET TEACHER DETAILS
 // ======================================
+
 
 const teacher =
 JSON.parse(
 localStorage.getItem("teacher")
 );
+
 
 
 let teacherId="";
@@ -45,26 +61,46 @@ let teacherSubject="";
 if(teacher){
 
 
-    teacherId =
-    teacher.teacherId;
+teacherId =
+teacher.teacherId;
 
 
-    teacherDepartment =
-    teacher.department;
+
+teacherDepartment =
+teacher.department;
 
 
-    teacherSubject =
-    teacher.subject;
+
+teacherSubject =
+teacher.subject;
+
 
 
 }
 
 
 
-console.log("Teacher Data:",teacher);
-console.log("Teacher ID:",teacherId);
-console.log("Department:",teacherDepartment);
-console.log("Subject:",teacherSubject);
+console.log(
+"Teacher:",
+teacher
+);
+
+
+
+console.log(
+"Department:",
+teacherDepartment
+);
+
+
+
+console.log(
+"Subject:",
+teacherSubject
+);
+
+
+
 
 
 
@@ -73,10 +109,9 @@ console.log("Subject:",teacherSubject);
 // PAGE LOAD
 // ======================================
 
+
 document.addEventListener(
-
 "DOMContentLoaded",
-
 ()=>{
 
 
@@ -84,6 +119,7 @@ loadTeacherDashboard();
 
 
 showDateTime();
+
 
 
 setInterval(
@@ -94,18 +130,16 @@ showDateTime,
 
 
 const logout =
-document.getElementById("logout");
+document.getElementById(
+"logout"
+);
 
 
 
 if(logout){
 
 
-logout.addEventListener(
-
-"click",
-
-()=>{
+logout.onclick=()=>{
 
 
 localStorage.clear();
@@ -116,9 +150,7 @@ sessionStorage.clear();
 location.href="login.html";
 
 
-}
-
-);
+};
 
 
 }
@@ -128,6 +160,10 @@ location.href="login.html";
 }
 
 );
+
+
+
+
 
 
 
@@ -136,12 +172,8 @@ location.href="login.html";
 // DATE TIME
 // ======================================
 
+
 function showDateTime(){
-
-
-const d =
-new Date();
-
 
 
 const date =
@@ -158,12 +190,16 @@ document.getElementById(
 
 
 
+const now =
+new Date();
+
+
+
 if(date){
 
 
 date.innerHTML =
-
-d.toLocaleDateString(
+now.toLocaleDateString(
 "en-IN",
 {
 
@@ -188,14 +224,15 @@ if(time){
 
 
 time.innerHTML =
-d.toLocaleTimeString();
+now.toLocaleTimeString();
+
+}
 
 
 }
 
 
 
-}
 
 
 
@@ -206,11 +243,13 @@ d.toLocaleTimeString();
 // LOAD DASHBOARD
 // ======================================
 
+
 async function loadTeacherDashboard(){
 
 
 
 try{
+
 
 
 // ======================================
@@ -219,56 +258,44 @@ try{
 
 
 const studentResponse =
-
 await fetch(
-
-`${API}/students?department=${teacherDepartment}`
-
+`${API}/students`
 );
 
 
 
 const studentData =
-
 await studentResponse.json();
 
 
 
-let students=[];
+let students =
+studentData.students || [];
 
 
 
-if(studentData.success){
+
+
+// FILTER DEPARTMENT
 
 
 students =
-studentData.students;
-
-
-}
-
-
-
-const totalStudents =
-students.length;
-
-
-
-const totalElement =
-document.getElementById(
-"totalStudents"
+students.filter(
+student =>
+student.department === teacherDepartment
 );
 
 
 
-if(totalElement){
 
 
-totalElement.innerHTML =
-totalStudents;
+
+update(
+"totalStudents",
+students.length
+);
 
 
-}
 
 
 
@@ -282,34 +309,31 @@ totalStudents;
 
 
 const resultResponse =
-
 await fetch(
-
 `${API}/results`
-
 );
 
 
 
 const resultData =
-
 await resultResponse.json();
 
 
 
-let results=[];
+let results =
+resultData.results || [];
 
 
 
-if(resultData.success){
+
+
+
+// FILTER SUBJECT + DEPARTMENT
 
 
 results =
-
-resultData.results.filter(
-
+results.filter(
 result =>
-
 
 result.department === teacherDepartment
 
@@ -317,11 +341,9 @@ result.department === teacherDepartment
 
 result.subject === teacherSubject
 
-
 );
 
 
-}
 
 
 
@@ -335,45 +357,37 @@ results
 
 
 
-const resultCount =
 
-document.getElementById(
-"resultsCount"
+update(
+"resultsCount",
+results.length
 );
 
 
 
-if(resultCount){
 
 
-resultCount.innerHTML =
-results.length;
-
-
-}
-
-
-
-let totalMarks=0;
+let marks=0;
 
 let pass=0;
 
 
 
-results.forEach(result=>{
+
+results.forEach(
+result=>{
 
 
-totalMarks +=
-
+marks +=
 Number(result.marks);
 
 
 
-if(result.status==="Pass"){
-
+if(
+result.status==="Pass"
+){
 
 pass++;
-
 
 }
 
@@ -386,28 +400,31 @@ pass++;
 
 const average =
 
-results.length > 0
+results.length
 
 ?
 
-(totalMarks/results.length)
-.toFixed(2)
+(
+marks/results.length
+).toFixed(2)
 
 :
 
 0;
+
 
 
 
 
 const passPercentage =
 
-results.length > 0
+results.length
 
 ?
 
-((pass/results.length)*100)
-.toFixed(0)
+Math.round(
+(pass/results.length)*100
+)
 
 :
 
@@ -417,43 +434,18 @@ results.length > 0
 
 
 
-const averageElement =
-
-document.getElementById(
-"averageMarks"
+update(
+"averageMarks",
+average+"%"
 );
 
 
 
-if(averageElement){
-
-
-averageElement.innerHTML =
-average+"%";
-
-
-}
-
-
-
-
-
-const passElement =
-
-document.getElementById(
-"passPercentage"
+update(
+"passPercentage",
+passPercentage+"%"
 );
 
-
-
-if(passElement){
-
-
-passElement.innerHTML =
-passPercentage+"%";
-
-
-}
 
 
 
@@ -468,42 +460,45 @@ passPercentage+"%";
 
 
 const attendanceResponse =
-
 await fetch(
-
 `${API}/attendance`
-
 );
 
 
 
 const attendanceData =
-
 await attendanceResponse.json();
 
 
 
-let attendance=[];
+let attendance =
+attendanceData.attendance || [];
 
 
 
-if(attendanceData.success){
 
 
-attendance =
-
-attendanceData.attendance.filter(
-
-item =>
 
 
-item.department === teacherDepartment
+// FILTER DEPARTMENT STUDENTS
 
 
+const rolls =
+students.map(
+s=>s.roll
 );
 
 
-}
+
+
+
+attendance =
+attendance.filter(
+item =>
+rolls.includes(item.roll)
+);
+
+
 
 
 
@@ -516,87 +511,81 @@ attendance
 
 
 
+
+
+
 const present =
-
 attendance.filter(
-
-item =>
-
-item.status==="Present"
-
+a=>a.status==="Present"
 ).length;
+
 
 
 
 
 const absent =
-
 attendance.filter(
-
-item =>
-
-item.status==="Absent"
-
+a=>a.status==="Absent"
 ).length;
 
 
 
 
 
-const presentElement =
 
-document.getElementById(
-"presentStudents"
+update(
+"presentStudents",
+present
 );
 
 
 
-if(presentElement){
-
-
-presentElement.innerHTML =
-present;
-
-
-}
-
-
-
-
-
-const absentElement =
-
-document.getElementById(
-"absentStudents"
+update(
+"absentStudents",
+absent
 );
 
 
 
-if(absentElement){
 
 
-absentElement.innerHTML =
-absent;
+
+const percentage =
+
+attendance.length
+
+?
+
+Math.round(
+(present/attendance.length)*100
+)
+
+:
+
+0;
+
+
+
+
+update(
+"attendancePercentage",
+percentage+"%"
+);
+
+
+
+
+
 
 
 }
-
-
-
-
-
-}
-
 
 catch(error){
 
 
 console.error(
-
-"Dashboard Error:",
-
+"Teacher Dashboard Error",
 error
-
 );
 
 
@@ -605,6 +594,43 @@ error
 
 
 }
+
+
+
+
+
+
+
+// ======================================
+// UPDATE CARD
+// ======================================
+
+
+function update(
+id,
+value
+){
+
+
+const element =
+document.getElementById(id);
+
+
+
+if(element){
+
+
+element.innerHTML =
+value;
+
+
+}
+
+
+}
+
+
+
 
 
 
@@ -615,7 +641,6 @@ error
 
 
 setInterval(
-
 ()=>{
 
 
@@ -623,7 +648,5 @@ loadTeacherDashboard();
 
 
 },
-
 30000
-
 );

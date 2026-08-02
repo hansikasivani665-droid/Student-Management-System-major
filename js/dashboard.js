@@ -1,544 +1,868 @@
 // =====================================================
 // STUDENT MANAGEMENT SYSTEM
-// ADMIN DASHBOARD
+// ADMIN DASHBOARD JS
 // Developer : Hansika Sivani
 // =====================================================
 
-const API = "https://student-management-system-major-1.onrender.com";
 
-// ======================================
-// Chart Instances
-// ======================================
+const API =
+"https://student-management-system-major-1.onrender.com";
+
+
 
 let studentChartInstance = null;
+
 let attendanceChartInstance = null;
 
 
+
 // =====================================================
-// DATE & TIME
+// DATE TIME
 // =====================================================
 
-function updateDateTime() {
 
-    const now = new Date();
+function updateDateTime(){
 
-    const dateOptions = {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    };
 
-    const date = document.getElementById("currentDate");
-    const time = document.getElementById("currentTime");
+const now = new Date();
 
-    if (date) {
-        date.textContent =
-            now.toLocaleDateString("en-IN", dateOptions);
-    }
 
-    if (time) {
-        time.textContent =
-            now.toLocaleTimeString();
-    }
+const date =
+document.getElementById("currentDate");
+
+
+const time =
+document.getElementById("currentTime");
+
+
+
+if(date){
+
+date.innerHTML =
+now.toLocaleDateString(
+"en-IN",
+{
+weekday:"long",
+day:"numeric",
+month:"long",
+year:"numeric"
+}
+);
 
 }
 
-setInterval(updateDateTime, 1000);
+
+
+if(time){
+
+time.innerHTML =
+now.toLocaleTimeString();
+
+}
+
+
+
+}
+
+
+
+setInterval(
+updateDateTime,
+1000
+);
+
 
 updateDateTime();
 
 
+
+
 // =====================================================
-// LOAD DASHBOARD CARDS
+// LOAD DASHBOARD
 // =====================================================
 
-async function loadDashboard() {
 
-    try {
+async function loadDashboard(){
 
-        const response =
-            await fetch(`${API}/dashboard`);
 
-        const data =
-            await response.json();
+try{
 
-        console.log("Dashboard :", data);
 
-        if (!data.success) {
-            return;
-        }
+const studentResponse =
+await fetch(
+`${API}/students`
+);
 
-        const update = (id, value) => {
 
-            const element =
-                document.getElementById(id);
+const studentData =
+await studentResponse.json();
 
-            if (element) {
-                element.innerHTML = value;
-            }
 
-        };
 
-        update(
-            "totalStudents",
-            data.totalStudents
-        );
+const attendanceResponse =
+await fetch(
+`${API}/attendance`
+);
 
-        update(
-            "presentStudents",
-            data.presentStudents
-        );
 
-        update(
-            "attendancePercentage",
-            data.attendancePercentage + "%"
-        );
+const attendanceData =
+await attendanceResponse.json();
 
-        update(
-            "averageMarks",
-            data.averageMarks + "%"
-        );
 
-        update(
-            "passPercentage",
-            data.passPercentage + "%"
-        );
 
-        update(
-            "resultsCount",
-            data.resultsCount
-        );
 
-        update(
-            "totalDepartments",
-            data.totalDepartments
-        );
 
-        update(
-            "latestStudent",
-            data.latestStudent
-        );
+const resultResponse =
+await fetch(
+`${API}/results`
+);
 
-    }
 
-    catch (err) {
+const resultData =
+await resultResponse.json();
 
-        console.log(err);
 
-    }
+
+
+
+
+let students =
+studentData.students || [];
+
+
+
+let attendance =
+attendanceData.attendance || [];
+
+
+
+let results =
+resultData.results || [];
+
+
+
+
+
+console.log(
+"Students",
+students
+);
+
+
+console.log(
+"Attendance",
+attendance
+);
+
+
+console.log(
+"Results",
+results
+);
+
+
+
+
+
+// =====================================================
+// MAIN CARDS
+// =====================================================
+
+
+update(
+"totalStudents",
+students.length
+);
+
+
+
+const present =
+attendance.filter(
+a=>a.status==="Present"
+).length;
+
+
+
+const absent =
+attendance.filter(
+a=>a.status==="Absent"
+).length;
+
+
+
+const attendancePercentage =
+attendance.length
+?
+Math.round(
+(present/attendance.length)*100
+)
+:
+0;
+
+
+
+update(
+"presentStudents",
+present
+);
+
+
+
+update(
+"attendancePercentage",
+attendancePercentage+"%"
+);
+
+
+
+
+
+
+let totalMarks=0;
+
+let pass=0;
+
+
+
+results.forEach(r=>{
+
+
+totalMarks +=
+Number(r.marks);
+
+
+if(r.status==="Pass"){
+
+pass++;
 
 }
 
-loadDashboard();
+
+});
 
 
-// =====================================================
-// LOAD RECENT STUDENTS
-// =====================================================
 
-async function loadStudents() {
 
-    try {
+const average =
+results.length
+?
+(totalMarks/results.length).toFixed(2)
+:
+0;
 
-        const response =
-            await fetch(`${API}/students`);
 
-        const data =
-            await response.json();
 
-        console.log("Students:", data);
 
-        const tbody =
-            document.getElementById(
-                "recentStudentTable"
-            );
+const passPercentage =
+results.length
+?
+Math.round(
+(pass/results.length)*100
+)
+:
+0;
 
-        if (!tbody) {
-            return;
-        }
 
-        tbody.innerHTML = "";
 
-        if (
-            !data.students ||
-            data.students.length === 0
-        ) {
+update(
+"averageMarks",
+average+"%"
+);
 
-            tbody.innerHTML = `
-            <tr>
-                <td colspan="5">
-                    No Students Found
-                </td>
-            </tr>
-            `;
 
-            return;
 
-        }
+update(
+"passPercentage",
+passPercentage+"%"
+);
 
-        data.students
-            .slice(0, 5)
-            .forEach(student => {
 
-                tbody.innerHTML += `
 
-                <tr>
+update(
+"resultsCount",
+results.length
+);
 
-                    <td>${student.name}</td>
 
-                    <td>${student.roll}</td>
 
-                    <td>${student.department}</td>
 
-                    <td>${student.year}</td>
 
-                    <td>
+const departments =
+[
+...new Set(
+students.map(
+s=>s.department
+)
+)
+];
 
-                        <span class="success">
 
-                            Active
 
-                        </span>
+update(
+"totalDepartments",
+departments.length
+);
 
-                    </td>
 
-                </tr>
 
-                `;
+if(students.length){
 
-            });
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
+update(
+"latestStudent",
+students[students.length-1].name
+);
 
 }
 
-loadStudents();
+
+
+
 
 
 // =====================================================
-// LOAD ATTENDANCE
+// DEPARTMENT ANALYTICS
 // =====================================================
 
-async function loadAttendance() {
 
-    try {
+const deptNames =
+[
+"CSE",
+"ECE",
+"EEE",
+"Mechanical",
+"Civil"
+];
 
-        const response =
-            await fetch(`${API}/dashboard`);
 
-        const data =
-            await response.json();
 
-        console.log(
-            "Attendance Dashboard:",
-            data
-        );
+deptNames.forEach(
+dept=>{
 
-        if (!data.success) {
-            return;
-        }
 
-        createAttendanceChart(
-            data.presentStudents,
-            data.absentStudents
-        );
+const deptStudents =
+students.filter(
+s=>s.department===dept
+);
 
-    }
 
-    catch (error) {
 
-        console.log(
-            "Attendance Error:",
-            error
-        );
+const deptRolls =
+deptStudents.map(
+s=>s.roll
+);
 
-    }
+
+
+
+const deptAttendance =
+attendance.filter(
+a=>
+deptRolls.includes(a.roll)
+);
+
+
+
+
+const deptResults =
+results.filter(
+r=>
+deptRolls.includes(r.roll)
+);
+
+
+
+
+
+const deptPresent =
+deptAttendance.filter(
+a=>a.status==="Present"
+).length;
+
+
+
+
+const deptAbsent =
+deptAttendance.filter(
+a=>a.status==="Absent"
+).length;
+
+
+
+
+const deptPercentage =
+deptAttendance.length
+?
+Math.round(
+(deptPresent/deptAttendance.length)*100
+)
+:
+0;
+
+
+
+
+
+let marks=0;
+
+let deptPass=0;
+
+
+
+deptResults.forEach(r=>{
+
+
+marks += Number(r.marks);
+
+
+
+if(r.status==="Pass"){
+
+deptPass++;
 
 }
 
-loadAttendance();
 
-// =====================================================
-// LOAD RESULTS
-// =====================================================
+});
 
-async function loadResults() {
 
-    try {
 
-        const response = await fetch(`${API}/results`);
-        const data = await response.json();
 
-        console.log("Results :", data);
+const deptAverage =
+deptResults.length
+?
+(marks/deptResults.length).toFixed(2)
+:
+0;
 
-        if (!data.success) return;
 
-        let pass = 0;
-        let fail = 0;
 
-        data.results.forEach(result => {
 
-            if (result.status === "Pass") {
-                pass++;
-            } else {
-                fail++;
-            }
+let id =
+dept
+.toLowerCase()
+.replace("mechanical","mech");
 
-        });
 
-        createStudentChart(pass, fail);
 
-    }
 
-    catch (err) {
+update(
+`${id}Students`,
+deptStudents.length
+);
 
-        console.log(err);
 
-    }
+
+update(
+`${id}Present`,
+deptPresent
+);
+
+
+
+update(
+`${id}Absent`,
+deptAbsent
+);
+
+
+
+update(
+`${id}Attendance`,
+deptPercentage+"%"
+);
+
+
+
+update(
+`${id}Results`,
+deptResults.length
+);
+
+
+
+update(
+`${id}Average`,
+deptAverage
+);
+
+
+
+});
+
+
+
+
+
+createAttendanceChart(
+present,
+absent
+);
+
+
+
+createStudentChart(
+pass,
+results.length-pass
+);
+
+
+
+
+
+}
+
+catch(error){
+
+
+console.log(
+"Dashboard Error",
+error
+);
+
 
 }
 
-loadResults();
 
-
-// =====================================================
-// STUDENT RESULT CHART
-// =====================================================
-
-function createStudentChart(pass, fail) {
-
-    const canvas = document.getElementById("studentChart");
-
-    if (!canvas) return;
-
-    if (studentChartInstance) {
-        studentChartInstance.destroy();
-    }
-
-    studentChartInstance = new Chart(canvas, {
-
-        type: "bar",
-
-        data: {
-
-            labels: ["Pass", "Fail"],
-
-            datasets: [{
-
-                label: "Students",
-
-                data: [pass, fail],
-
-                backgroundColor: [
-                    "#16a34a",
-                    "#dc2626"
-                ],
-
-                borderRadius: 10
-
-            }]
-
-        },
-
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            plugins: {
-
-                legend: {
-
-                    display: false
-
-                }
-
-            },
-
-            scales: {
-
-                y: {
-
-                    beginAtZero: true
-
-                }
-
-            }
-
-        }
-
-    });
 
 }
+
+
+
+
+
+// =====================================================
+// UPDATE ELEMENT
+// =====================================================
+
+
+function update(id,value){
+
+
+const element =
+document.getElementById(id);
+
+
+
+if(element){
+
+element.innerHTML=value;
+
+}
+
+
+}
+
+
+
+
+
+// =====================================================
+// RECENT STUDENTS
+// =====================================================
+
+
+async function loadStudents(){
+
+
+try{
+
+
+const response =
+await fetch(
+`${API}/students`
+);
+
+
+const data =
+await response.json();
+
+
+
+const table =
+document.getElementById(
+"recentStudentTable"
+);
+
+
+
+if(!table)return;
+
+
+
+table.innerHTML="";
+
+
+
+data.students
+.slice(0,5)
+.forEach(
+student=>{
+
+
+table.innerHTML +=`
+
+<tr>
+
+<td>${student.name}</td>
+
+<td>${student.roll}</td>
+
+<td>${student.department}</td>
+
+<td>${student.year}</td>
+
+<td>
+
+<span class="success">
+Active
+</span>
+
+</td>
+
+
+</tr>
+
+`;
+
+
+});
+
+
+}
+
+
+catch(error){
+
+console.log(error);
+
+}
+
+
+}
+
+
+
+
+
+
+
+// =====================================================
+// RESULT CHART
+// =====================================================
+
+
+function createStudentChart(pass,fail){
+
+
+const canvas =
+document.getElementById(
+"studentChart"
+);
+
+
+if(!canvas)return;
+
+
+
+if(studentChartInstance){
+
+studentChartInstance.destroy();
+
+}
+
+
+
+
+studentChartInstance =
+new Chart(
+canvas,
+{
+
+type:"bar",
+
+
+data:{
+
+labels:[
+"Pass",
+"Fail"
+],
+
+
+datasets:[{
+
+data:[
+pass,
+fail
+]
+
+}]
+
+},
+
+
+options:{
+
+responsive:true
+
+}
+
+
+});
+
+
+}
+
+
+
+
+
+
 
 
 // =====================================================
 // ATTENDANCE CHART
 // =====================================================
 
-function createAttendanceChart(present, absent) {
 
-    const canvas = document.getElementById("attendanceChart");
+function createAttendanceChart(
+present,
+absent
+){
 
-    if (!canvas) return;
 
-    if (attendanceChartInstance) {
-        attendanceChartInstance.destroy();
-    }
+const canvas =
+document.getElementById(
+"attendanceChart"
+);
 
-    attendanceChartInstance = new Chart(canvas, {
 
-        type: "doughnut",
 
-        data: {
+if(!canvas)return;
 
-            labels: ["Present", "Absent"],
 
-            datasets: [{
 
-                data: [present, absent],
 
-                backgroundColor: [
-                    "#16a34a",
-                    "#dc2626"
-                ],
+if(attendanceChartInstance){
 
-                borderWidth: 1
-
-            }]
-
-        },
-
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            plugins: {
-
-                legend: {
-
-                    position: "bottom"
-
-                }
-
-            }
-
-        }
-
-    });
+attendanceChartInstance.destroy();
 
 }
 
 
-// =====================================================
-// CARD ANIMATION
-// =====================================================
-
-function animateCards() {
-
-    const cards = document.querySelectorAll(".card");
-
-    cards.forEach((card, index) => {
-
-        card.style.opacity = "0";
-        card.style.transform = "translateY(40px)";
-
-        setTimeout(() => {
-
-            card.style.transition = ".5s";
-            card.style.opacity = "1";
-            card.style.transform = "translateY(0px)";
-
-        }, index * 120);
-
-    });
-
-}
-
-animateCards();
 
 
-// =====================================================
-// WELCOME MESSAGE
-// =====================================================
+attendanceChartInstance =
+new Chart(
+canvas,
+{
 
-const welcome = document.getElementById("welcomeMessage");
+type:"doughnut",
 
-if (welcome) {
 
-    const hour = new Date().getHours();
+data:{
 
-    if (hour < 12) {
+labels:[
+"Present",
+"Absent"
+],
 
-        welcome.innerHTML = "Good Morning, Administrator ☀️";
 
-    } else if (hour < 17) {
+datasets:[{
 
-        welcome.innerHTML = "Good Afternoon, Administrator 🌤️";
+data:[
+present,
+absent
+]
 
-    } else {
+}]
 
-        welcome.innerHTML = "Good Evening, Administrator 🌙";
 
-    }
+},
+
+
+options:{
+
+responsive:true
 
 }
 
 
-// =====================================================
-// AUTO REFRESH
-// =====================================================
+}
 
-setInterval(() => {
+);
 
-    loadDashboard();
-    loadStudents();
-    loadAttendance();
-    loadResults();
 
-}, 30000);
+}
+
+
+
+
+
 
 
 // =====================================================
 // LOGOUT
 // =====================================================
 
-const logout = document.getElementById("logout");
 
-if (logout) {
+const logout =
+document.getElementById(
+"logout"
+);
 
-    logout.addEventListener("click", function (e) {
 
-        e.preventDefault();
 
-        if (confirm("Are you sure you want to logout?")) {
+if(logout){
 
-            localStorage.clear();
-            sessionStorage.clear();
 
-            window.location.href = "login.html";
+logout.onclick=function(){
 
-        }
 
-    });
+localStorage.clear();
+
+sessionStorage.clear();
+
+
+location.href="login.html";
+
+
+};
+
 
 }
 
 
+
+
+
+
+
 // =====================================================
-// CONSOLE
+// START
 // =====================================================
 
-console.log("======================================");
-console.log("Student Management Dashboard Loaded");
-console.log("======================================");
+
+loadDashboard();
+
+loadStudents();
+
+
+
+
+setInterval(
+()=>{
+
+loadDashboard();
+
+loadStudents();
+
+},
+30000
+);
+
+
+
+console.log(
+"Admin Dashboard Loaded Successfully"
+);
