@@ -131,16 +131,64 @@ db.get("SELECT COUNT(*) AS count FROM students", (err, row) => {
 
         const students = [
 
-            ["Rahul Kumar", "CSE001", "CSE", "III", "rahul@gmail.com", "9876543210", "1234"],
-            ["Anjali Sharma", "CSE002", "CSE", "III", "anjali@gmail.com", "9876543211", "1234"],
-            ["Priya Reddy", "CSE003", "CSE", "III", "priya@gmail.com", "9876543212", "1234"],
-            ["Sai Teja", "CSE004", "CSE", "III", "sai@gmail.com", "9876543213", "1234"],
-            ["Kiran Kumar", "CSE005", "CSE", "III", "kiran@gmail.com", "9876543214", "1234"],
-            ["Harsha Vardhan", "CSE006", "CSE", "III", "harsha@gmail.com", "9876543215", "1234"],
-            ["Nikhil Reddy", "CSE007", "CSE", "III", "nikhil@gmail.com", "9876543216", "1234"],
-            ["Keerthana", "CSE008", "CSE", "III", "keerthana@gmail.com", "9876543217", "1234"],
-            ["Bhavana", "CSE009", "CSE", "III", "bhavana@gmail.com", "9876543218", "1234"],
-            ["Sandeep", "CSE010", "CSE", "III", "sandeep@gmail.com", "9876543219", "1234"]
+            ["Rahul Kumar","CSE001","CSE","I","rahul@gmail.com","9876543201","1234"],
+["Anjali Sharma","CSE002","CSE","I","anjali@gmail.com","9876543202","1234"],
+["Priya Reddy","CSE003","CSE","I","priya@gmail.com","9876543203","1234"],
+
+["Sai Teja","CSE004","CSE","II","sai@gmail.com","9876543204","1234"],
+["Kiran Kumar","CSE005","CSE","II","kiran@gmail.com","9876543205","1234"],
+["Harsha Vardhan","CSE006","CSE","II","harsha@gmail.com","9876543206","1234"],
+
+["Nikhil Reddy","CSE007","CSE","III","nikhil@gmail.com","9876543207","1234"],
+["Keerthana","CSE008","CSE","III","keerthana@gmail.com","9876543208","1234"],
+
+["Bhavana","CSE009","CSE","IV","bhavana@gmail.com","9876543209","1234"],
+["Sandeep","CSE010","CSE","IV","sandeep@gmail.com","9876543210","1234"],
+
+    ["Kavya","EEE006","EEE","II","kavya@gmail.com","9876543226","1234"],
+    ["Ajay","EEE007","EEE","III","ajay@gmail.com","9876543227","1234"],
+    ["Harini","EEE008","EEE","III","harini@gmail.com","9876543228","1234"],
+    ["Karthik","EEE009","EEE","IV","karthik@gmail.com","9876543229","1234"],
+    ["Meghana","EEE010","EEE","IV","meghana@gmail.com","9876543230","1234"],
+
+
+    // ===========================
+    // AIML
+    // ===========================
+
+    ["Abhishek","AIML001","AIML","I","abhishek@gmail.com","9876543231","1234"],
+    ["Nandini","AIML002","AIML","I","nandini@gmail.com","9876543232","1234"],
+    ["Rohit","AIML003","AIML","I","rohit@gmail.com","9876543233","1234"],
+
+    ["Pooja","AIML004","AIML","II","pooja@gmail.com","9876543234","1234"],
+    ["Akhil","AIML005","AIML","II","akhil@gmail.com","9876543235","1234"],
+    ["Sneha","AIML006","AIML","II","sneha@gmail.com","9876543236","1234"],
+
+    ["Yash","AIML007","AIML","III","yash@gmail.com","9876543237","1234"],
+    ["Sirisha","AIML008","AIML","III","sirisha@gmail.com","9876543238","1234"],
+
+    ["Charan","AIML009","AIML","IV","charan@gmail.com","9876543239","1234"],
+    ["Madhuri","AIML010","AIML","IV","madhuri@gmail.com","9876543240","1234"],
+
+
+    // ===========================
+    // DATA SCIENCE
+    // ===========================
+
+    ["Srinivas","DS001","Data Science","I","srinivas@gmail.com","9876543241","1234"],
+    ["Lavanya","DS002","Data Science","I","lavanya@gmail.com","9876543242","1234"],
+    ["Pranav","DS003","Data Science","I","pranav@gmail.com","9876543243","1234"],
+
+    ["Anusha","DS004","Data Science","II","anusha@gmail.com","9876543244","1234"],
+    ["Gopi","DS005","Data Science","II","gopi@gmail.com","9876543245","1234"],
+    ["Tejaswini","DS006","Data Science","II","tejaswini@gmail.com","9876543246","1234"],
+
+    ["Vivek","DS007","Data Science","III","vivek@gmail.com","9876543247","1234"],
+    ["Shilpa","DS008","Data Science","III","shilpa@gmail.com","9876543248","1234"],
+
+    ["Rithvik","DS009","Data Science","IV","rithvik@gmail.com","9876543249","1234"],
+    ["Vaishnavi","DS010","Data Science","IV","vaishnavi@gmail.com","9876543250","1234"]
+
 
         ];
 
