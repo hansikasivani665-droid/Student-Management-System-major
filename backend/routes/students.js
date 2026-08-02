@@ -3,31 +3,56 @@ const router = express.Router();
 const db = require("../models/database");
 
 // ====================================
-// GET ALL STUDENTS
+// GET ALL STUDENTS / FILTER STUDENTS
 // ====================================
+
 router.get("/", (req, res) => {
 
-    db.all(
-        "SELECT * FROM students ORDER BY id DESC",
-        [],
-        (err, rows) => {
+    const { department, year } = req.query;
 
-            if (err) {
+    let query = "SELECT * FROM students";
+    let params = [];
 
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
+    if (department && year) {
 
-            }
+        query += " WHERE department = ? AND year = ?";
+        params = [department, year];
 
-            res.json({
-                success: true,
-                students: rows
+    }
+
+    else if (department) {
+
+        query += " WHERE department = ?";
+        params = [department];
+
+    }
+
+    else if (year) {
+
+        query += " WHERE year = ?";
+        params = [year];
+
+    }
+
+    query += " ORDER BY id DESC";
+
+    db.all(query, params, (err, rows) => {
+
+        if (err) {
+
+            return res.status(500).json({
+                success: false,
+                message: err.message
             });
 
         }
-    );
+
+        res.json({
+            success: true,
+            students: rows
+        });
+
+    });
 
 });
 
@@ -35,13 +60,15 @@ router.get("/", (req, res) => {
 // ====================================
 // GET STUDENT BY EMAIL
 // ====================================
+
 router.get("/email/:email", (req, res) => {
 
-    const email = req.params.email;
-
     db.get(
-        "SELECT * FROM students WHERE email=?",
-        [email],
+
+        "SELECT * FROM students WHERE email = ?",
+
+        [req.params.email],
+
         (err, student) => {
 
             if (err) {
@@ -64,10 +91,11 @@ router.get("/email/:email", (req, res) => {
 
             res.json({
                 success: true,
-                student: student
+                student
             });
 
         }
+
     );
 
 });
@@ -76,11 +104,15 @@ router.get("/email/:email", (req, res) => {
 // ====================================
 // GET STUDENT BY ID
 // ====================================
+
 router.get("/:id", (req, res) => {
 
     db.get(
-        "SELECT * FROM students WHERE id=?",
+
+        "SELECT * FROM students WHERE id = ?",
+
         [req.params.id],
+
         (err, student) => {
 
             if (err) {
@@ -103,10 +135,11 @@ router.get("/:id", (req, res) => {
 
             res.json({
                 success: true,
-                student: student
+                student
             });
 
         }
+
     );
 
 });
@@ -115,6 +148,7 @@ router.get("/:id", (req, res) => {
 // ====================================
 // ADD STUDENT
 // ====================================
+
 router.post("/", (req, res) => {
 
     const {
@@ -144,8 +178,11 @@ router.post("/", (req, res) => {
     }
 
     db.get(
-        "SELECT * FROM students WHERE roll=? OR email=?",
+
+        "SELECT * FROM students WHERE roll = ? OR email = ?",
+
         [roll, email],
+
         (err, row) => {
 
             if (err) {
@@ -167,9 +204,19 @@ router.post("/", (req, res) => {
             }
 
             db.run(
+
                 `INSERT INTO students
-                (name, roll, department, year, email, phone, password)
-                VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                (
+                    name,
+                    roll,
+                    department,
+                    year,
+                    email,
+                    phone,
+                    password
+                )
+                VALUES (?,?,?,?,?,?,?)`,
+
                 [
                     name,
                     roll,
@@ -179,6 +226,7 @@ router.post("/", (req, res) => {
                     phone,
                     password || "1234"
                 ],
+
                 function (err) {
 
                     if (err) {
@@ -197,9 +245,11 @@ router.post("/", (req, res) => {
                     });
 
                 }
+
             );
 
         }
+
     );
 
 });
@@ -208,6 +258,7 @@ router.post("/", (req, res) => {
 // ====================================
 // UPDATE STUDENT
 // ====================================
+
 router.put("/:id", (req, res) => {
 
     const {
@@ -220,15 +271,17 @@ router.put("/:id", (req, res) => {
     } = req.body;
 
     db.run(
+
         `UPDATE students
          SET
-            name=?,
-            roll=?,
-            department=?,
-            year=?,
-            email=?,
-            phone=?
-         WHERE id=?`,
+            name = ?,
+            roll = ?,
+            department = ?,
+            year = ?,
+            email = ?,
+            phone = ?
+         WHERE id = ?`,
+
         [
             name,
             roll,
@@ -238,6 +291,7 @@ router.put("/:id", (req, res) => {
             phone,
             req.params.id
         ],
+
         function (err) {
 
             if (err) {
@@ -255,6 +309,7 @@ router.put("/:id", (req, res) => {
             });
 
         }
+
     );
 
 });
@@ -263,11 +318,15 @@ router.put("/:id", (req, res) => {
 // ====================================
 // DELETE STUDENT
 // ====================================
+
 router.delete("/:id", (req, res) => {
 
     db.run(
-        "DELETE FROM students WHERE id=?",
+
+        "DELETE FROM students WHERE id = ?",
+
         [req.params.id],
+
         function (err) {
 
             if (err) {
@@ -285,6 +344,7 @@ router.delete("/:id", (req, res) => {
             });
 
         }
+
     );
 
 });
