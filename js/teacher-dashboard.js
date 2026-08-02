@@ -2,240 +2,508 @@
 // Teacher Dashboard
 // ======================================
 
-const STUDENT_API = "https://student-management-system-major-1.onrender.com/students";
-const RESULT_API = "https://student-management-system-major-1.onrender.com/results";
-const ATTENDANCE_API = "https://student-management-system-major-1.onrender.com/attendance";
+
+const API =
+"https://student-management-system-major-1.onrender.com";
+
+
+
+const STUDENT_API =
+`${API}/students`;
+
+const RESULT_API =
+`${API}/results`;
+
+const ATTENDANCE_API =
+`${API}/attendance`;
+
 
 
 // ======================================
-// Login Check
+// LOGIN CHECK
 // ======================================
 
-if (localStorage.getItem("loggedIn") !== "true") {
 
-    location.href = "login.html";
+if(localStorage.getItem("loggedIn") !== "true"){
+
+    location.href="login.html";
 
 }
 
 
+
 // ======================================
-// Page Load
+// GET TEACHER DATA
 // ======================================
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    loadTeacherDashboard();
+const teacher =
+JSON.parse(
+localStorage.getItem("teacher")
+);
 
-    showDateTime();
 
-    setInterval(showDateTime, 1000);
 
-    const logout = document.getElementById("logout");
+let teacherId="";
 
-    if (logout) {
 
-        logout.addEventListener("click", () => {
+if(teacher){
 
-            localStorage.clear();
-            sessionStorage.clear();
+    teacherId =
+    teacher.teacherId;
 
-            location.href = "login.html";
 
-        });
+    const name =
+    document.getElementById("teacherName");
+
+
+    if(name){
+
+        name.innerHTML =
+        `Welcome ${teacher.name}`;
 
     }
+
+}
+
+
+
+
+
+// ======================================
+// PAGE LOAD
+// ======================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+loadTeacherDashboard();
+
+
+showDateTime();
+
+
+setInterval(
+showDateTime,
+1000
+);
+
+
+
+const logout =
+document.getElementById("logout");
+
+
+
+if(logout){
+
+
+logout.addEventListener(
+"click",
+()=>{
+
+
+localStorage.clear();
+
+sessionStorage.clear();
+
+
+location.href="login.html";
+
 
 });
 
 
+}
+
+
+
+}
+
+);
+
+
+
+
+
+
 // ======================================
-// DATE & TIME
+// DATE TIME
 // ======================================
 
-function showDateTime() {
 
-    const d = new Date();
+function showDateTime(){
 
-    const date = document.getElementById("currentDate");
-    const time = document.getElementById("currentTime");
 
-    if (date) {
+const d =
+new Date();
 
-        date.innerHTML = d.toLocaleDateString("en-IN", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
 
-    }
 
-    if (time) {
+const date =
+document.getElementById("currentDate");
 
-        time.innerHTML = d.toLocaleTimeString();
 
-    }
+const time =
+document.getElementById("currentTime");
+
+
+
+if(date){
+
+date.innerHTML =
+d.toLocaleDateString(
+"en-IN",
+{
+
+weekday:"long",
+
+day:"numeric",
+
+month:"long",
+
+year:"numeric"
+
+}
+);
+
 
 }
 
 
-// ======================================
-// LOAD DASHBOARD
-// ======================================
 
-async function loadTeacherDashboard() {
+if(time){
 
-    try {
+time.innerHTML =
+d.toLocaleTimeString();
 
-        // ======================================
-        // STUDENTS
-        // ======================================
-
-        const studentResponse =
-            await fetch(STUDENT_API);
-
-        const studentData =
-            await studentResponse.json();
-
-        if (studentData.success) {
-
-            const students =
-                studentData.students;
-
-            if (document.getElementById("totalStudents")) {
-
-                document.getElementById("totalStudents").innerHTML =
-                    students.length;
-
-            }
-
-        }
-
-
-        // ======================================
-        // RESULTS
-        // ======================================
-
-        const resultResponse =
-            await fetch(RESULT_API);
-
-        const resultData =
-            await resultResponse.json();
-
-        if (resultData.success) {
-
-            const results =
-                resultData.results;
-
-            if (document.getElementById("resultsCount")) {
-
-                document.getElementById("resultsCount").innerHTML =
-                    results.length;
-
-            }
-
-            let totalMarks = 0;
-
-            let pass = 0;
-
-            results.forEach(result => {
-
-                totalMarks += Number(result.marks);
-
-                if (result.status === "Pass") {
-
-                    pass++;
-
-                }
-
-            });
-
-            const average =
-                results.length > 0
-                    ? (totalMarks / results.length).toFixed(2)
-                    : 0;
-
-            const passPercentage =
-                results.length > 0
-                    ? ((pass / results.length) * 100).toFixed(0)
-                    : 0;
-
-            if (document.getElementById("averageMarks")) {
-
-                document.getElementById("averageMarks").innerHTML =
-                    average + "%";
-
-            }
-
-            if (document.getElementById("passPercentage")) {
-
-                document.getElementById("passPercentage").innerHTML =
-                    passPercentage + "%";
-
-            }
-
-        }
-
-
-        // ======================================
-        // ATTENDANCE
-        // ======================================
-
-        const attendanceResponse =
-            await fetch(ATTENDANCE_API);
-
-        const attendanceData =
-            await attendanceResponse.json();
-
-        if (attendanceData.success) {
-
-            const attendance =
-                attendanceData.attendance;
-
-            const present =
-                attendance.filter(a => a.status === "Present").length;
-
-            const absent =
-                attendance.filter(a => a.status === "Absent").length;
-
-            if (document.getElementById("presentStudents")) {
-
-                document.getElementById("presentStudents").innerHTML =
-                    present;
-
-            }
-
-            if (document.getElementById("absentStudents")) {
-
-                document.getElementById("absentStudents").innerHTML =
-                    absent;
-
-            }
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error("Teacher Dashboard Error:", error);
-
-    }
 
 }
 
 
+
+}
+
+
+
+
+
+
 // ======================================
-// Auto Refresh
+// LOAD DASHBOARD DATA
 // ======================================
 
-setInterval(() => {
 
-    loadTeacherDashboard();
-
-}, 30000);
+async function loadTeacherDashboard(){
 
 
-console.log("=====================================");
-console.log("Teacher Dashboard Loaded");
-console.log("=====================================");
+try{
+
+
+
+// ======================================
+// TOTAL STUDENTS
+// ======================================
+
+
+const studentResponse =
+await fetch(STUDENT_API);
+
+
+
+const studentData =
+await studentResponse.json();
+
+
+
+if(studentData.success){
+
+
+
+const students =
+studentData.students;
+
+
+
+// show only teacher department students
+
+
+let teacherStudents =
+students;
+
+
+
+if(teacher && teacher.department){
+
+
+teacherStudents =
+students.filter(
+
+s=>
+
+s.department ===
+teacher.department
+
+);
+
+
+}
+
+
+
+
+const total =
+document.getElementById(
+"totalStudents"
+);
+
+
+
+if(total){
+
+total.innerHTML =
+teacherStudents.length;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+// ======================================
+// RESULTS COUNT
+// ======================================
+
+
+const resultResponse =
+await fetch(RESULT_API);
+
+
+
+const resultData =
+await resultResponse.json();
+
+
+
+if(resultData.success){
+
+
+let results =
+resultData.results;
+
+
+
+if(teacher && teacher.department){
+
+
+results =
+results.filter(
+
+r=>
+
+r.department ===
+teacher.department
+
+);
+
+
+}
+
+
+
+const resultCount =
+document.getElementById(
+"resultsCount"
+);
+
+
+
+if(resultCount){
+
+resultCount.innerHTML =
+results.length;
+
+}
+
+
+}
+
+
+
+
+
+
+
+// ======================================
+// ATTENDANCE
+// ======================================
+
+
+
+let url =
+ATTENDANCE_API;
+
+
+
+if(teacherId){
+
+
+url +=
+`?teacherId=${teacherId}`;
+
+
+}
+
+
+
+const attendanceResponse =
+await fetch(url);
+
+
+
+const attendanceData =
+await attendanceResponse.json();
+
+
+
+
+if(attendanceData.success){
+
+
+
+const attendance =
+attendanceData.attendance;
+
+
+
+const present =
+attendance.filter(
+
+a=>
+
+a.status==="Present"
+
+).length;
+
+
+
+const absent =
+attendance.filter(
+
+a=>
+
+a.status==="Absent"
+
+).length;
+
+
+
+
+
+const presentBox =
+document.getElementById(
+"presentStudents"
+);
+
+
+
+const absentBox =
+document.getElementById(
+"absentStudents"
+);
+
+
+
+
+
+if(presentBox){
+
+presentBox.innerHTML =
+present;
+
+}
+
+
+
+
+if(absentBox){
+
+absentBox.innerHTML =
+absent;
+
+}
+
+
+
+
+}
+
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+
+"Teacher Dashboard Error:",
+
+error
+
+);
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+// ======================================
+// AUTO REFRESH
+// ======================================
+
+
+setInterval(
+
+()=>{
+
+loadTeacherDashboard();
+
+},
+
+30000
+
+);
+
+
+
+
+console.log(
+"====================================="
+);
+
+console.log(
+"Teacher Dashboard Loaded Successfully"
+);
+
+console.log(
+"====================================="
+);

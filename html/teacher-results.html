@@ -1,68 +1,320 @@
-<!DOCTYPE html>
-<html lang="en">
+// =====================================
+// Teacher Results Module (Render Version)
+// =====================================
 
-<head>
+const BASE_URL = "https://student-management-system-major-1.onrender.com";
 
-<meta charset="UTF-8">
+const department = document.getElementById("department");
+const year = document.getElementById("year");
+const loadStudentsBtn = document.getElementById("loadStudents");
 
-<title>Teacher Results</title>
+const studentTable = document.getElementById("studentTable");
+const saveResultsBtn = document.getElementById("saveResults");
 
-<link rel="stylesheet" href="../css/teacher-results.css">
+const message = document.getElementById("message");
 
-</head>
-
-<body>
-
-<header>
-
-<h1>📊 Enter Student Results</h1>
-
-<a href="teacher-dashboard.html">⬅ Dashboard</a>
-
-</header>
-
-<div class="container">
-
-<form id="resultForm">
-
-<input
-type="text"
-id="roll"
-placeholder="Roll Number"
-required>
+let students = [];
 
 
+// =====================================
+// Load Students
+// =====================================
 
-    <input
+loadStudentsBtn.addEventListener("click", async () => {
+
+    const dept = department.value;
+    const selectedYear = year.value;
+
+
+    if (!dept || !selectedYear) {
+
+        message.style.color = "red";
+        message.innerHTML = "❌ Select Department and Year";
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            `${BASE_URL}/students`
+        );
+
+
+        const data = await response.json();
+
+
+        if(data.success){
+
+            students = data.students.filter(student => 
+                student.department === dept &&
+                student.year === selectedYear
+            );
+
+
+            displayStudents();
+
+        }
+        else{
+
+            message.innerHTML="❌ No students found";
+
+        }
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        message.style.color="red";
+        message.innerHTML="❌ Failed to load students";
+
+    }
+
+});
+
+
+
+// =====================================
+// Display Students
+// =====================================
+
+function displayStudents(){
+
+
+    studentTable.innerHTML="";
+
+
+    if(students.length===0){
+
+        studentTable.innerHTML=
+        `
+        <tr>
+        <td colspan="6">
+        No students available
+        </td>
+        </tr>
+        `;
+
+        return;
+
+    }
+
+
+
+    students.forEach(student=>{
+
+
+        studentTable.innerHTML +=
+
+        `
+        <tr>
+
+        <td>
+        ${student.roll}
+        </td>
+
+
+        <td>
+        ${student.name}
+        </td>
+
+
+        <td>
+        ${student.department}
+        </td>
+
+
+        <td>
+        ${student.year}
+        </td>
+
+
+        <td>
+
+        <input 
         type="text"
-        id="subject"
-        placeholder="Subject"
-        required>
+        class="subject"
+        data-roll="${student.roll}"
+        placeholder="Subject">
 
- 
+        </td>
 
-<input
-type="number"
-id="marks"
-placeholder="Marks"
-min="0"
-max="100"
-required>
 
-<button>
 
-Save Result
+        <td>
 
-</button>
+        <input 
+        type="number"
+        class="marks"
+        data-roll="${student.roll}"
+        min="0"
+        max="100"
+        placeholder="Marks">
 
-</form>
+        </td>
 
-<p id="message"></p>
 
-</div>
+        </tr>
+        `;
 
-<script src="../js/teacher-results.js"></script>
 
-</body>
+    });
 
-</html>
+
+}
+
+
+
+// =====================================
+// Save Results
+// =====================================
+
+saveResultsBtn.addEventListener("click", async()=>{
+
+
+    const subjects =
+    document.querySelectorAll(".subject");
+
+
+    const marksInputs =
+    document.querySelectorAll(".marks");
+
+
+
+    let results=[];
+
+
+
+    for(let i=0;i<subjects.length;i++){
+
+
+        let subject =
+        subjects[i].value.trim();
+
+
+        let marks =
+        Number(marksInputs[i].value);
+
+
+
+        if(!subject || isNaN(marks)){
+
+            continue;
+
+        }
+
+
+
+        let grade="";
+
+
+        if(marks>=90)
+            grade="A+";
+
+        else if(marks>=80)
+            grade="A";
+
+        else if(marks>=70)
+            grade="B";
+
+        else if(marks>=60)
+            grade="C";
+
+        else if(marks>=50)
+            grade="D";
+
+        else
+            grade="F";
+
+
+
+        let status =
+        marks>=35 ? "Pass":"Fail";
+
+
+
+        results.push({
+
+            roll: marksInputs[i].dataset.roll,
+
+            subject,
+
+            marks,
+
+            grade,
+
+            status
+
+        });
+
+
+
+    }
+
+
+
+    if(results.length===0){
+
+        message.style.color="red";
+        message.innerHTML=
+        "❌ Enter subject and marks";
+
+        return;
+
+    }
+
+
+
+    try{
+
+
+        for(let result of results){
+
+
+            await fetch(
+                `${BASE_URL}/results`,
+                {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+
+                body:JSON.stringify(result)
+
+                }
+
+            );
+
+
+        }
+
+
+
+        message.style.color="green";
+        message.innerHTML=
+        "✅ Results saved successfully";
+
+
+    }
+
+    catch(error){
+
+
+        console.error(error);
+
+        message.style.color="red";
+
+        message.innerHTML=
+        "❌ Server connection failed";
+
+
+    }
+
+
+});

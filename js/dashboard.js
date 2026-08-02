@@ -264,3 +264,281 @@ async function loadAttendance() {
 }
 
 loadAttendance();
+
+// =====================================================
+// LOAD RESULTS
+// =====================================================
+
+async function loadResults() {
+
+    try {
+
+        const response = await fetch(`${API}/results`);
+        const data = await response.json();
+
+        console.log("Results :", data);
+
+        if (!data.success) return;
+
+        let pass = 0;
+        let fail = 0;
+
+        data.results.forEach(result => {
+
+            if (result.status === "Pass") {
+                pass++;
+            } else {
+                fail++;
+            }
+
+        });
+
+        createStudentChart(pass, fail);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadResults();
+
+
+// =====================================================
+// STUDENT RESULT CHART
+// =====================================================
+
+function createStudentChart(pass, fail) {
+
+    const canvas = document.getElementById("studentChart");
+
+    if (!canvas) return;
+
+    if (studentChartInstance) {
+        studentChartInstance.destroy();
+    }
+
+    studentChartInstance = new Chart(canvas, {
+
+        type: "bar",
+
+        data: {
+
+            labels: ["Pass", "Fail"],
+
+            datasets: [{
+
+                label: "Students",
+
+                data: [pass, fail],
+
+                backgroundColor: [
+                    "#16a34a",
+                    "#dc2626"
+                ],
+
+                borderRadius: 10
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+// =====================================================
+// ATTENDANCE CHART
+// =====================================================
+
+function createAttendanceChart(present, absent) {
+
+    const canvas = document.getElementById("attendanceChart");
+
+    if (!canvas) return;
+
+    if (attendanceChartInstance) {
+        attendanceChartInstance.destroy();
+    }
+
+    attendanceChartInstance = new Chart(canvas, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: ["Present", "Absent"],
+
+            datasets: [{
+
+                data: [present, absent],
+
+                backgroundColor: [
+                    "#16a34a",
+                    "#dc2626"
+                ],
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+// =====================================================
+// CARD ANIMATION
+// =====================================================
+
+function animateCards() {
+
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach((card, index) => {
+
+        card.style.opacity = "0";
+        card.style.transform = "translateY(40px)";
+
+        setTimeout(() => {
+
+            card.style.transition = ".5s";
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0px)";
+
+        }, index * 120);
+
+    });
+
+}
+
+animateCards();
+
+
+// =====================================================
+// WELCOME MESSAGE
+// =====================================================
+
+const welcome = document.getElementById("welcomeMessage");
+
+if (welcome) {
+
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+
+        welcome.innerHTML = "Good Morning, Administrator ☀️";
+
+    } else if (hour < 17) {
+
+        welcome.innerHTML = "Good Afternoon, Administrator 🌤️";
+
+    } else {
+
+        welcome.innerHTML = "Good Evening, Administrator 🌙";
+
+    }
+
+}
+
+
+// =====================================================
+// AUTO REFRESH
+// =====================================================
+
+setInterval(() => {
+
+    loadDashboard();
+    loadStudents();
+    loadAttendance();
+    loadResults();
+
+}, 30000);
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+const logout = document.getElementById("logout");
+
+if (logout) {
+
+    logout.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+        if (confirm("Are you sure you want to logout?")) {
+
+            localStorage.clear();
+            sessionStorage.clear();
+
+            window.location.href = "login.html";
+
+        }
+
+    });
+
+}
+
+
+// =====================================================
+// CONSOLE
+// =====================================================
+
+console.log("======================================");
+console.log("Student Management Dashboard Loaded");
+console.log("======================================");

@@ -1,35 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-<title>Student Attendance</title>
-<link rel="stylesheet" href="../css/student-view.css">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Attendance</title>
+
+    <link rel="stylesheet" href="../css/student-view.css">
+
 </head>
 
 <body>
 
-<h1>📅 My Attendance</h1>
+    <header>
 
-<table border="1">
+        <h1>📅 Student Attendance</h1>
 
-<tr>
-<th>Date</th>
-<th>Status</th>
-</tr>
+        <p id="studentName">
+            Welcome Student
+        </p>
 
-<tbody id="attendanceTable">
-
-</tbody>
-
-</table>
+    </header>
 
 
-<button onclick="history.back()">
-⬅ Back
-</button>
+    <section class="attendance-container">
+
+        <div class="student-info">
+
+            <div class="info-card">
+                <h3>Roll Number</h3>
+                <p id="studentRoll">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Department</h3>
+                <p id="studentDepartment">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Year</h3>
+                <p id="studentYear">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Attendance</h3>
+                <p id="attendancePercentage">0%</p>
+            </div>
+
+        </div>
 
 
-<script src="../js/student-attendance.js"></script>
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="attendanceTable">
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <div class="button-box">
+
+        <button onclick="history.back()">
+
+            ⬅ Back
+
+        </button>
+
+    </div>
+
+
+    <footer>
+
+        © 2026 Student Management System
+
+    </footer>
+
+    <script src="../js/student-attendance.js"></script>
 
 </body>
 

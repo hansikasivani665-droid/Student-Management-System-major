@@ -5,11 +5,15 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Teacher Attendance</title>
 
-<link rel="stylesheet" href="../css/teacher-attendance.css">
+
+<link rel="stylesheet"
+href="../css/teacher-attendance.css">
+
 
 </head>
 
@@ -19,96 +23,366 @@
 
 <header>
 
-    <h1>📅 Teacher Attendance</h1>
+<h1>
+📅 Teacher Attendance Portal
+</h1>
 
-    <p id="teacherName">
-        Teacher
-    </p>
+
+<p id="teacherName">
+Teacher Portal
+</p>
+
+
+<p id="teacherSubject">
+Subject:
+</p>
+
 
 </header>
+
+
 
 
 
 <section class="attendance-container">
 
 
-    <h2>Mark Student Attendance</h2>
-
-
-    <div class="date-box">
-
-        <label>
-            Date:
-        </label>
-
-        <input type="date" id="attendanceDate">
-
-    </div>
+<h2>
+Mark Student Attendance
+</h2>
 
 
 
-    <table>
 
 
-        <thead>
+<!-- ========================= -->
+<!-- TEACHER DETAILS -->
+<!-- ========================= -->
 
-            <tr>
 
-                <th>
-                    Roll No
-                </th>
+<div class="teacher-info">
 
-                <th>
-                    Student Name
-                </th>
 
-                <th>
-                    Department
-                </th>
+<div>
 
-                <th>
-                    Status
-                </th>
+<label>
+Teacher ID
+</label>
 
-            </tr>
 
-        </thead>
+<p id="teacherId">
+-
+</p>
+
+
+</div>
 
 
 
-        <tbody id="studentTable">
+
+<div>
+
+<label>
+Subject
+</label>
 
 
-        </tbody>
+<p id="subjectName">
+-
+</p>
 
 
-
-    </table>
-
-
-
-    <button id="saveAttendance">
-
-        Save Attendance
-
-    </button>
+</div>
 
 
 
-    <p id="message"></p>
+</div>
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- FILTER SECTION -->
+<!-- ========================= -->
+
+
+<div class="filter-container">
+
+
+
+<div class="filter-box">
+
+
+<label>
+Department
+</label>
+
+
+<select id="department">
+
+
+<option value="">
+Select Department
+</option>
+
+
+<option value="CSE">
+CSE
+</option>
+
+
+<option value="ECE">
+ECE
+</option>
+
+
+<option value="EEE">
+EEE
+</option>
+
+
+<option value="AIML">
+AIML
+</option>
+
+
+<option value="Data Science">
+Data Science
+</option>
+
+
+<option value="Civil">
+Civil
+</option>
+
+
+<option value="Mechanical">
+Mechanical
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+<div class="filter-box">
+
+
+<label>
+Year
+</label>
+
+
+<select id="year">
+
+
+<option value="">
+Select Year
+</option>
+
+
+<option value="I">
+I Year
+</option>
+
+
+<option value="II">
+II Year
+</option>
+
+
+<option value="III">
+III Year
+</option>
+
+
+<option value="IV">
+IV Year
+</option>
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+<div class="filter-box">
+
+
+<label>
+Date
+</label>
+
+
+<input
+
+type="date"
+
+id="attendanceDate">
+
+
+</div>
+
+
+
+
+
+
+<div class="filter-box button-box">
+
+
+<button id="loadStudents">
+
+Load Students
+
+</button>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- STUDENT TABLE -->
+<!-- ========================= -->
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+Roll No
+</th>
+
+
+<th>
+Name
+</th>
+
+
+<th>
+Department
+</th>
+
+
+<th>
+Year
+</th>
+
+
+<th>
+Subject
+</th>
+
+
+<th>
+Status
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody id="studentTable">
+
+
+<tr>
+
+
+<td colspan="6">
+
+Select Department & Year
+
+</td>
+
+
+</tr>
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+
+
+
+
+<button id="saveAttendance">
+
+Save Attendance
+
+</button>
+
+
+
+
+
+<p id="message"></p>
+
 
 
 </section>
 
 
 
+
+
+
+
 <footer>
+
 
 © 2026 Student Management System
 
+
 </footer>
 
+
+
+
+
+
 <script src="/js/teacher-attendance.js"></script>
+
 
 </body>
 

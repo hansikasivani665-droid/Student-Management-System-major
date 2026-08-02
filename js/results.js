@@ -1,136 +1,268 @@
-// ===============================
-// API
-// ===============================
-console.log("RESULT JS FILE LOADED");
-const RESULT_API = "https://student-management-system-major-1.onrender.com/results";
+// =====================================
+// Results Route
+// =====================================
 
-let resultData = [];
+const express = require("express");
+const router = express.Router();
+
+const db = require("../models/database");
 
 
-// =============================================
-// PAGE LOAD
-// =============================================
+// =====================================
+// Add Result
+// =====================================
 
-document.addEventListener("DOMContentLoaded", () => {
+router.post("/", (req, res) => {
 
-    loadResults();
+    const {
+        roll,
+        subject,
+        marks,
+        grade,
+        status
+    } = req.body;
+
+
+    if(!roll || !subject || marks === undefined){
+
+        return res.status(400).json({
+
+            success:false,
+            message:"All fields are required"
+
+        });
+
+    }
+
+
+
+    const sql = `
+
+    INSERT INTO results
+    (
+        roll,
+        subject,
+        marks,
+        grade,
+        status
+    )
+
+    VALUES (?,?,?,?,?)
+
+    `;
+
+
+
+    db.run(
+        sql,
+
+        [
+            roll,
+            subject,
+            marks,
+            grade,
+            status
+        ],
+
+        function(error){
+
+
+            if(error){
+
+                console.error(error);
+
+
+                return res.status(500).json({
+
+                    success:false,
+                    message:error.message
+
+                });
+
+
+            }
+
+
+
+            res.json({
+
+                success:true,
+
+                message:"Result added successfully",
+
+                id:this.lastID
+
+            });
+
+
+
+        }
+
+    );
+
 
 });
 
 
-async function loadResults() {
 
-    try {
 
-        const response = await fetch(RESULT_API);
+// =====================================
+// Get All Results
+// =====================================
 
-        const data = await response.json();
+router.get("/", (req,res)=>{
 
-        console.log(data);
 
-        if (data.success) {
+    const sql = `
 
-            resultData = data.results;
+    SELECT
 
-            displayResults(resultData);
+    results.id,
 
-            calculateCards(resultData);
+    results.roll,
 
-        } else {
+    students.name,
 
-            console.log("No Results Found");
+    students.department,
+
+    students.year,
+
+    results.subject,
+
+    results.marks,
+
+    results.grade,
+
+    results.status
+
+
+    FROM results
+
+
+    LEFT JOIN students
+
+    ON results.roll = students.roll
+
+
+    ORDER BY results.id DESC
+
+
+    `;
+
+
+
+    db.all(sql, [], (error, rows)=>{
+
+
+        if(error){
+
+
+            console.error(error);
+
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:error.message
+
+            });
+
 
         }
 
-    }
-
-    catch (error) {
-
-        console.error("Fetch Error:", error);
-
-    }
-
-}
 
 
-// =============================================
-// DISPLAY RESULTS
-// =============================================
+        res.json({
 
-function displayResults(results) {
+            success:true,
 
-    const tbody = document.getElementById("resultTableBody");
+            results:rows
 
-    if (!tbody) return;
+        });
 
-    tbody.innerHTML = "";
 
-    results.forEach((student, index) => {
-
-        tbody.innerHTML += `
-            <tr>
-
-                <td>${index + 1}</td>
-
-                <td>${student.roll}</td>
-
-                <td>${student.name}</td>
-
-                <td>${student.department}</td>
-
-                <td>${student.year}</td>
-
-                <td>${student.subject}</td>
-
-                <td>${student.marks}</td>
-
-                <td>${student.grade}</td>
-
-                <td>${student.status}</td>
-
-            </tr>
-        `;
 
     });
 
-}
 
 
-// =============================================
-// DASHBOARD CARDS
-// =============================================
+});
 
-function calculateCards(results) {
 
-    const total = results.length;
 
-    let totalMarks = 0;
-    let pass = 0;
+// =====================================
+// Get Results By Roll Number
+// =====================================
 
-    results.forEach(result => {
+router.get("/:roll",(req,res)=>{
 
-        totalMarks += Number(result.marks);
 
-        if (result.status === "Pass") {
+    const roll=req.params.roll;
 
-            pass++;
+
+
+    const sql = `
+
+    SELECT
+
+    results.*,
+
+    students.name,
+
+    students.department,
+
+    students.year
+
+
+    FROM results
+
+
+    LEFT JOIN students
+
+    ON results.roll = students.roll
+
+
+    WHERE results.roll=?
+
+
+    `;
+
+
+
+    db.all(sql,[roll],(error,rows)=>{
+
+
+        if(error){
+
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:error.message
+
+            });
+
 
         }
 
+
+
+        res.json({
+
+            success:true,
+
+            results:rows
+
+        });
+
+
     });
 
-    const average =
-        total > 0
-            ? (totalMarks / total).toFixed(2)
-            : 0;
 
-    const passPercentage =
-        total > 0
-            ? ((pass / total) * 100).toFixed(2)
-            : 0;
+});
 
-    document.getElementById("totalResults").innerHTML = total;
-    document.getElementById("averageMarks").innerHTML = average + "%";
-    document.getElementById("passPercentage").innerHTML = passPercentage + "%";
 
-}
+
+module.exports = router;

@@ -1,6 +1,12 @@
-// ===============================
+// ======================================
+// STUDENT ATTENDANCE MODULE
+// ======================================
+
+console.log("Student Attendance Module Loaded");
+
+// ======================================
 // CHECK LOGIN
-// ===============================
+// ======================================
 
 if (localStorage.getItem("loggedIn") !== "true") {
 
@@ -8,17 +14,15 @@ if (localStorage.getItem("loggedIn") !== "true") {
 
 }
 
-
-// ===============================
+// ======================================
 // API
-// ===============================
+// ======================================
 
 const API = "https://student-management-system-major-1.onrender.com";
 
-
-// ===============================
+// ======================================
 // LOAD PAGE
-// ===============================
+// ======================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -26,10 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-// ===============================
+// ======================================
 // LOAD ATTENDANCE
-// ===============================
+// ======================================
 
 async function loadAttendance() {
 
@@ -37,7 +40,19 @@ async function loadAttendance() {
 
         const email = localStorage.getItem("currentUser");
 
-        // Get Student Details
+        if (!email) {
+
+            alert("Student Login Required");
+
+            window.location.href = "/html/login.html";
+
+            return;
+
+        }
+
+        // ======================================
+        // GET STUDENT DETAILS
+        // ======================================
 
         const studentResponse =
             await fetch(`${API}/students/email/${email}`);
@@ -45,7 +60,7 @@ async function loadAttendance() {
         const studentData =
             await studentResponse.json();
 
-        console.log(studentData);
+        console.log("Student :", studentData);
 
         if (!studentData.success) {
 
@@ -55,19 +70,31 @@ async function loadAttendance() {
 
         }
 
-        const roll =
-            studentData.student.roll;
+        const student = studentData.student;
 
+        document.getElementById("studentName").innerHTML =
+            student.name;
 
-        // Get Attendance
+        document.getElementById("studentRoll").innerHTML =
+            student.roll;
+
+        document.getElementById("studentDepartment").innerHTML =
+            student.department;
+
+        document.getElementById("studentYear").innerHTML =
+            student.year;
+
+        // ======================================
+        // GET ATTENDANCE
+        // ======================================
 
         const attendanceResponse =
-            await fetch(`${API}/attendance/student/${roll}`);
+            await fetch(`${API}/attendance/student/${student.roll}`);
 
         const attendanceData =
             await attendanceResponse.json();
 
-        console.log(attendanceData);
+        console.log("Attendance :", attendanceData);
 
         const table =
             document.getElementById("attendanceTable");
@@ -83,17 +110,20 @@ async function loadAttendance() {
 
                 table.innerHTML += `
 
-                <tr>
+                    <tr>
 
-                    <td>${record.date}</td>
+                        <td>${record.date}</td>
 
-                    <td>${record.status}</td>
+                        <td>${record.status}</td>
 
-                </tr>
+                    </tr>
 
                 `;
 
             });
+
+            document.getElementById("attendancePercentage").innerHTML =
+                attendanceData.summary.percentage + "%";
 
         }
 
@@ -101,17 +131,20 @@ async function loadAttendance() {
 
             table.innerHTML = `
 
-            <tr>
+                <tr>
 
-                <td colspan="2">
+                    <td colspan="2">
 
-                    No Attendance Records Found
+                        No Attendance Records Found
 
-                </td>
+                    </td>
 
-            </tr>
+                </tr>
 
             `;
+
+            document.getElementById("attendancePercentage").innerHTML =
+                "0%";
 
         }
 
@@ -119,7 +152,9 @@ async function loadAttendance() {
 
     catch (error) {
 
-        console.error(error);
+        console.log(error);
+
+        alert("Unable to load attendance.");
 
     }
 
