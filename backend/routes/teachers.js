@@ -555,6 +555,87 @@ router.put("/update-subjects", (req,res)=>{
     });
 
 });
+// ==========================================
+// UPDATE TEACHER SUBJECTS (ONE TIME USE)
+// ==========================================
 
+router.put("/update-subjects", (req,res)=>{
+
+
+    const subjects = [
+
+        ["DBMS","T001"],
+
+        ["Computer Networks","T002"],
+
+        ["Operating Systems","T003"],
+
+        ["Java Programming","T004"],
+
+        ["Machine Learning","T005"]
+
+    ];
+
+
+    let count = 0;
+
+
+    subjects.forEach(data=>{
+
+
+        db.run(
+
+            `
+            UPDATE teachers
+            SET subject=?
+            WHERE teacherId=?
+            `,
+
+            data,
+
+
+            (err)=>{
+
+
+                if(err){
+
+                    return res.status(500).json({
+
+                        success:false,
+
+                        message:err.message
+
+                    });
+
+                }
+
+
+                count++;
+
+
+                if(count === subjects.length){
+
+
+                    res.json({
+
+                        success:true,
+
+                        message:"Subjects Updated Successfully"
+
+                    });
+
+
+                }
+
+
+            }
+
+        );
+
+
+    });
+
+
+});
 
 module.exports = router;
