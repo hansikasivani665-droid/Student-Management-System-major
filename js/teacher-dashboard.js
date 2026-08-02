@@ -36,7 +36,6 @@ localStorage.getItem("teacher")
 );
 
 
-
 let teacherId="";
 let teacherDepartment="";
 let teacherSubject="";
@@ -45,16 +44,27 @@ let teacherSubject="";
 
 if(teacher){
 
+
     teacherId =
     teacher.teacherId;
+
 
     teacherDepartment =
     teacher.department;
 
+
     teacherSubject =
     teacher.subject;
 
+
 }
+
+
+
+console.log("Teacher Data:",teacher);
+console.log("Teacher ID:",teacherId);
+console.log("Department:",teacherDepartment);
+console.log("Subject:",teacherSubject);
 
 
 
@@ -62,7 +72,6 @@ if(teacher){
 // ======================================
 // PAGE LOAD
 // ======================================
-
 
 document.addEventListener(
 
@@ -91,6 +100,7 @@ document.getElementById("logout");
 
 if(logout){
 
+
 logout.addEventListener(
 
 "click",
@@ -102,6 +112,7 @@ localStorage.clear();
 
 sessionStorage.clear();
 
+
 location.href="login.html";
 
 
@@ -109,7 +120,9 @@ location.href="login.html";
 
 );
 
+
 }
+
 
 
 }
@@ -119,11 +132,9 @@ location.href="login.html";
 
 
 
-
 // ======================================
 // DATE TIME
 // ======================================
-
 
 function showDateTime(){
 
@@ -134,17 +145,24 @@ new Date();
 
 
 const date =
-document.getElementById("currentDate");
+document.getElementById(
+"currentDate"
+);
+
 
 
 const time =
-document.getElementById("currentTime");
+document.getElementById(
+"currentTime"
+);
 
 
 
 if(date){
 
+
 date.innerHTML =
+
 d.toLocaleDateString(
 "en-IN",
 {
@@ -161,21 +179,23 @@ year:"numeric"
 
 );
 
+
 }
 
 
 
 if(time){
 
+
 time.innerHTML =
 d.toLocaleTimeString();
 
-}
-
-
 
 }
 
+
+
+}
 
 
 
@@ -185,7 +205,6 @@ d.toLocaleTimeString();
 // ======================================
 // LOAD DASHBOARD
 // ======================================
-
 
 async function loadTeacherDashboard(){
 
@@ -200,6 +219,7 @@ try{
 
 
 const studentResponse =
+
 await fetch(
 
 `${API}/students?department=${teacherDepartment}`
@@ -209,6 +229,7 @@ await fetch(
 
 
 const studentData =
+
 await studentResponse.json();
 
 
@@ -228,10 +249,6 @@ studentData.students;
 
 
 
-
-// total students for teacher department
-
-
 const totalStudents =
 students.length;
 
@@ -246,8 +263,10 @@ document.getElementById(
 
 if(totalElement){
 
+
 totalElement.innerHTML =
 totalStudents;
+
 
 }
 
@@ -256,12 +275,14 @@ totalStudents;
 
 
 
+
 // ======================================
-// RESULTS FILTER
+// RESULTS
 // ======================================
 
 
 const resultResponse =
+
 await fetch(
 
 `${API}/results`
@@ -271,6 +292,7 @@ await fetch(
 
 
 const resultData =
+
 await resultResponse.json();
 
 
@@ -282,20 +304,21 @@ let results=[];
 if(resultData.success){
 
 
-
 results =
+
 resultData.results.filter(
 
-result=>
+result =>
 
-result.subject === teacherSubject
-
-&&
 
 result.department === teacherDepartment
 
-);
+&&
 
+result.subject === teacherSubject
+
+
+);
 
 
 }
@@ -303,8 +326,17 @@ result.department === teacherDepartment
 
 
 
+console.log(
+"Teacher Results:",
+results
+);
+
+
+
+
 
 const resultCount =
+
 document.getElementById(
 "resultsCount"
 );
@@ -313,11 +345,12 @@ document.getElementById(
 
 if(resultCount){
 
+
 resultCount.innerHTML =
 results.length;
 
-}
 
+}
 
 
 
@@ -331,13 +364,16 @@ results.forEach(result=>{
 
 
 totalMarks +=
+
 Number(result.marks);
 
 
 
 if(result.status==="Pass"){
 
+
 pass++;
+
 
 }
 
@@ -346,8 +382,11 @@ pass++;
 
 
 
+
+
 const average =
-results.length>0
+
+results.length > 0
 
 ?
 
@@ -360,8 +399,10 @@ results.length>0
 
 
 
-const percentage =
-results.length>0
+
+const passPercentage =
+
+results.length > 0
 
 ?
 
@@ -375,22 +416,30 @@ results.length>0
 
 
 
-const avgElement =
+
+const averageElement =
+
 document.getElementById(
 "averageMarks"
 );
 
 
-if(avgElement){
 
-avgElement.innerHTML =
+if(averageElement){
+
+
+averageElement.innerHTML =
 average+"%";
+
 
 }
 
 
 
+
+
 const passElement =
+
 document.getElementById(
 "passPercentage"
 );
@@ -399,8 +448,10 @@ document.getElementById(
 
 if(passElement){
 
+
 passElement.innerHTML =
-percentage+"%";
+passPercentage+"%";
+
 
 }
 
@@ -409,12 +460,15 @@ percentage+"%";
 
 
 
+
+
 // ======================================
-// ATTENDANCE FILTER
+// ATTENDANCE
 // ======================================
 
 
 const attendanceResponse =
+
 await fetch(
 
 `${API}/attendance`
@@ -424,6 +478,7 @@ await fetch(
 
 
 const attendanceData =
+
 await attendanceResponse.json();
 
 
@@ -435,23 +490,27 @@ let attendance=[];
 if(attendanceData.success){
 
 
-
 attendance =
 
 attendanceData.attendance.filter(
 
-item=>
+item =>
 
-item.subject===teacherSubject
 
-&&
+item.department === teacherDepartment
 
-item.department===teacherDepartment
 
 );
 
 
 }
+
+
+
+console.log(
+"Teacher Attendance:",
+attendance
+);
 
 
 
@@ -461,12 +520,11 @@ const present =
 
 attendance.filter(
 
-a=>
+item =>
 
-a.status==="Present"
+item.status==="Present"
 
 ).length;
-
 
 
 
@@ -475,9 +533,9 @@ const absent =
 
 attendance.filter(
 
-a=>
+item =>
 
-a.status==="Absent"
+item.status==="Absent"
 
 ).length;
 
@@ -485,9 +543,8 @@ a.status==="Absent"
 
 
 
-
-
 const presentElement =
+
 document.getElementById(
 "presentStudents"
 );
@@ -496,15 +553,19 @@ document.getElementById(
 
 if(presentElement){
 
+
 presentElement.innerHTML =
 present;
+
 
 }
 
 
 
 
+
 const absentElement =
+
 document.getElementById(
 "absentStudents"
 );
@@ -513,23 +574,29 @@ document.getElementById(
 
 if(absentElement){
 
+
 absentElement.innerHTML =
 absent;
 
-}
-
-
-
-
 
 }
+
+
+
+
+
+}
+
 
 catch(error){
 
 
 console.error(
+
 "Dashboard Error:",
+
 error
+
 );
 
 
@@ -551,7 +618,9 @@ setInterval(
 
 ()=>{
 
+
 loadTeacherDashboard();
+
 
 },
 
