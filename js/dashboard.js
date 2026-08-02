@@ -10,7 +10,7 @@
 // API URL
 // ===============================
 
-const API = "https://YOUR-RENDER-BACKEND-URL.onrender.com";
+const API = "https://student-management-system-backend.onrender.com";
 
 
 // ===============================

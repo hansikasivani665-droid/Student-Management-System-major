@@ -1,109 +1,143 @@
+// =====================================================
+// STUDENT MANAGEMENT SYSTEM BACKEND SERVER
+// =====================================================
+
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-require("dotenv").config();
 
-// ===============================
-// Database Connection
-// ===============================
-const db = require("./models/database");
 
-// ===============================
-// Import Routes
-// ===============================
-const authRoutes = require("./routes/auth");
+// Routes
+
 const studentRoutes = require("./routes/students");
 const attendanceRoutes = require("./routes/attendance");
-const resultRoutes = require("./routes/results");
-const adminRoutes = require("./routes/admin");
+const resultsRoutes = require("./routes/results");
 const dashboardRoutes = require("./routes/dashboard");
-const teacherRoutes = require("./routes/teachers");
+const authRoutes = require("./routes/auth");
+
+
+
+// Database
+
+require("./models/database");
+
+
 
 const app = express();
 
-// ===============================
-// Middlewares
-// ===============================
-app.use(cors());
+
+
+
+// =====================================================
+// CORS CONFIGURATION
+// =====================================================
+
+
+app.use(cors({
+
+    origin:[
+        "https://student-management-system-major-1.onrender.com",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ],
+
+    methods:[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+    ],
+
+    credentials:true
+
+}));
+
+
+
+
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// ===============================
-// Debug Middleware
-// ===============================
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
+app.use(express.urlencoded({
+    extended:true
+}));
+
+
+
+
+
+// =====================================================
+// STATIC FILES
+// =====================================================
+
+
+app.use(
+express.static(
+path.join(__dirname,"../")
+)
+);
+
+
+
+
+
+// =====================================================
+// API ROUTES
+// =====================================================
+
+
+app.use("/students",studentRoutes);
+
+app.use("/attendance",attendanceRoutes);
+
+app.use("/results",resultsRoutes);
+
+app.use("/dashboard",dashboardRoutes);
+
+app.use("/auth",authRoutes);
+
+
+
+
+
+// =====================================================
+// HOME TEST
+// =====================================================
+
+
+app.get("/",(req,res)=>{
+
+    res.send(
+        "Student Management System Backend Running"
+    );
+
 });
 
-// ===============================
-// Static Files
-// ===============================
-app.use(express.static(path.join(__dirname, "..")));
-app.use("/html", express.static(path.join(__dirname, "../html")));
-app.use("/css", express.static(path.join(__dirname, "../css")));
-app.use("/js", express.static(path.join(__dirname, "../js")));
-app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
-// ===============================
-// Home Page
-// ===============================
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../html/login.html"));
-});
 
-// ===============================
-// API Routes Mounting
-// ===============================
-app.use("/auth", authRoutes);
-app.use("/students", studentRoutes);
-app.use("/attendance", attendanceRoutes);
-app.use("/results", resultRoutes);
-app.use("/admin", adminRoutes);
-app.use("/dashboard", dashboardRoutes);
-app.use("/teachers", teacherRoutes);
 
-// ===============================
-// Health Check
-// ===============================
-app.get("/health", (req, res) => {
-    res.json({
-        success: true,
-        message: "Server is running smoothly"
-    });
-});
 
-// ===============================
-// 404 Handler
-// ===============================
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "API Route Not Found"
-    });
-});
+// =====================================================
+// SERVER START
+// =====================================================
 
-// ===============================
-// Error Handler
-// ===============================
-app.use((err, req, res, next) => {
-    console.error("Server Error:", err);
 
-    res.status(500).json({
-        success: false,
-        message: err.message || "Internal Server Error"
-    });
-});
+const PORT =
+process.env.PORT || 5000;
 
-// ===============================
-// Start Server
-// ===============================
-const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, "0.0.0.0", () => {
-    console.log("======================================");
-    console.log("🚀 Student Management System Backend");
-    console.log("======================================");
-    console.log(`Server Running on Port ${PORT}`);
-    console.log("======================================");
+
+app.listen(PORT,()=>{
+
+console.log(
+`🚀 Server Running on Port ${PORT}`
+);
+
+
 });
