@@ -33,29 +33,20 @@ const app = express();
 // CORS CONFIGURATION
 // =====================================================
 
-
 app.use(cors({
-
-    origin:[
+    origin: [
         "https://student-management-system-major-1.onrender.com",
         "http://localhost:5500",
         "http://127.0.0.1:5500"
     ],
-
-    methods:[
+    methods: [
         "GET",
         "POST",
         "PUT",
         "DELETE"
     ],
-
-    credentials:true
-
+    credentials: true
 }));
-
-
-
-
 
 // =====================================================
 // MIDDLEWARE
