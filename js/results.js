@@ -1,104 +1,66 @@
 // =====================================
-// Results Route
+// STUDENT MANAGEMENT SYSTEM
+// ADMIN RESULTS MODULE
 // =====================================
 
-const express = require("express");
-const router = express.Router();
 
-const db = require("../models/database");
+if(localStorage.getItem("loggedIn") !== "true"){
+
+    window.location.href="/html/login.html";
+
+}
+
+
 
 
 // =====================================
-// Add Result
+// API
 // =====================================
 
-router.post("/", (req, res) => {
 
-    const {
-        roll,
-        subject,
-        marks,
-        grade,
-        status
-    } = req.body;
-
-
-    if(!roll || !subject || marks === undefined){
-
-        return res.status(400).json({
-
-            success:false,
-            message:"All fields are required"
-
-        });
-
-    }
+const RESULT_API =
+"https://student-management-system-major-1.onrender.com/results";
 
 
 
-    const sql = `
-
-    INSERT INTO results
-    (
-        roll,
-        subject,
-        marks,
-        grade,
-        status
-    )
-
-    VALUES (?,?,?,?,?)
-
-    `;
+let resultsData=[];
 
 
 
-    db.run(
-        sql,
-
-        [
-            roll,
-            subject,
-            marks,
-            grade,
-            status
-        ],
-
-        function(error){
 
 
-            if(error){
-
-                console.error(error);
-
-
-                return res.status(500).json({
-
-                    success:false,
-                    message:error.message
-
-                });
+// =====================================
+// PAGE LOAD
+// =====================================
 
 
-            }
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+loadResults();
 
 
 
-            res.json({
-
-                success:true,
-
-                message:"Result added successfully",
-
-                id:this.lastID
-
-            });
+const search =
+document.getElementById(
+"searchResult"
+);
 
 
 
-        }
+if(search){
 
-    );
+
+search.addEventListener(
+"input",
+searchResults
+);
+
+
+}
+
 
 
 });
@@ -106,84 +68,242 @@ router.post("/", (req, res) => {
 
 
 
+
+
+
+
 // =====================================
-// Get All Results
+// LOAD RESULTS
 // =====================================
 
-router.get("/", (req,res)=>{
+
+async function loadResults(){
 
 
-    const sql = `
-
-    SELECT
-
-    results.id,
-
-    results.roll,
-
-    students.name,
-
-    students.department,
-
-    students.year,
-
-    results.subject,
-
-    results.marks,
-
-    results.grade,
-
-    results.status
+try{
 
 
-    FROM results
-
-
-    LEFT JOIN students
-
-    ON results.roll = students.roll
-
-
-    ORDER BY results.id DESC
-
-
-    `;
+const response =
+await fetch(
+RESULT_API
+);
 
 
 
-    db.all(sql, [], (error, rows)=>{
-
-
-        if(error){
-
-
-            console.error(error);
-
-
-            return res.status(500).json({
-
-                success:false,
-
-                message:error.message
-
-            });
-
-
-        }
+const data =
+await response.json();
 
 
 
-        res.json({
-
-            success:true,
-
-            results:rows
-
-        });
+console.log(
+"Results API:",
+data
+);
 
 
 
-    });
+
+if(data.success){
+
+
+
+resultsData =
+data.results || [];
+
+
+
+displayResults(
+resultsData
+);
+
+
+
+updateCards(
+resultsData
+);
+
+
+
+}
+
+else{
+
+
+showNoData();
+
+
+}
+
+
+
+}
+
+
+catch(error){
+
+
+console.error(
+"Results Error:",
+error
+);
+
+
+showNoData();
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// DISPLAY RESULTS TABLE
+// =====================================
+
+
+function displayResults(results){
+
+
+
+const table =
+document.getElementById(
+"resultTableBody"
+);
+
+
+
+if(!table){
+
+return;
+
+}
+
+
+
+table.innerHTML="";
+
+
+
+
+if(results.length===0){
+
+
+
+table.innerHTML=`
+
+<tr>
+
+<td colspan="9">
+
+No Results Found
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+
+}
+
+
+
+
+
+
+results.forEach(
+(result,index)=>{
+
+
+
+table.innerHTML += `
+
+
+<tr>
+
+
+<td>
+${index+1}
+</td>
+
+
+
+<td>
+${result.roll || "-"}
+</td>
+
+
+
+<td>
+${result.name || "-"}
+</td>
+
+
+
+<td>
+${result.department || "-"}
+</td>
+
+
+
+<td>
+${result.year || "-"}
+</td>
+
+
+
+<td>
+${result.subject || "-"}
+</td>
+
+
+
+<td>
+${result.marks ?? "-"}
+</td>
+
+
+
+<td>
+${result.grade || "-"}
+</td>
+
+
+
+<td>
+
+<span class="${
+result.status==="Pass"
+?
+"pass"
+:
+"fail"
+}">
+
+${result.status || "-"}
+
+</span>
+
+
+</td>
+
+
+
+</tr>
+
+
+
+`;
 
 
 
@@ -191,78 +311,263 @@ router.get("/", (req,res)=>{
 
 
 
+}
+
+
+
+
+
+
+
+
+
 // =====================================
-// Get Results By Roll Number
+// UPDATE CARDS
 // =====================================
 
-router.get("/:roll",(req,res)=>{
 
-
-    const roll=req.params.roll;
-
-
-
-    const sql = `
-
-    SELECT
-
-    results.*,
-
-    students.name,
-
-    students.department,
-
-    students.year
-
-
-    FROM results
-
-
-    LEFT JOIN students
-
-    ON results.roll = students.roll
-
-
-    WHERE results.roll=?
-
-
-    `;
+function updateCards(results){
 
 
 
-    db.all(sql,[roll],(error,rows)=>{
-
-
-        if(error){
-
-
-            return res.status(500).json({
-
-                success:false,
-
-                message:error.message
-
-            });
-
-
-        }
+const total =
+results.length;
 
 
 
-        res.json({
+let totalMarks=0;
 
-            success:true,
-
-            results:rows
-
-        });
+let pass=0;
 
 
-    });
+
+
+results.forEach(result=>{
+
+
+totalMarks +=
+Number(result.marks || 0);
+
+
+
+if(result.status==="Pass"){
+
+pass++;
+
+}
 
 
 });
 
 
 
-module.exports = router;
+
+
+
+const average =
+
+total
+
+?
+
+(
+totalMarks / total
+)
+.toFixed(2)
+
+:
+
+0;
+
+
+
+
+
+const percentage =
+
+total
+
+?
+
+Math.round(
+(pass / total) * 100
+)
+
+:
+
+0;
+
+
+
+
+
+
+
+const totalElement =
+document.getElementById(
+"totalResults"
+);
+
+
+
+const averageElement =
+document.getElementById(
+"averageMarks"
+);
+
+
+
+const passElement =
+document.getElementById(
+"passPercentage"
+);
+
+
+
+
+
+if(totalElement){
+
+totalElement.innerHTML =
+total;
+
+}
+
+
+
+if(averageElement){
+
+averageElement.innerHTML =
+average+"%";
+
+}
+
+
+
+if(passElement){
+
+passElement.innerHTML =
+percentage+"%";
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// SEARCH
+// =====================================
+
+
+function searchResults(){
+
+
+
+const keyword =
+document
+.getElementById(
+"searchResult"
+)
+.value
+.toLowerCase();
+
+
+
+
+const filtered =
+
+resultsData.filter(result=>{
+
+
+
+return (
+
+(result.name || "")
+.toLowerCase()
+.includes(keyword)
+
+
+||
+
+(result.roll || "")
+.toLowerCase()
+.includes(keyword)
+
+
+||
+
+(result.subject || "")
+.toLowerCase()
+.includes(keyword)
+
+
+);
+
+
+
+});
+
+
+
+
+displayResults(
+filtered
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// NO DATA
+// =====================================
+
+
+function showNoData(){
+
+
+
+const table =
+document.getElementById(
+"resultTableBody"
+);
+
+
+
+if(table){
+
+
+table.innerHTML=`
+
+<tr>
+
+<td colspan="9">
+
+No Results Available
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+
+
+}
