@@ -11,13 +11,13 @@ const db = require("../models/database");
 // GET ALL TEACHERS
 // ==========================================
 
+
 router.get("/", (req,res)=>{
 
     db.all(
         `
         SELECT *
         FROM teachers
-        ORDER BY id DESC
         `,
         [],
         (err,rows)=>{
@@ -29,6 +29,10 @@ router.get("/", (req,res)=>{
                 });
             }
 
+
+            console.log("Teachers:",rows);
+
+
             res.json({
                 success:true,
                 teachers:rows
@@ -38,10 +42,6 @@ router.get("/", (req,res)=>{
     );
 
 });
-
-
-
-
 
 // ==========================================
 // GET TEACHER BY EMAIL
