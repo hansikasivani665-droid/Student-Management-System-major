@@ -35,14 +35,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 <body>
 
 
-
 <div class="container">
 
 
 
-<!-- =================================================
+<!-- ===============================
 SIDEBAR
-================================================= -->
+================================ -->
 
 
 <aside class="sidebar">
@@ -79,7 +78,6 @@ Enterprise ERP
 <ul>
 
 
-
 <li class="active">
 
 <a href="/html/dashboard.html">
@@ -93,7 +91,6 @@ Dashboard
 </a>
 
 </li>
-
 
 
 
@@ -115,7 +112,6 @@ Students
 
 
 
-
 <li>
 
 <a href="/html/add-student.html">
@@ -129,7 +125,6 @@ Add Student
 </a>
 
 </li>
-
 
 
 
@@ -151,7 +146,6 @@ Attendance
 
 
 
-
 <li>
 
 <a href="/html/results.html">
@@ -165,7 +159,6 @@ Results
 </a>
 
 </li>
-
 
 
 
@@ -187,7 +180,6 @@ Teachers
 
 
 
-
 <li>
 
 <a href="/html/settings.html">
@@ -205,7 +197,6 @@ Settings
 
 
 
-
 <li>
 
 <a href="/html/admin-profile.html">
@@ -219,7 +210,6 @@ Profile
 </a>
 
 </li>
-
 
 
 
@@ -250,9 +240,10 @@ Logout
 
 
 
-<!-- =================================================
+
+<!-- ===============================
 MAIN CONTENT
-================================================= -->
+================================ -->
 
 
 <main class="main-content">
@@ -262,7 +253,6 @@ MAIN CONTENT
 
 
 <header class="top-header">
-
 
 
 <div>
@@ -287,16 +277,11 @@ Welcome back Administrator 👋
 
 
 
-
-
 <div class="header-right">
 
 
 
-
-
 <div class="header-box">
-
 
 <i class="fa-solid fa-calendar-days"></i>
 
@@ -307,7 +292,6 @@ Welcome back Administrator 👋
 
 
 </div>
-
 
 
 
@@ -329,19 +313,19 @@ Welcome back Administrator 👋
 
 
 
-
 <div class="profile-box">
 
 
 <i class="fa-solid fa-user-circle"></i>
 
 
-
 <div>
 
 
-<h4>
+<h4 id="adminName">
+
 Hansika Sivani
+
 </h4>
 
 
@@ -353,22 +337,25 @@ Administrator
 </div>
 
 
-
 </div>
 
 
 
 
-
 </div>
-
 
 
 </header>
 
-<!-- =================================================
-MAIN DASHBOARD CARDS
-================================================= -->
+
+
+
+
+
+
+<!-- ===============================
+DASHBOARD CARDS
+================================ -->
 
 
 <section class="cards">
@@ -385,7 +372,9 @@ MAIN DASHBOARD CARDS
 </div>
 
 
+
 <div>
+
 
 <h4>
 Total Students
@@ -393,14 +382,19 @@ Total Students
 
 
 <h2 id="totalStudents">
+
 0
+
 </h2>
 
 
 </div>
 
 
+
 </div>
+
+
 
 
 
@@ -416,22 +410,29 @@ Total Students
 </div>
 
 
+
 <div>
+
 
 <h4>
 Attendance
 </h4>
 
 
+
 <h2 id="attendancePercentage">
+
 0%
+
 </h2>
 
 
 </div>
 
 
+
 </div>
+
 
 
 
@@ -448,22 +449,29 @@ Attendance
 </div>
 
 
+
 <div>
+
 
 <h4>
 Average Marks
 </h4>
 
 
+
 <h2 id="averageMarks">
-0%
+
+0
+
 </h2>
 
 
 </div>
 
 
+
 </div>
+
 
 
 
@@ -480,22 +488,29 @@ Average Marks
 </div>
 
 
+
 <div>
+
 
 <h4>
 Pass Percentage
 </h4>
 
 
+
 <h2 id="passPercentage">
+
 0%
+
 </h2>
 
 
 </div>
 
 
+
 </div>
+
 
 
 
@@ -512,22 +527,29 @@ Pass Percentage
 </div>
 
 
+
 <div>
+
 
 <h4>
 Departments
 </h4>
 
 
+
 <h2 id="totalDepartments">
+
 0
+
 </h2>
 
 
 </div>
 
 
+
 </div>
+
 
 
 
@@ -544,19 +566,25 @@ Departments
 </div>
 
 
+
 <div>
+
 
 <h4>
 Results Published
 </h4>
 
 
+
 <h2 id="resultsCount">
+
 0
+
 </h2>
 
 
 </div>
+
 
 
 </div>
@@ -577,19 +605,25 @@ Results Published
 </div>
 
 
+
 <div>
+
 
 <h4>
 Present Today
 </h4>
 
 
+
 <h2 id="presentStudents">
+
 0
+
 </h2>
 
 
 </div>
+
 
 
 </div>
@@ -600,16 +634,8 @@ Present Today
 
 </section>
 
-
-
-
-
-
-
-
-
 <!-- =================================================
-DEPARTMENT ANALYTICS
+DEPARTMENT PERFORMANCE
 ================================================= -->
 
 
@@ -635,8 +661,8 @@ Department Performance
 
 
 
-
 <!-- CSE -->
+
 
 <div class="dept-card">
 
@@ -661,8 +687,6 @@ Students
 
 
 
-
-
 <div class="dept-row">
 
 <span>
@@ -674,8 +698,6 @@ Present
 </b>
 
 </div>
-
-
 
 
 
@@ -693,8 +715,6 @@ Absent
 
 
 
-
-
 <div class="dept-row">
 
 <span>
@@ -709,8 +729,6 @@ Attendance
 
 
 
-
-
 <div class="dept-row">
 
 <span>
@@ -722,8 +740,6 @@ Results
 </b>
 
 </div>
-
-
 
 
 
@@ -749,9 +765,8 @@ Average Marks
 
 
 
-
-
 <!-- ECE -->
+
 
 <div class="dept-card">
 
@@ -776,7 +791,6 @@ Students
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -788,7 +802,6 @@ Present
 </b>
 
 </div>
-
 
 
 
@@ -806,7 +819,6 @@ Absent
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -821,7 +833,6 @@ Attendance
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -833,7 +844,6 @@ Results
 </b>
 
 </div>
-
 
 
 
@@ -860,8 +870,8 @@ Average Marks
 
 
 
-
 <!-- EEE -->
+
 
 <div class="dept-card">
 
@@ -886,7 +896,6 @@ Students
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -898,7 +907,6 @@ Present
 </b>
 
 </div>
-
 
 
 
@@ -916,7 +924,6 @@ Absent
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -931,7 +938,6 @@ Attendance
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -943,7 +949,6 @@ Results
 </b>
 
 </div>
-
 
 
 
@@ -971,6 +976,7 @@ Average Marks
 
 <!-- MECHANICAL -->
 
+
 <div class="dept-card">
 
 
@@ -994,7 +1000,6 @@ Students
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -1006,7 +1011,6 @@ Present
 </b>
 
 </div>
-
 
 
 
@@ -1024,7 +1028,6 @@ Absent
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -1039,7 +1042,6 @@ Attendance
 
 
 
-
 <div class="dept-row">
 
 <span>
@@ -1051,7 +1053,6 @@ Results
 </b>
 
 </div>
-
 
 
 
@@ -1080,6 +1081,51 @@ Average Marks
 
 </section>
 
+
+
+
+
+
+
+
+
+<!-- =================================================
+DEPARTMENT OVERVIEW
+================================================= -->
+
+
+<section class="department-section">
+
+
+<h2>
+
+<i class="fa-solid fa-building"></i>
+
+Department Overview
+
+</h2>
+
+
+
+<div 
+id="departmentCards" 
+class="cards">
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
 <!-- =================================================
 QUICK ACTIONS
 ================================================= -->
@@ -1089,8 +1135,11 @@ QUICK ACTIONS
 
 
 <h2>
+
 Quick Actions
+
 </h2>
+
 
 
 
@@ -1098,15 +1147,21 @@ Quick Actions
 
 
 
+
+
 <a href="/html/add-student.html" class="action">
 
+
 <i class="fa-solid fa-user-plus"></i>
+
 
 <span>
 Add Student
 </span>
 
+
 </a>
+
 
 
 
@@ -1114,13 +1169,17 @@ Add Student
 
 <a href="/html/student-list.html" class="action">
 
+
 <i class="fa-solid fa-users"></i>
+
 
 <span>
 Student List
 </span>
 
+
 </a>
+
 
 
 
@@ -1128,13 +1187,18 @@ Student List
 
 <a href="/html/attendance.html" class="action">
 
+
 <i class="fa-solid fa-calendar-check"></i>
+
 
 <span>
 Attendance
 </span>
 
+
 </a>
+
+
 
 
 
@@ -1142,13 +1206,18 @@ Attendance
 
 <a href="/html/results.html" class="action">
 
+
 <i class="fa-solid fa-chart-column"></i>
+
 
 <span>
 Results
 </span>
 
+
 </a>
+
+
 
 
 
@@ -1156,13 +1225,17 @@ Results
 
 <a href="/html/manage-teachers.html" class="action">
 
+
 <i class="fa-solid fa-chalkboard-user"></i>
+
 
 <span>
 Teachers
 </span>
 
+
 </a>
+
 
 
 
@@ -1171,13 +1244,8 @@ Teachers
 </div>
 
 
+
 </section>
-
-
-
-
-
-
 
 <!-- =================================================
 CHART SECTION
@@ -1187,10 +1255,17 @@ CHART SECTION
 <section class="dashboard-grid">
 
 
+
+
+
+<!-- RESULT ANALYSIS -->
+
+
 <div class="panel">
 
 
 <div class="panel-header">
+
 
 <h2>
 
@@ -1200,24 +1275,33 @@ Result Analysis
 
 </h2>
 
+
 </div>
+
 
 
 <canvas id="studentChart"></canvas>
 
 
+
 </div>
 
 
 
 
 
+
+
+
+
+<!-- ATTENDANCE OVERVIEW -->
 
 
 <div class="panel large-panel">
 
 
 <div class="panel-header">
+
 
 <h2>
 
@@ -1227,6 +1311,7 @@ Attendance Overview
 
 </h2>
 
+
 </div>
 
 
@@ -1234,11 +1319,15 @@ Attendance Overview
 <canvas id="attendanceChart"></canvas>
 
 
+
 </div>
 
 
 
+
+
 </section>
+
 
 
 
@@ -1255,14 +1344,19 @@ RECENT STUDENTS
 <section class="panel">
 
 
+
 <div class="panel-header">
+
 
 
 <h2>
 
+
 <i class="fa-solid fa-users"></i>
 
+
 Recent Students
+
 
 </h2>
 
@@ -1274,7 +1368,10 @@ Recent Students
 
 
 
+
+
 <table class="table">
+
 
 
 <thead>
@@ -1316,16 +1413,23 @@ Status
 
 
 
+
+
 <tbody id="recentStudentTable">
+
 
 
 <tr>
 
+
 <td colspan="5">
+
 
 Loading Students...
 
+
 </td>
+
 
 </tr>
 
@@ -1335,16 +1439,15 @@ Loading Students...
 
 
 
+
+
 </table>
 
 
+
+
+
 </section>
-
-
-
-
-
-
 
 <!-- =================================================
 LOWER PANELS
@@ -1355,6 +1458,9 @@ LOWER PANELS
 
 
 
+
+
+<!-- NOTIFICATIONS -->
 
 
 <div class="panel">
@@ -1372,13 +1478,14 @@ Notifications
 </h2>
 
 
-
 </div>
 
 
 
 
+
 <ul class="notification-list">
+
 
 
 <li>
@@ -1388,6 +1495,8 @@ Notifications
 Attendance Updated Successfully
 
 </li>
+
+
 
 
 <li>
@@ -1400,6 +1509,8 @@ New Student Added
 
 
 
+
+
 <li>
 
 <i class="fa-solid fa-chart-line"></i>
@@ -1409,7 +1520,10 @@ Results Published
 </li>
 
 
+
+
 </ul>
+
 
 
 </div>
@@ -1421,7 +1535,12 @@ Results Published
 
 
 
+
+<!-- ADMIN PANEL -->
+
+
 <div class="panel">
+
 
 
 <div class="panel-header">
@@ -1429,9 +1548,12 @@ Results Published
 
 <h2>
 
+
 <i class="fa-solid fa-user-shield"></i>
 
+
 Administrator
+
 
 </h2>
 
@@ -1442,30 +1564,44 @@ Administrator
 
 
 
+
+
 <div class="admin-card">
+
 
 
 <div class="admin-avatar">
 
+
 <i class="fa-solid fa-user-tie"></i>
+
 
 </div>
 
 
 
+
 <h3>
+
 Hansika Sivani
+
 </h3>
 
 
+
 <p>
+
 System Administrator
+
 </p>
 
 
 
+
 <span class="badge">
+
 Active
+
 </span>
 
 
@@ -1474,7 +1610,11 @@ Active
 
 
 
+
+
 </div>
+
+
 
 
 
@@ -1489,12 +1629,14 @@ Active
 
 
 
+
 <!-- =================================================
-ACTIVITY TABLE
+RECENT ACTIVITIES
 ================================================= -->
 
 
 <section class="panel">
+
 
 
 <div class="panel-header">
@@ -1502,14 +1644,21 @@ ACTIVITY TABLE
 
 <h2>
 
+
 <i class="fa-solid fa-clock-rotate-left"></i>
 
+
 Recent Activities
+
 
 </h2>
 
 
+
 </div>
+
+
+
 
 
 
@@ -1519,21 +1668,32 @@ Recent Activities
 
 <thead>
 
+
 <tr>
 
+
 <th>
+
 Date
+
 </th>
 
 
+
 <th>
+
 Activity
+
 </th>
+
 
 
 <th>
+
 Status
+
 </th>
+
 
 
 </tr>
@@ -1543,29 +1703,44 @@ Status
 
 
 
+
+
+
 <tbody>
 
 
 
 <tr>
 
+
 <td>
+
 Today
+
 </td>
 
 
+
 <td>
+
 Student Registration
+
 </td>
+
 
 
 <td>
 
+
 <span class="success">
+
 Completed
+
 </span>
 
+
 </td>
+
 
 
 </tr>
@@ -1574,25 +1749,38 @@ Completed
 
 
 
+
 <tr>
 
+
 <td>
+
 Today
+
 </td>
 
 
+
 <td>
+
 Attendance Updated
+
 </td>
+
 
 
 <td>
 
+
 <span class="success">
+
 Completed
+
 </span>
 
+
 </td>
+
 
 
 </tr>
@@ -1604,23 +1792,35 @@ Completed
 
 <tr>
 
+
 <td>
+
 Today
+
 </td>
 
 
+
 <td>
+
 Results Published
+
 </td>
 
 
+
 <td>
+
 
 <span class="success">
+
 Completed
+
 </span>
 
+
 </td>
+
 
 
 </tr>
@@ -1633,6 +1833,8 @@ Completed
 
 
 </table>
+
+
 
 
 
@@ -1657,17 +1859,24 @@ FOOTER
 
 <div>
 
+
 <h3>
+
 Student Management System
+
 </h3>
 
 
 <p>
+
 Enterprise Edition v2.0
+
 </p>
 
 
+
 </div>
+
 
 
 
@@ -1677,17 +1886,26 @@ Enterprise Edition v2.0
 
 
 <p>
-Developed by <strong>Hansika Sivani</strong>
+
+Developed by 
+<strong>
+Hansika Sivani
+</strong>
+
 </p>
 
 
+
 <p>
+
 © 2026 All Rights Reserved
+
 </p>
 
 
 
 </div>
+
 
 
 
@@ -1699,8 +1917,8 @@ Developed by <strong>Hansika Sivani</strong>
 
 
 
-</main>
 
+</main>
 
 
 </div>
@@ -1711,10 +1929,20 @@ Developed by <strong>Hansika Sivani</strong>
 
 
 
+
+
+<!-- =================================================
+SCRIPTS
+================================================= -->
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
+
 <script src="../js/dashboard.js"></script>
+
 
 
 

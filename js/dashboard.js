@@ -1,79 +1,64 @@
 // =====================================================
 // STUDENT MANAGEMENT SYSTEM
-// ADMIN DASHBOARD JS
+// ADMIN DASHBOARD.JS
 // Developer : Hansika Sivani
+// Version : Render Compatible
 // =====================================================
 
 
-const API =
-"https://student-management-system-major-1.onrender.com";
+// ===============================
+// API URL
+// ===============================
+
+const API = "https://YOUR-RENDER-BACKEND-URL.onrender.com";
 
 
+// ===============================
+// Chart Variables
+// ===============================
 
 let studentChartInstance = null;
-
 let attendanceChartInstance = null;
-
+let departmentChartInstance = null;
 
 
 // =====================================================
-// DATE TIME
+// DATE & TIME
 // =====================================================
-
 
 function updateDateTime(){
 
-
-const now = new Date();
-
-
-const date =
-document.getElementById("currentDate");
+    const now = new Date();
 
 
-const time =
-document.getElementById("currentTime");
+    const dateElement = document.getElementById("currentDate");
+    const timeElement = document.getElementById("currentTime");
 
 
+    if(dateElement){
 
-if(date){
+        dateElement.innerHTML =
+        now.toLocaleDateString("en-IN",{
+            weekday:"long",
+            year:"numeric",
+            month:"long",
+            day:"numeric"
+        });
 
-date.innerHTML =
-now.toLocaleDateString(
-"en-IN",
-{
-weekday:"long",
-day:"numeric",
-month:"long",
-year:"numeric"
-}
-);
-
-}
+    }
 
 
+    if(timeElement){
 
-if(time){
+        timeElement.innerHTML =
+        now.toLocaleTimeString();
 
-time.innerHTML =
-now.toLocaleTimeString();
+    }
 
 }
 
 
-
-}
-
-
-
-setInterval(
-updateDateTime,
-1000
-);
-
-
-updateDateTime();
-
+setInterval(updateDateTime,1000);
 
 
 
@@ -81,441 +66,378 @@ updateDateTime();
 // LOAD DASHBOARD
 // =====================================================
 
-
 async function loadDashboard(){
 
 
 try{
 
 
-const studentResponse =
+console.log("Loading Dashboard Data...");
+
+
+
+const response = await fetch(
+    `${API}/dashboard`
+);
+
+
+
+const data = await response.json();
+
+
+
+console.log("Dashboard API Response :",data);
+
+
+
+if(!data.success){
+
+    console.log("Dashboard data failed");
+
+    return;
+
+}
+
+
+
+// ===============================
+// UPDATE CARDS
+// ===============================
+
+
+updateCard(
+    "totalStudents",
+    data.totalStudents
+);
+
+
+
+updateCard(
+    "presentStudents",
+    data.presentStudents
+);
+
+
+
+updateCard(
+    "absentStudents",
+    data.absentStudents
+);
+
+
+
+updateCard(
+    "attendancePercentage",
+    data.attendancePercentage + "%"
+);
+
+
+
+updateCard(
+    "averageMarks",
+    data.averageMarks
+);
+
+
+
+updateCard(
+    "passPercentage",
+    data.passPercentage + "%"
+);
+
+
+
+updateCard(
+    "totalDepartments",
+    data.totalDepartments
+);
+
+
+
+// Latest Student
+
+const latestStudent =
+document.getElementById("latestStudent");
+
+
+if(latestStudent){
+
+latestStudent.innerHTML =
+data.latestStudent || "No Data";
+
+}
+
+
+
+console.log("Dashboard Updated Successfully");
+
+
+
+}
+catch(error){
+
+
+console.error(
+"Dashboard Loading Error:",
+error
+);
+
+
+}
+
+}
+
+
+
+// =====================================================
+// UPDATE CARD FUNCTION
+// =====================================================
+
+function updateCard(id,value){
+
+
+const element =
+document.getElementById(id);
+
+
+
+if(element){
+
+element.innerHTML =
+value ?? 0;
+
+}
+
+
+
+}
+
+
+
+// =====================================================
+// LOAD DEPARTMENT ANALYTICS
+// =====================================================
+
+
+async function loadDepartmentData(){
+
+
+try{
+
+
+const response =
+await fetch(
+`${API}/dashboard/department`
+);
+
+
+
+const data =
+await response.json();
+
+
+
+console.log(
+"Department Data:",
+data
+);
+
+
+
+if(!data.success){
+
+return;
+
+}
+
+
+
+displayDepartmentCards(
+data.departments
+);
+
+
+
+}
+catch(error){
+
+console.error(
+"Department Loading Error:",
+error
+);
+
+
+}
+
+
+}
+
+
+
+// =====================================================
+// DISPLAY DEPARTMENT CARDS
+// =====================================================
+
+
+function displayDepartmentCards(departments){
+
+
+
+const container =
+document.getElementById(
+"departmentContainer"
+);
+
+
+
+if(!container)
+return;
+
+
+
+container.innerHTML="";
+
+
+
+departments.forEach(dep=>{
+
+
+const card=document.createElement("div");
+
+
+card.className="department-card";
+
+
+
+card.innerHTML=`
+
+<h3>${dep.department}</h3>
+
+<p>
+Students :
+<b>${dep.totalStudents}</b>
+</p>
+
+
+<p>
+Attendance :
+<b>${dep.attendancePercentage}%</b>
+</p>
+
+
+<p>
+Average Marks :
+<b>${dep.averageMarks}</b>
+</p>
+
+
+`;
+
+
+
+container.appendChild(card);
+
+
+
+});
+
+
+
+}
+
+
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+updateDateTime();
+
+loadDashboard();
+
+loadDepartmentData();
+
+
+}
+);
+
+// =====================================================
+// RECENT STUDENTS TABLE
+// =====================================================
+
+
+async function loadRecentStudents(){
+
+
+try{
+
+
+console.log("Loading Recent Students...");
+
+
+
+const response =
 await fetch(
 `${API}/students`
 );
 
 
-const studentData =
-await studentResponse.json();
 
-
-
-const attendanceResponse =
-await fetch(
-`${API}/attendance`
-);
-
-
-const attendanceData =
-await attendanceResponse.json();
-
-
-
-
-
-const resultResponse =
-await fetch(
-`${API}/results`
-);
-
-
-const resultData =
-await resultResponse.json();
-
-
-
-
-
-
-let students =
-studentData.students || [];
-
-
-
-let attendance =
-attendanceData.attendance || [];
-
-
-
-let results =
-resultData.results || [];
-
-
+const data =
+await response.json();
 
 
 
 console.log(
-"Students",
-students
-);
-
-
-console.log(
-"Attendance",
-attendance
-);
-
-
-console.log(
-"Results",
-results
+"Students API Response:",
+data
 );
 
 
 
+// Handle API response format
 
-
-// =====================================================
-// MAIN CARDS
-// =====================================================
-
-
-update(
-"totalStudents",
-students.length
-);
+let students = [];
 
 
 
-const present =
-attendance.filter(
-a=>a.status==="Present"
-).length;
+if(Array.isArray(data)){
 
-
-
-const absent =
-attendance.filter(
-a=>a.status==="Absent"
-).length;
-
-
-
-const attendancePercentage =
-attendance.length
-?
-Math.round(
-(present/attendance.length)*100
-)
-:
-0;
-
-
-
-update(
-"presentStudents",
-present
-);
-
-
-
-update(
-"attendancePercentage",
-attendancePercentage+"%"
-);
-
-
-
-
-
-
-let totalMarks=0;
-
-let pass=0;
-
-
-
-results.forEach(r=>{
-
-
-totalMarks +=
-Number(r.marks);
-
-
-if(r.status==="Pass"){
-
-pass++;
+    students = data;
 
 }
 
+else if(data.students){
 
-});
+    students = data.students;
 
+}
 
+else if(data.results){
 
-
-const average =
-results.length
-?
-(totalMarks/results.length).toFixed(2)
-:
-0;
-
-
-
-
-const passPercentage =
-results.length
-?
-Math.round(
-(pass/results.length)*100
-)
-:
-0;
-
-
-
-update(
-"averageMarks",
-average+"%"
-);
-
-
-
-update(
-"passPercentage",
-passPercentage+"%"
-);
-
-
-
-update(
-"resultsCount",
-results.length
-);
-
-
-
-
-
-const departments =
-[
-...new Set(
-students.map(
-s=>s.department
-)
-)
-];
-
-
-
-update(
-"totalDepartments",
-departments.length
-);
-
-
-
-if(students.length){
-
-update(
-"latestStudent",
-students[students.length-1].name
-);
+    students = data.results;
 
 }
 
 
 
-
-
-
-// =====================================================
-// DEPARTMENT ANALYTICS
-// =====================================================
-
-
-const deptNames =
-[
-"CSE",
-"ECE",
-"EEE",
-"Mechanical",
-"Civil"
-];
-
-
-
-deptNames.forEach(
-dept=>{
-
-
-const deptStudents =
-students.filter(
-s=>s.department===dept
-);
-
-
-
-const deptRolls =
-deptStudents.map(
-s=>s.roll
-);
-
-
-
-
-const deptAttendance =
-attendance.filter(
-a=>
-deptRolls.includes(a.roll)
-);
-
-
-
-
-const deptResults =
-results.filter(
-r=>
-deptRolls.includes(r.roll)
-);
-
-
-
-
-
-const deptPresent =
-deptAttendance.filter(
-a=>a.status==="Present"
-).length;
-
-
-
-
-const deptAbsent =
-deptAttendance.filter(
-a=>a.status==="Absent"
-).length;
-
-
-
-
-const deptPercentage =
-deptAttendance.length
-?
-Math.round(
-(deptPresent/deptAttendance.length)*100
-)
-:
-0;
-
-
-
-
-
-let marks=0;
-
-let deptPass=0;
-
-
-
-deptResults.forEach(r=>{
-
-
-marks += Number(r.marks);
-
-
-
-if(r.status==="Pass"){
-
-deptPass++;
-
-}
-
-
-});
-
-
-
-
-const deptAverage =
-deptResults.length
-?
-(marks/deptResults.length).toFixed(2)
-:
-0;
-
-
-
-
-let id =
-dept
-.toLowerCase()
-.replace("mechanical","mech");
-
-
-
-
-update(
-`${id}Students`,
-deptStudents.length
-);
-
-
-
-update(
-`${id}Present`,
-deptPresent
-);
-
-
-
-update(
-`${id}Absent`,
-deptAbsent
-);
-
-
-
-update(
-`${id}Attendance`,
-deptPercentage+"%"
-);
-
-
-
-update(
-`${id}Results`,
-deptResults.length
-);
-
-
-
-update(
-`${id}Average`,
-deptAverage
-);
-
-
-
-});
-
-
-
-
-
-createAttendanceChart(
-present,
-absent
-);
-
-
-
-createStudentChart(
-pass,
-results.length-pass
-);
-
-
+displayRecentStudents(students);
 
 
 
 }
-
 catch(error){
 
 
-console.log(
-"Dashboard Error",
+console.error(
+"Recent Students Error:",
 error
 );
 
@@ -529,48 +451,241 @@ error
 
 
 
-
 // =====================================================
-// UPDATE ELEMENT
+// DISPLAY RECENT STUDENTS
 // =====================================================
 
 
-function update(id,value){
-
-
-const element =
-document.getElementById(id);
+function displayRecentStudents(students){
 
 
 
-if(element){
+const tableBody =
+document.getElementById(
+"recentStudentsBody"
+);
 
-element.innerHTML=value;
+
+
+if(!tableBody){
+
+console.log(
+"recentStudentsBody not found"
+);
+
+return;
 
 }
 
 
+
+tableBody.innerHTML="";
+
+
+
+// No students
+
+if(
+!students ||
+students.length===0
+){
+
+
+tableBody.innerHTML=`
+
+<tr>
+
+<td colspan="6">
+No students available
+</td>
+
+</tr>
+
+`;
+
+
+return;
+
 }
 
 
 
 
+// Show latest 5 students
+
+const recentStudents =
+students
+.slice()
+.reverse()
+.slice(0,5);
+
+
+
+
+recentStudents.forEach(student=>{
+
+
+
+const row =
+document.createElement("tr");
+
+
+
+row.innerHTML=`
+
+<td>
+${student.roll || "-"}
+</td>
+
+
+<td>
+${student.name || "-"}
+</td>
+
+
+<td>
+${student.department || "-"}
+</td>
+
+
+<td>
+${student.year || "-"}
+</td>
+
+
+<td>
+${student.email || "-"}
+</td>
+
+
+<td>
+${student.phone || "-"}
+</td>
+
+
+`;
+
+
+
+tableBody.appendChild(row);
+
+
+
+});
+
+
+
+}
+
+
+
 
 // =====================================================
-// RECENT STUDENTS
+// STUDENT COUNT BY DEPARTMENT
 // =====================================================
 
 
-async function loadStudents(){
+function calculateDepartmentCount(students){
+
+
+
+const departmentCount={};
+
+
+
+students.forEach(student=>{
+
+
+const dept =
+student.department || "Unknown";
+
+
+
+if(
+departmentCount[dept]
+){
+
+departmentCount[dept]++;
+
+}
+
+else{
+
+departmentCount[dept]=1;
+
+}
+
+
+});
+
+
+
+return departmentCount;
+
+
+}
+
+
+
+
+// =====================================================
+// AUTO REFRESH STUDENT DATA
+// =====================================================
+
+
+function refreshStudentData(){
+
+
+loadRecentStudents();
+
+
+}
+
+
+
+// =====================================================
+// UPDATE DOM LOAD
+// =====================================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+loadRecentStudents();
+
+
+}
+);
+
+// =====================================================
+// CHARTS SECTION
+// =====================================================
+
+
+// =====================================================
+// LOAD CHART DATA
+// =====================================================
+
+
+async function loadCharts(){
 
 
 try{
 
 
+console.log(
+"Loading Chart Data..."
+);
+
+
+
 const response =
 await fetch(
-`${API}/students`
+`${API}/dashboard/department`
 );
+
 
 
 const data =
@@ -578,62 +693,48 @@ await response.json();
 
 
 
-const table =
-document.getElementById(
-"recentStudentTable"
+console.log(
+"Chart API Data:",
+data
 );
 
 
 
-if(!table)return;
+if(!data.success){
 
+console.log(
+"No chart data available"
+);
 
-
-table.innerHTML="";
-
-
-
-data.students
-.slice(0,5)
-.forEach(
-student=>{
-
-
-table.innerHTML +=`
-
-<tr>
-
-<td>${student.name}</td>
-
-<td>${student.roll}</td>
-
-<td>${student.department}</td>
-
-<td>${student.year}</td>
-
-<td>
-
-<span class="success">
-Active
-</span>
-
-</td>
-
-
-</tr>
-
-`;
-
-
-});
-
+return;
 
 }
 
 
+
+createDepartmentChart(
+data.departments
+);
+
+
+
+createAttendanceChart();
+
+
+
+createMarksChart();
+
+
+
+}
 catch(error){
 
-console.log(error);
+
+console.error(
+"Chart Loading Error:",
+error
+);
+
 
 }
 
@@ -642,80 +743,113 @@ console.log(error);
 
 
 
-
-
-
-
 // =====================================================
-// RESULT CHART
+// DEPARTMENT CHART
 // =====================================================
 
 
-function createStudentChart(pass,fail){
+function createDepartmentChart(departments){
+
 
 
 const canvas =
 document.getElementById(
-"studentChart"
+"departmentChart"
 );
 
 
-if(!canvas)return;
+
+if(!canvas)
+return;
 
 
 
-if(studentChartInstance){
+const labels =
+departments.map(
+item=>item.department
+);
 
-studentChartInstance.destroy();
+
+
+const values =
+departments.map(
+item=>item.totalStudents
+);
+
+
+
+// Destroy old chart
+
+if(departmentChartInstance){
+
+departmentChartInstance.destroy();
 
 }
 
 
 
-
-studentChartInstance =
+departmentChartInstance =
 new Chart(
 canvas,
 {
+
 
 type:"bar",
 
 
 data:{
 
-labels:[
-"Pass",
-"Fail"
-],
+
+labels:labels,
 
 
 datasets:[{
 
-data:[
-pass,
-fail
-]
+label:
+"Students",
+
+
+data:values
+
 
 }]
+
 
 },
 
 
 options:{
 
-responsive:true
+
+responsive:true,
+
+
+plugins:{
+
+
+legend:{
+
+
+display:true
+
 
 }
 
 
-});
+}
+
 
 
 }
 
 
+}
+
+);
 
 
+
+}
 
 
 
@@ -725,10 +859,8 @@ responsive:true
 // =====================================================
 
 
-function createAttendanceChart(
-present,
-absent
-){
+function createAttendanceChart(){
+
 
 
 const canvas =
@@ -738,9 +870,21 @@ document.getElementById(
 
 
 
-if(!canvas)return;
+if(!canvas)
+return;
 
 
+
+fetch(
+`${API}/dashboard`
+)
+
+.then(
+response=>response.json()
+)
+
+.then(
+data=>{
 
 
 if(attendanceChartInstance){
@@ -751,29 +895,43 @@ attendanceChartInstance.destroy();
 
 
 
-
 attendanceChartInstance =
 new Chart(
 canvas,
 {
+
 
 type:"doughnut",
 
 
 data:{
 
+
 labels:[
+
 "Present",
+
 "Absent"
+
 ],
+
 
 
 datasets:[{
 
+
+label:
+"Attendance",
+
+
 data:[
-present,
-absent
+
+data.presentStudents || 0,
+
+data.absentStudents || 0
+
 ]
+
 
 }]
 
@@ -783,7 +941,26 @@ absent
 
 options:{
 
-responsive:true
+
+responsive:true,
+
+
+plugins:{
+
+
+legend:{
+
+
+position:"bottom"
+
+
+}
+
+
+
+}
+
+
 
 }
 
@@ -793,76 +970,435 @@ responsive:true
 );
 
 
+
+}
+
+)
+
+.catch(error=>{
+
+console.error(
+"Attendance Chart Error:",
+error
+);
+
+});
+
+
+
 }
 
 
 
 
-
-
-
 // =====================================================
-// LOGOUT
+// MARKS PERFORMANCE CHART
 // =====================================================
 
 
-const logout =
+async function createMarksChart(){
+
+
+
+const canvas =
 document.getElementById(
-"logout"
+"marksChart"
 );
 
 
 
-if(logout){
+if(!canvas)
+return;
 
 
-logout.onclick=function(){
+
+try{
 
 
-localStorage.clear();
-
-sessionStorage.clear();
-
-
-location.href="login.html";
+const response =
+await fetch(
+`${API}/results`
+);
 
 
-};
 
+const data =
+await response.json();
+
+
+
+let results=[];
+
+
+
+if(Array.isArray(data)){
+
+results=data;
+
+}
+
+else if(data.results){
+
+results=data.results;
+
+}
+
+
+
+let pass=0;
+
+let fail=0;
+
+
+
+results.forEach(result=>{
+
+
+if(
+result.status==="Pass"
+){
+
+pass++;
+
+}
+
+else{
+
+fail++;
+
+}
+
+
+
+});
+
+
+
+
+
+if(attendanceChartInstance){
+
+}
+
+
+
+const existing =
+window.marksChartInstance;
+
+
+
+if(existing){
+
+existing.destroy();
 
 }
 
 
 
 
+window.marksChartInstance =
+new Chart(
+canvas,
+{
+
+
+type:"pie",
+
+
+data:{
+
+
+labels:[
+
+"Pass",
+
+"Fail"
+
+],
 
 
 
-// =====================================================
-// START
-// =====================================================
+datasets:[{
 
 
-loadDashboard();
-
-loadStudents();
-
+label:
+"Results",
 
 
+data:[
 
-setInterval(
-()=>{
+pass,
 
-loadDashboard();
+fail
 
-loadStudents();
+]
+
+
+}]
+
 
 },
-30000
+
+
+options:{
+
+
+responsive:true,
+
+
+plugins:{
+
+
+legend:{
+
+
+position:"bottom"
+
+
+}
+
+
+}
+
+
+}
+
+
+}
+
 );
 
+
+
+}
+catch(error){
+
+
+console.error(
+"Marks Chart Error:",
+error
+);
+
+
+}
+
+
+
+}
+
+
+
+
+// =====================================================
+// LOAD ALL CHARTS AFTER PAGE LOAD
+// =====================================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+loadCharts();
+
+
+}
+);
+
+// =====================================================
+// LOGOUT FUNCTION
+// =====================================================
+
+
+function logout(){
+
+
+localStorage.removeItem(
+"user"
+);
+
+
+localStorage.removeItem(
+"token"
+);
+
+
+
+window.location.href =
+"login.html";
+
+
+}
+
+
+
+// =====================================================
+// LOGOUT BUTTON EVENT
+// =====================================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+const logoutBtn =
+document.getElementById(
+"logoutBtn"
+);
+
+
+
+if(logoutBtn){
+
+
+logoutBtn.addEventListener(
+"click",
+logout
+);
+
+
+}
+
+
+});
+
+
+
+
+// =====================================================
+// AUTO REFRESH DASHBOARD
+// =====================================================
+
+
+function refreshDashboard(){
 
 
 console.log(
-"Admin Dashboard Loaded Successfully"
+"Refreshing Dashboard..."
 );
+
+
+
+loadDashboard();
+
+loadRecentStudents();
+
+loadDepartmentData();
+
+loadCharts();
+
+
+}
+
+
+
+// Refresh every 60 seconds
+
+setInterval(
+refreshDashboard,
+60000
+);
+
+
+
+
+// =====================================================
+// PROFILE / ADMIN NAME
+// =====================================================
+
+
+function loadAdminProfile(){
+
+
+
+const adminName =
+document.getElementById(
+"adminName"
+);
+
+
+
+const storedUser =
+localStorage.getItem(
+"user"
+);
+
+
+
+if(
+adminName &&
+storedUser
+){
+
+
+try{
+
+
+const user =
+JSON.parse(
+storedUser
+);
+
+
+
+adminName.innerHTML =
+user.name || "Admin";
+
+
+}
+catch(error){
+
+
+adminName.innerHTML =
+"Admin";
+
+
+}
+
+
+}
+
+
+
+}
+
+
+
+
+// =====================================================
+// FINAL PAGE INITIALIZATION
+// =====================================================
+
+
+window.addEventListener(
+"load",
+()=>{
+
+
+console.log(
+"================================="
+);
+
+
+console.log(
+"Student Management Dashboard Loaded"
+);
+
+
+console.log(
+"Render API:",
+API
+);
+
+
+console.log(
+"================================="
+);
+
+
+
+loadAdminProfile();
+
+
+});
