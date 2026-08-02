@@ -638,4 +638,38 @@ router.put("/update-subjects", (req,res)=>{
 
 });
 
+router.get("/fix-subjects", (req,res)=>{
+
+    db.serialize(()=>{
+
+        db.run(
+            "UPDATE teachers SET subject='DBMS' WHERE teacherId='T001'"
+        );
+
+        db.run(
+            "UPDATE teachers SET subject='Computer Networks' WHERE teacherId='T002'"
+        );
+
+        db.run(
+            "UPDATE teachers SET subject='Operating Systems' WHERE teacherId='T003'"
+        );
+
+        db.run(
+            "UPDATE teachers SET subject='Java Programming' WHERE teacherId='T004'"
+        );
+
+        db.run(
+            "UPDATE teachers SET subject='Machine Learning' WHERE teacherId='T005'"
+        );
+
+    });
+
+
+    res.json({
+        success:true,
+        message:"Subjects updated successfully"
+    });
+
+});
+
 module.exports = router;
