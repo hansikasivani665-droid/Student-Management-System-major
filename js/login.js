@@ -147,17 +147,17 @@ document
         // ===========================
         if (role === "admin") {
 
-            window.location.href = "dashboard.html";
+            window.location.href = "/html/dashboard.html";
 
         }
         else if (role === "teacher") {
 
-            window.location.href = "teacher-dashboard.html";
+            window.location.href = "/html/teacher-dashboard.html";
 
         }
         else if (role === "student") {
 
-            window.location.href = "student-dashboard.html";
+            window.location.href = "/html/student-dashboard.html";
 
         }
 
