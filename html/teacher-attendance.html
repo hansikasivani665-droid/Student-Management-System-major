@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,9 +32,13 @@
 
 <label>Teacher ID</label>
 
-<input id="teacherId" readonly>
+<input 
+type="text"
+id="teacherId"
+placeholder="Enter Teacher ID">
 
 </div>
+
 
 
 
@@ -41,9 +46,13 @@
 
 <label>Subject</label>
 
-<input id="subject" readonly>
+<input 
+type="text"
+id="subject"
+placeholder="Enter Subject">
 
 </div>
+
 
 
 
@@ -85,6 +94,7 @@ Data Science
 
 
 
+
 <div>
 
 <label>Year</label>
@@ -111,11 +121,10 @@ III
 IV
 </option>
 
-
 </select>
 
-
 </div>
+
 
 
 
@@ -128,11 +137,12 @@ IV
 type="date"
 id="attendanceDate">
 
-
 </div>
 
 
+
 </div>
+
 
 
 
@@ -143,6 +153,7 @@ id="attendanceDate">
 Load Students
 
 </button>
+
 
 
 
@@ -176,6 +187,11 @@ Year
 
 
 <th>
+Subject
+</th>
+
+
+<th>
 Status
 </th>
 
@@ -186,17 +202,17 @@ Status
 
 
 
+
 <tbody id="studentTable">
 
 
 <tr>
 
-<td colspan="5">
+<td colspan="6">
 
-Select Department & Year
+Enter Details and Load Students
 
 </td>
-
 
 </tr>
 
@@ -204,7 +220,10 @@ Select Department & Year
 </tbody>
 
 
+
 </table>
+
+
 
 
 
@@ -219,11 +238,8 @@ Save Attendance
 
 
 
+
 <p id="message"></p>
-
-
-
-</div>
 
 
 
@@ -235,3 +251,4 @@ Save Attendance
 </body>
 
 </html>
+```
