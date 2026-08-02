@@ -4,9 +4,7 @@
 // ======================================
 
 
-console.log(
-"Teacher Dashboard Loaded"
-);
+console.log("Teacher Dashboard Loaded");
 
 
 
@@ -14,10 +12,8 @@ console.log(
 // API
 // ======================================
 
-
 const API =
-"https://student-management-system-major-1.onrender.com";
-
+"https://student-management-system-backend.onrender.com";
 
 
 
@@ -26,16 +22,11 @@ const API =
 // LOGIN CHECK
 // ======================================
 
+if(localStorage.getItem("loggedIn") !== "true"){
 
-if(
-localStorage.getItem("loggedIn") !== "true"
-){
-
-location.href="login.html";
+    location.href="login.html";
 
 }
-
-
 
 
 
@@ -43,7 +34,6 @@ location.href="login.html";
 // ======================================
 // GET TEACHER DETAILS
 // ======================================
-
 
 const teacher =
 JSON.parse(
@@ -60,46 +50,15 @@ let teacherSubject="";
 
 if(teacher){
 
-
-teacherId =
-teacher.teacherId;
-
-
-
-teacherDepartment =
-teacher.department;
-
-
-
-teacherSubject =
-teacher.subject;
-
-
+    teacherId = teacher.teacherId;
+    teacherDepartment = teacher.department;
+    teacherSubject = teacher.subject;
 
 }
 
 
 
-console.log(
-"Teacher:",
-teacher
-);
-
-
-
-console.log(
-"Department:",
-teacherDepartment
-);
-
-
-
-console.log(
-"Subject:",
-teacherSubject
-);
-
-
+console.log("Teacher:",teacher);
 
 
 
@@ -109,7 +68,6 @@ teacherSubject
 // PAGE LOAD
 // ======================================
 
-
 document.addEventListener(
 "DOMContentLoaded",
 ()=>{
@@ -117,9 +75,7 @@ document.addEventListener(
 
 loadTeacherDashboard();
 
-
 showDateTime();
-
 
 
 setInterval(
@@ -130,37 +86,25 @@ showDateTime,
 
 
 const logout =
-document.getElementById(
-"logout"
-);
-
+document.getElementById("logout");
 
 
 if(logout){
 
-
 logout.onclick=()=>{
 
-
 localStorage.clear();
-
 sessionStorage.clear();
-
 
 location.href="login.html";
 
-
 };
 
-
 }
 
 
 
-}
-
-);
-
+});
 
 
 
@@ -177,17 +121,11 @@ function showDateTime(){
 
 
 const date =
-document.getElementById(
-"currentDate"
-);
-
+document.getElementById("currentDate");
 
 
 const time =
-document.getElementById(
-"currentTime"
-);
-
+document.getElementById("currentTime");
 
 
 const now =
@@ -197,24 +135,16 @@ new Date();
 
 if(date){
 
-
 date.innerHTML =
 now.toLocaleDateString(
 "en-IN",
 {
-
 weekday:"long",
-
 day:"numeric",
-
 month:"long",
-
 year:"numeric"
-
 }
-
 );
-
 
 }
 
@@ -222,13 +152,13 @@ year:"numeric"
 
 if(time){
 
-
 time.innerHTML =
 now.toLocaleTimeString();
 
 }
 
 
+
 }
 
 
@@ -238,30 +168,26 @@ now.toLocaleTimeString();
 
 
 
-
 // ======================================
-// LOAD DASHBOARD
+// LOAD TEACHER DASHBOARD
 // ======================================
 
 
 async function loadTeacherDashboard(){
 
 
-
 try{
 
 
-
-// ======================================
+// ===============================
 // STUDENTS
-// ======================================
+// ===============================
 
 
 const studentResponse =
 await fetch(
 `${API}/students`
 );
-
 
 
 const studentData =
@@ -274,19 +200,11 @@ studentData.students || [];
 
 
 
-
-
-// FILTER DEPARTMENT
-
-
 students =
 students.filter(
 student =>
 student.department === teacherDepartment
 );
-
-
-
 
 
 
@@ -300,19 +218,15 @@ students.length
 
 
 
-
-
-
-// ======================================
+// ===============================
 // RESULTS
-// ======================================
+// ===============================
 
 
 const resultResponse =
 await fetch(
 `${API}/results`
 );
-
 
 
 const resultData =
@@ -323,12 +237,6 @@ await resultResponse.json();
 let results =
 resultData.results || [];
 
-
-
-
-
-
-// FILTER SUBJECT + DEPARTMENT
 
 
 results =
@@ -345,19 +253,6 @@ result.subject === teacherSubject
 
 
 
-
-
-
-console.log(
-"Teacher Results:",
-results
-);
-
-
-
-
-
-
 update(
 "resultsCount",
 results.length
@@ -365,27 +260,21 @@ results.length
 
 
 
-
-
-let marks=0;
+let totalMarks=0;
 
 let pass=0;
 
 
 
-
-results.forEach(
-result=>{
+results.forEach(result=>{
 
 
-marks +=
-Number(result.marks);
+totalMarks +=
+Number(result.marks || 0);
 
 
 
-if(
-result.status==="Pass"
-){
+if(result.status==="Pass"){
 
 pass++;
 
@@ -397,15 +286,12 @@ pass++;
 
 
 
+let average =
 
-const average =
-
-results.length
-
-?
+results.length ?
 
 (
-marks/results.length
+totalMarks/results.length
 ).toFixed(2)
 
 :
@@ -415,12 +301,9 @@ marks/results.length
 
 
 
+let passPercentage =
 
-const passPercentage =
-
-results.length
-
-?
+results.length ?
 
 Math.round(
 (pass/results.length)*100
@@ -433,10 +316,9 @@ Math.round(
 
 
 
-
 update(
 "averageMarks",
-average+"%"
+average
 );
 
 
@@ -453,15 +335,17 @@ passPercentage+"%"
 
 
 
-
-// ======================================
+// ===============================
 // ATTENDANCE
-// ======================================
+// ===============================
+
 
 
 const attendanceResponse =
 await fetch(
-`${API}/attendance`
+
+`${API}/attendance?department=${teacherDepartment}&subject=${teacherSubject}&teacherId=${teacherId}`
+
 );
 
 
@@ -478,32 +362,8 @@ attendanceData.attendance || [];
 
 
 
-
-
-// FILTER DEPARTMENT STUDENTS
-
-
-const rolls =
-students.map(
-s=>s.roll
-);
-
-
-
-
-
-attendance =
-attendance.filter(
-item =>
-rolls.includes(item.roll)
-);
-
-
-
-
-
 console.log(
-"Teacher Attendance:",
+"Attendance:",
 attendance
 );
 
@@ -511,23 +371,17 @@ attendance
 
 
 
-
-
-
-const present =
+let present =
 attendance.filter(
 a=>a.status==="Present"
 ).length;
 
 
 
-
-
-const absent =
+let absent =
 attendance.filter(
 a=>a.status==="Absent"
 ).length;
-
 
 
 
@@ -549,12 +403,9 @@ absent
 
 
 
+let attendancePercentage =
 
-const percentage =
-
-attendance.length
-
-?
+attendance.length ?
 
 Math.round(
 (present/attendance.length)*100
@@ -569,12 +420,8 @@ Math.round(
 
 update(
 "attendancePercentage",
-percentage+"%"
+attendancePercentage+"%"
 );
-
-
-
-
 
 
 
@@ -582,12 +429,10 @@ percentage+"%"
 
 catch(error){
 
-
 console.error(
 "Teacher Dashboard Error",
 error
 );
-
 
 }
 
@@ -606,10 +451,7 @@ error
 // ======================================
 
 
-function update(
-id,
-value
-){
+function update(id,value){
 
 
 const element =
@@ -619,10 +461,7 @@ document.getElementById(id);
 
 if(element){
 
-
-element.innerHTML =
-value;
-
+element.innerHTML=value;
 
 }
 
@@ -643,9 +482,7 @@ value;
 setInterval(
 ()=>{
 
-
 loadTeacherDashboard();
-
 
 },
 30000
