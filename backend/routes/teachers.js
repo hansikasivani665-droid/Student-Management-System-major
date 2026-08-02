@@ -6,120 +6,83 @@ console.log("teachers.js Loaded");
 const db = require("../models/database");
 
 
-
 // ==========================================
 // GET ALL TEACHERS
 // ==========================================
 
 router.get("/", (req,res)=>{
 
-
     db.all(
-
         `
         SELECT *
         FROM teachers
         ORDER BY id DESC
         `,
-
         [],
-
         (err,rows)=>{
 
-
             if(err){
-
                 return res.status(500).json({
-
                     success:false,
                     message:err.message
-
                 });
-
             }
 
-
             res.json({
-
                 success:true,
                 teachers:rows
-
             });
 
-
         }
-
     );
 
-
 });
-
 
 
 
 // ==========================================
 // GET TEACHER BY EMAIL
-// IMPORTANT: KEEP ABOVE /:id
 // ==========================================
 
-router.get("/email/:email", (req,res)=>{
+router.get("/email/:email",(req,res)=>{
 
-
-    const email = req.params.email;
-
+    const email=req.params.email;
 
     db.get(
-
         `
         SELECT *
         FROM teachers
         WHERE email=?
         `,
-
         [email],
 
         (err,row)=>{
 
-
             if(err){
-
                 return res.status(500).json({
-
                     success:false,
                     message:err.message
-
                 });
-
             }
 
 
             if(!row){
-
                 return res.status(404).json({
-
                     success:false,
                     message:"Teacher not found"
-
                 });
-
             }
 
 
             res.json({
-
                 success:true,
                 teacher:row
-
             });
 
-
         }
-
     );
 
-
 });
-
 
 
 
@@ -127,65 +90,41 @@ router.get("/email/:email", (req,res)=>{
 // GET SINGLE TEACHER
 // ==========================================
 
-
 router.get("/:id",(req,res)=>{
 
-
     db.get(
-
         `
         SELECT *
         FROM teachers
         WHERE id=?
         `,
-
-        [
-            req.params.id
-        ],
-
+        [req.params.id],
 
         (err,row)=>{
 
-
             if(err){
-
                 return res.status(500).json({
-
                     success:false,
                     message:err.message
-
                 });
-
             }
-
 
 
             if(!row){
-
                 return res.status(404).json({
-
                     success:false,
                     message:"Teacher not found"
-
                 });
-
             }
 
 
-
             res.json({
-
                 success:true,
                 teacher:row
-
             });
 
-
         }
-
-
     );
-
 
 });
 
@@ -196,23 +135,21 @@ router.get("/:id",(req,res)=>{
 // ADD TEACHER (ADMIN)
 // ==========================================
 
-
 router.post("/",(req,res)=>{
 
 
 const {
 
-
 name,
 employeeId,
 department,
+subject,
 email,
 phone,
-qualification
-
+qualification,
+experience
 
 }=req.body;
-
 
 
 
@@ -220,11 +157,10 @@ if(
 !name ||
 !employeeId ||
 !department ||
+!subject ||
 !email ||
 !phone
-
 ){
-
 
 return res.status(400).json({
 
@@ -234,7 +170,6 @@ message:"All required fields must be filled"
 
 });
 
-
 }
 
 
@@ -243,20 +178,15 @@ message:"All required fields must be filled"
 db.get(
 
 `
-
 SELECT *
-
 FROM teachers
-
 WHERE employeeId=? OR email=?
-
 `,
 
 [
 employeeId,
 email
 ],
-
 
 (err,row)=>{
 
@@ -277,7 +207,6 @@ message:err.message
 
 if(row){
 
-
 return res.status(400).json({
 
 success:false,
@@ -286,10 +215,7 @@ message:"Teacher already exists"
 
 });
 
-
 }
-
-
 
 
 
@@ -300,17 +226,18 @@ db.run(
 INSERT INTO teachers
 
 (
-
 name,
 employeeId,
 department,
+subject,
 email,
 phone,
-qualification
+qualification,
+experience
 
 )
 
-VALUES(?,?,?,?,?,?)
+VALUES(?,?,?,?,?,?,?,?)
 
 `,
 
@@ -319,10 +246,11 @@ VALUES(?,?,?,?,?,?)
 name,
 employeeId,
 department,
+subject,
 email,
 phone,
-qualification
-
+qualification,
+experience
 
 ],
 
@@ -332,7 +260,6 @@ function(err){
 
 if(err){
 
-
 return res.status(500).json({
 
 success:false,
@@ -340,7 +267,6 @@ success:false,
 message:err.message
 
 });
-
 
 }
 
@@ -354,9 +280,7 @@ message:"Teacher Added Successfully",
 
 teacherId:this.lastID
 
-
 });
-
 
 
 });
@@ -366,7 +290,6 @@ teacherId:this.lastID
 
 
 });
-
 
 
 
@@ -377,20 +300,19 @@ teacherId:this.lastID
 // UPDATE TEACHER
 // ==========================================
 
-
 router.put("/:id",(req,res)=>{
 
 
 const {
 
-
 name,
 employeeId,
 department,
+subject,
 email,
 phone,
-qualification
-
+qualification,
+experience
 
 }=req.body;
 
@@ -405,17 +327,13 @@ UPDATE teachers
 SET
 
 name=?,
-
 employeeId=?,
-
 department=?,
-
+subject=?,
 email=?,
-
 phone=?,
-
-qualification=?
-
+qualification=?,
+experience=?
 
 WHERE id=?
 
@@ -426,11 +344,12 @@ WHERE id=?
 name,
 employeeId,
 department,
+subject,
 email,
 phone,
 qualification,
+experience,
 req.params.id
-
 
 ],
 
@@ -440,7 +359,6 @@ req.params.id
 
 if(err){
 
-
 return res.status(500).json({
 
 success:false,
@@ -448,7 +366,6 @@ success:false,
 message:err.message
 
 });
-
 
 }
 
@@ -461,7 +378,6 @@ success:true,
 message:"Teacher Updated Successfully"
 
 });
-
 
 
 });
@@ -477,7 +393,6 @@ message:"Teacher Updated Successfully"
 // ==========================================
 // DELETE TEACHER
 // ==========================================
-
 
 router.delete("/:id",(req,res)=>{
 
@@ -500,7 +415,6 @@ WHERE id=?
 
 if(err){
 
-
 return res.status(500).json({
 
 success:false,
@@ -508,7 +422,6 @@ success:false,
 message:err.message
 
 });
-
 
 }
 
@@ -533,11 +446,9 @@ message:"Teacher Deleted Successfully"
 
 
 
-
 // ==========================================
 // TEACHER LOGIN
 // ==========================================
-
 
 router.post("/login",(req,res)=>{
 
@@ -564,10 +475,8 @@ WHERE email=? AND password=?
 `,
 
 [
-
 email,
 password
-
 ],
 
 
@@ -588,9 +497,7 @@ message:err.message
 
 
 
-
 if(!row){
-
 
 return res.status(401).json({
 
@@ -600,9 +507,7 @@ message:"Invalid Teacher Login"
 
 });
 
-
 }
-
 
 
 
@@ -615,13 +520,41 @@ teacher:row
 });
 
 
-
 });
 
 
 });
+router.put("/update-subjects", (req,res)=>{
+
+    const subjects = [
+        ["DBMS","T001"],
+        ["Computer Networks","T002"],
+        ["Operating Systems","T003"],
+        ["Java Programming","T004"],
+        ["Machine Learning","T005"]
+    ];
 
 
+    subjects.forEach(item=>{
+
+        db.run(
+            `
+            UPDATE teachers
+            SET subject=?
+            WHERE teacherId=?
+            `,
+            item
+        );
+
+    });
+
+
+    res.json({
+        success:true,
+        message:"Subjects Updated"
+    });
+
+});
 
 
 module.exports = router;
