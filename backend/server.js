@@ -46,23 +46,24 @@ const app = express();
 // =====================================================
 
 
+const allowedOrigins = [
+    "https://student-management-system-major-1.onrender.com",
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000"
+];
+
 app.use(cors({
-
-    origin:[
-        "https://student-management-system-major-1.onrender.com",
-        "http://127.0.0.1:5500",
-        "http://localhost:5500"
-    ],
-
-    methods:[
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE"
-    ],
-
-    credentials:true
-
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(null, true);
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
 }));
 
 
@@ -144,14 +145,19 @@ app.use(
 
 
 // =====================================================
-// HOME TEST
+// HEALTH CHECK (RENDER)
 // =====================================================
 
+app.get("/health", (req, res) => {
+    res.json({ success: true, status: "ok" });
+});
 
-app.get("/",(req,res)=>{
+// =====================================================
+// HOME
+// =====================================================
 
+app.get("/", (req, res) => {
     res.redirect("/html/login.html");
-
 });
 
 

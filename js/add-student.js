@@ -4,7 +4,7 @@
 
 console.log("Add Student Page Loaded");
 
-const API = "https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
 const studentForm = document.getElementById("studentForm");
 const message = document.getElementById("message");

@@ -1,75 +1,52 @@
 if(localStorage.getItem("loggedIn")!=="true")
 {
 
-location.href="/html/index.html";
+location.href="/html/login.html";
 
 }
 
-
-
-const API = "https://student-management-system-major-1.onrender.com/teachers";
-
-
-
+const API = `${window.API_BASE || window.location.origin}/teachers`;
 
 const form =
 document.getElementById("teacherForm");
 
-
 const table =
 document.getElementById("teacherTable");
-
-
-
-
 
 document.addEventListener(
 "DOMContentLoaded",
 loadTeachers
 );
 
-
-
-
-
-
 form.addEventListener(
 "submit",
 async(e)=>{
 
-
 e.preventDefault();
 
-
-
 const teacher={
-
 
 name:
 document.getElementById("teacherName").value,
 
+teacherId:
+document.getElementById("teacherEmployeeId").value,
 
 email:
 document.getElementById("teacherEmail").value,
 
-
 department:
 document.getElementById("teacherDepartment").value,
-
 
 subject:
 document.getElementById("teacherSubject").value,
 
-
 phone:
 document.getElementById("teacherPhone").value
 
-
 };
 
-
-
-
+const response =
 await fetch(API,{
 
 method:"POST",
@@ -83,63 +60,47 @@ headers:{
 body:
 JSON.stringify(teacher)
 
-
 });
 
+const data =
+await response.json();
 
+if(!data.success){
+
+alert(data.message || "Failed to add teacher");
+return;
+
+}
 
 alert(
 "Teacher Added Successfully"
 );
 
-
-
 form.reset();
-
 
 loadTeachers();
 
-
 });
-
-
-
-
-
-
-
 
 async function loadTeachers(){
 
-
-
 try{
-
 
 let response =
 await fetch(API);
 
-
 let data =
 await response.json();
 
-
-
 table.innerHTML="";
-
-
 
 if(data.success){
 
-
 data.teachers.forEach(t=>{
-
 
 table.innerHTML += `
 
-
 <tr>
-
 
 <td>${t.id}</td>
 
@@ -153,7 +114,6 @@ table.innerHTML += `
 
 <td>${t.phone}</td>
 
-
 <td>
 
 <button class="delete"
@@ -165,21 +125,13 @@ Delete
 
 </td>
 
-
 </tr>
-
 
 `;
 
-
-
 });
 
-
-
 }
-
-
 
 }
 
@@ -189,24 +141,14 @@ console.log(error);
 
 }
 
-
 }
 
-
-
-
-
-
-
-
 async function deleteTeacher(id){
-
 
 if(
 confirm("Delete Teacher?")
 )
 {
-
 
 await fetch(
 `${API}/${id}`,
@@ -216,18 +158,11 @@ method:"DELETE"
 
 });
 
-
 loadTeachers();
 
-
 }
 
-
 }
-
-
-
-
 
 document
 .getElementById("searchTeacher")
@@ -235,14 +170,11 @@ document
 "keyup",
 function(){
 
-
 let value=this.value.toLowerCase();
-
 
 document
 .querySelectorAll("#teacherTable tr")
 .forEach(row=>{
-
 
 row.style.display =
 row.innerText
@@ -253,9 +185,6 @@ row.innerText
 :
 "none";
 
-
-
 });
-
 
 });

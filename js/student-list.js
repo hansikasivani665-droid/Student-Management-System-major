@@ -2,8 +2,8 @@
 // Student List Module
 // =====================================
 
-const STUDENT_API =
-"https://student-management-system-major-1.onrender.com/students";
+const API = window.API_BASE || window.location.origin;
+const STUDENT_API = `${API}/students`;
 
 let allStudents = [];
 
@@ -14,7 +14,7 @@ let allStudents = [];
 
 if (localStorage.getItem("loggedIn") !== "true") {
 
-    window.location.href = "login.html";
+    window.location.href = "/html/login.html";
 
 }
 

@@ -1,5 +1,6 @@
-const API = "https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
+const STUDENT_API = `${API}/students`;
 
 const id =
 new URLSearchParams(window.location.search).get("id");
@@ -13,10 +14,16 @@ document.getElementById("message");
 async function loadStudent(){
 
     const response =
-    await fetch(`${API}/${id}`);
+    await fetch(`${STUDENT_API}/${id}`);
 
     const data =
     await response.json();
+
+    if(!data.success || !data.student){
+        message.style.color = "red";
+        message.innerHTML = "Student not found";
+        return;
+    }
 
     const student =
     data.student;
@@ -57,7 +64,7 @@ form.addEventListener("submit", async(e)=>{
 
     };
 
-    const response=await fetch(`${API}/${id}`,{
+    const response=await fetch(`${STUDENT_API}/${id}`,{
 
         method:"PUT",
 
@@ -81,7 +88,7 @@ form.addEventListener("submit", async(e)=>{
 
         setTimeout(()=>{
 
-            window.location.href="student-list.html";
+            window.location.href="/html/student-list.html";
 
         },1000);
 

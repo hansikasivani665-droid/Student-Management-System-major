@@ -18,8 +18,8 @@ if(localStorage.getItem("loggedIn") !== "true"){
 // =====================================
 
 
-const RESULT_API =
-"https://student-management-system-major-1.onrender.com/results";
+const API = window.API_BASE || window.location.origin;
+const RESULT_API = `${API}/results`;
 
 
 

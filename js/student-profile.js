@@ -4,30 +4,18 @@
 
 if (localStorage.getItem("loggedIn") !== "true") {
 
-    location.href = "login.html";
+    location.href = "/html/login.html";
 
 }
 
-
-// ===============================
-// API
-// ===============================
-
-const STUDENT_API =
-"https://student-management-system-major-1.onrender.com/students";
-
-
-// ===============================
-// Load Profile
-// ===============================
+const API = window.API_BASE || window.location.origin;
+const STUDENT_API = `${API}/students`;
 
 document.addEventListener("DOMContentLoaded", () => {
 
     loadProfile();
 
 });
-
-
 
 async function loadProfile() {
 
@@ -36,8 +24,14 @@ async function loadProfile() {
         const email =
             localStorage.getItem("currentUser");
 
+        if (!email) {
+            alert("Student login required");
+            location.href = "/html/login.html";
+            return;
+        }
+
         const response =
-            await fetch(`${STUDENT_API}/email/${email}`);
+            await fetch(`${STUDENT_API}/email/${encodeURIComponent(email)}`);
 
         const data =
             await response.json();
@@ -79,6 +73,7 @@ async function loadProfile() {
     catch (error) {
 
         console.error("Profile Error:", error);
+        alert("Unable to load profile");
 
     }
 

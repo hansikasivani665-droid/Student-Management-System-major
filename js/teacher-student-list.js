@@ -2,7 +2,7 @@
 // Teacher Student List
 // =====================================
 
-const API = "https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
 const table = document.getElementById("studentTable");
 const search = document.getElementById("search");

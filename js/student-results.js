@@ -4,32 +4,19 @@
 
 if (localStorage.getItem("loggedIn") !== "true") {
 
-    location.href = "login.html";
+    location.href = "/html/login.html";
 
 }
 
-
-// ===============================
-// API
-// ===============================
-
-const STUDENT_API =
-"https://student-management-system-major-1.onrender.com/students";
-
-const RESULT_API =
-"https://student-management-system-major-1.onrender.com/results";
-
-
-// ===============================
-// Load Results
-// ===============================
+const API = window.API_BASE || window.location.origin;
+const STUDENT_API = `${API}/students`;
+const RESULT_API = `${API}/results`;
 
 document.addEventListener("DOMContentLoaded", () => {
 
     loadResults();
 
 });
-
 
 async function loadResults() {
 
@@ -38,9 +25,14 @@ async function loadResults() {
         const email =
             localStorage.getItem("currentUser");
 
-        // Get student details
+        if (!email) {
+            alert("Student login required");
+            location.href = "/html/login.html";
+            return;
+        }
+
         const studentResponse =
-            await fetch(`${STUDENT_API}/email/${email}`);
+            await fetch(`${STUDENT_API}/email/${encodeURIComponent(email)}`);
 
         const studentData =
             await studentResponse.json();
@@ -55,7 +47,6 @@ async function loadResults() {
         const roll =
             studentData.student.roll;
 
-        // Get all results
         const response =
             await fetch(RESULT_API);
 

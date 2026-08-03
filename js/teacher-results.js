@@ -9,8 +9,7 @@ console.log("Teacher Results Module Loaded");
 // API
 // =====================================
 
-const API =
-"https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
 
 // =====================================

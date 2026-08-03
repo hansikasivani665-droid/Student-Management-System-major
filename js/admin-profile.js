@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Login Check
     if (localStorage.getItem("loggedIn") !== "true") {
-        window.location.href = "/html/index.html";
+        window.location.href = "/html/login.html";
         return;
     }
 

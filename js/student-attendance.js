@@ -18,7 +18,7 @@ if (localStorage.getItem("loggedIn") !== "true") {
 // API
 // ======================================
 
-const API = "https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
 // ======================================
 // LOAD PAGE
@@ -55,7 +55,7 @@ async function loadAttendance() {
         // ======================================
 
         const studentResponse =
-            await fetch(`${API}/students/email/${email}`);
+            await fetch(`${API}/students/email/${encodeURIComponent(email)}`);
 
         const studentData =
             await studentResponse.json();
@@ -89,7 +89,7 @@ async function loadAttendance() {
         // ======================================
 
         const attendanceResponse =
-            await fetch(`${API}/attendance/student/${student.roll}`);
+            await fetch(`${API}/attendance/student/${encodeURIComponent(student.roll)}`);
 
         const attendanceData =
             await attendanceResponse.json();

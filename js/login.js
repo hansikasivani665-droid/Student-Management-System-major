@@ -1,12 +1,8 @@
 // ===============================
 // API URL
-// ===============================// ===============================
-// API URL
 // ===============================
-const API = "https://student-management-system-major-1.onrender.com";
 
-
-
+const API = window.API_BASE || window.location.origin;
 
 // ===============================
 // Show Password
@@ -57,10 +53,6 @@ document
         document.getElementById("rememberMe").checked;
 
 
-    // ===========================
-    // Validation
-    // ===========================
-
     if (role === "") {
 
         alert("Please select login role.");
@@ -82,10 +74,6 @@ document
 
     }
 
-
-    // ===========================
-    // Send Login Request
-    // ===========================
     try {
 
         const response = await fetch(`${API}/auth/login`, {
@@ -97,20 +85,15 @@ document
             },
 
             body: JSON.stringify({
-
                 role: role,
                 email: email,
                 password: password
-
             })
 
         });
 
         const result = await response.json();
 
-        // ===========================
-        // Login Failed
-        // ===========================
         if (!result.success) {
 
             alert(result.message);
@@ -121,13 +104,21 @@ document
 
         }
 
-
-        // ===========================
-        // Save Login
-        // ===========================
         localStorage.setItem("loggedIn", "true");
         localStorage.setItem("currentUser", email);
         localStorage.setItem("userRole", role);
+
+        if (result.teacher) {
+            localStorage.setItem("teacher", JSON.stringify(result.teacher));
+        } else {
+            localStorage.removeItem("teacher");
+        }
+
+        if (result.student) {
+            localStorage.setItem("student", JSON.stringify(result.student));
+        } else {
+            localStorage.removeItem("student");
+        }
 
         if (remember) {
 
@@ -141,10 +132,6 @@ document
 
         }
 
-
-        // ===========================
-        // Redirect
-        // ===========================
         if (role === "admin") {
 
             window.location.href = "/html/dashboard.html";

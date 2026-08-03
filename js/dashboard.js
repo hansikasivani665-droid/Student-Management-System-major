@@ -10,8 +10,7 @@
 // API URL
 // ===============================
 
-const API =
-"https://student-management-system-major-1.onrender.com";
+const API = window.API_BASE || window.location.origin;
 
 
 
@@ -1357,7 +1356,7 @@ localStorage.removeItem(
 
 
 window.location.href =
-"/html/index.html";
+"/html/login.html";
 
 
 }

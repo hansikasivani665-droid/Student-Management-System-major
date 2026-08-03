@@ -4,18 +4,7 @@
 
 console.log("Teacher Attendance Module Loaded");
 
-
-// =====================================
-// API
-// =====================================
-
-const API =
-"https://student-management-system-major-1.onrender.com";
-
-
-// =====================================
-// DOM ELEMENTS
-// =====================================
+const API = window.API_BASE || window.location.origin;
 
 const studentTable =
 document.getElementById("studentTable");
@@ -44,17 +33,10 @@ document.getElementById("teacherId");
 const loadButton =
 document.getElementById("loadStudents");
 
-
-
-// =====================================
-// DATE
-// =====================================
-
 const today =
 new Date()
 .toISOString()
 .split("T")[0];
-
 
 if(attendanceDate){
 
@@ -63,23 +45,54 @@ if(attendanceDate){
 
 }
 
+document.addEventListener("DOMContentLoaded", () => {
 
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
 
-// =====================================
-// LOAD STUDENTS
-// =====================================
+    if(teacher){
 
+        if(teacherIdInput && teacher.teacherId){
+            teacherIdInput.value = teacher.teacherId;
+        }
+
+        if(subject && teacher.subject){
+            subject.value = teacher.subject;
+        }
+
+        if(department && teacher.department){
+
+            const options =
+            department.querySelectorAll("option");
+
+            options.forEach(option => {
+
+                if(
+                option.value.toLowerCase() ===
+                teacher.department.toLowerCase()
+                ){
+                    department.value = option.value;
+                }
+
+            });
+
+            if(!department.value){
+                department.value = teacher.department;
+            }
+
+        }
+
+    }
+
+});
 
 async function loadStudents(){
-
 
 const dept =
 department.value;
 
-
 const yr =
 year.value;
-
 
 if(
 !dept ||
@@ -96,37 +109,48 @@ return;
 
 }
 
-
-
 try{
-
 
 const response =
 await fetch(
 
-`${API}/students?department=${dept}&year=${yr}`
+`${API}/students?department=${encodeURIComponent(dept)}&year=${encodeURIComponent(yr)}`
 
 );
-
-
 
 const data =
 await response.json();
 
-
-
 if(data.success){
 
+const attendanceQuery =
+new URLSearchParams({
+department: dept,
+year: yr,
+subject: subject.value,
+teacherId: teacherIdInput.value,
+date: attendanceDate.value
+}).toString();
+
+const attendanceResponse =
+await fetch(`${API}/attendance?${attendanceQuery}`);
+
+const attendanceData =
+await attendanceResponse.json();
+
+const existingRecords =
+attendanceData.success
+? attendanceData.attendance
+: [];
 
 displayStudents(
-data.students
+data.students,
+existingRecords
 );
-
 
 }
 
 else{
-
 
 studentTable.innerHTML = `
 
@@ -144,42 +168,34 @@ No Students Found
 
 }
 
-
-
 }
 
 catch(error){
 
-
 console.log(error);
 
-
 message.innerHTML =
-"❌ Unable to load students";
-
-
-}
-
-
+"Unable to load students";
 
 }
 
+}
 
-
-// =====================================
-// DISPLAY STUDENTS
-// =====================================
-
-
-function displayStudents(students){
-
+function displayStudents(students, existingRecords = []){
 
 studentTable.innerHTML="";
 
-
-
 students.forEach(student=>{
 
+const existing =
+existingRecords.find(
+record =>
+record.roll === student.roll &&
+record.status !== "Not Marked"
+);
+
+const statusValue =
+existing ? existing.status : "Present";
 
 studentTable.innerHTML += `
 
@@ -189,78 +205,51 @@ studentTable.innerHTML += `
 ${student.roll}
 </td>
 
-
 <td>
 ${student.name}
 </td>
-
 
 <td>
 ${student.department}
 </td>
 
-
 <td>
 ${student.year}
 </td>
 
-
 <td>
 ${subject.value}
 </td>
-
 
 <td>
 
 <select class="status"
 data-roll="${student.roll}">
 
-<option value="Present">
+<option value="Present" ${statusValue === "Present" ? "selected" : ""}>
 Present
 </option>
 
-
-<option value="Absent">
+<option value="Absent" ${statusValue === "Absent" ? "selected" : ""}>
 Absent
 </option>
 
-
 </select>
 
-
 </td>
-
 
 </tr>
 
 `;
 
-
-
 });
 
-
 }
-
-
-
-// =====================================
-// LOAD BUTTON
-// =====================================
-
 
 loadButton.addEventListener(
 "click",
 loadStudents
 );
-
-
-
-
-// =====================================
-// SAVE ATTENDANCE
-// =====================================
-
 
 saveButton.addEventListener(
 
@@ -268,67 +257,45 @@ saveButton.addEventListener(
 
 async()=>{
 
-
 const statusList =
 document.querySelectorAll(".status");
 
-
-
 if(statusList.length===0){
-
 
 alert(
 "Load students first"
 );
 
-
 return;
-
 
 }
 
-
-
 let successCount=0;
-
-
 
 for(
 const item of statusList
 ){
 
-
-
 const attendanceData = {
-
 
 roll:
 item.dataset.roll,
 
-
 subject:
 subject.value,
-
 
 teacherId:
 teacherIdInput.value,
 
-
 date:
 attendanceDate.value,
-
 
 status:
 item.value
 
-
 };
 
-
-
-
 try{
-
 
 const response =
 await fetch(
@@ -341,10 +308,8 @@ method:"POST",
 
 headers:{
 
-
 "Content-Type":
 "application/json"
-
 
 },
 
@@ -357,16 +322,10 @@ attendanceData
 
 );
 
-
-
 const result =
 await response.json();
 
-
-
 console.log(result);
-
-
 
 if(result.success){
 
@@ -374,54 +333,37 @@ successCount++;
 
 }
 
-
-
 }
 
 catch(error){
 
-
 console.log(error);
 
-
 }
 
-
-
 }
-
-
-
 
 if(
 successCount === statusList.length
 ){
 
-
 message.style.color="green";
-
 
 message.innerHTML =
 
-`✅ Attendance Saved For ${successCount} Students`;
-
+`Attendance Saved For ${successCount} Students`;
 
 }
 
 else{
 
-
 message.style.color="red";
-
 
 message.innerHTML =
 
-"❌ Some attendance records failed";
-
+"Some attendance records failed";
 
 }
-
-
 
 }
 
