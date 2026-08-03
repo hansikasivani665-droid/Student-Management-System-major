@@ -94,248 +94,174 @@ students:rows
 
 });
 
+// ======================================
+// GET STUDENT BY EMAIL
+// ======================================
 
+router.get("/email/:email", (req, res) => {
 
+    const email = decodeURIComponent(req.params.email);
 
+    db.get(
+        "SELECT * FROM students WHERE email=?",
+        [email],
+        (err, row) => {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
+
+            if (!row) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student Not Found"
+                });
+            }
+
+            res.json({
+                success: true,
+                student: row
+            });
+
+        }
+    );
+
+});
 
 
 // ====================================
 // GET STUDENT BY ID
 // ====================================
 
-router.get("/:id",(req,res)=>{
+router.get("/:id", (req, res) => {
 
+    db.get(
+        "SELECT * FROM students WHERE id=?",
+        [req.params.id],
+        (err, student) => {
 
-db.get(
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
 
-"SELECT * FROM students WHERE id=?",
+            if (!student) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found"
+                });
+            }
 
-[req.params.id],
+            res.json({
+                success: true,
+                student
+            });
 
-(err,student)=>{
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-
-if(!student){
-
-return res.status(404).json({
-
-success:false,
-message:"Student not found"
+        }
+    );
 
 });
-
-}
-
-
-
-res.json({
-
-success:true,
-student
-
-});
-
-
-});
-
-
-});
-
-
-
-
-
-
-// ======================================
-// GET STUDENT BY EMAIL
-// ======================================
-
-router.get("/email/:email",(req,res)=>{
-
-
-const email =
-decodeURIComponent(req.params.email);
-
-
-
-db.get(
-
-"SELECT * FROM students WHERE email=?",
-
-[email],
-
-(err,row)=>{
-
-
-if(err){
-
-console.log(
-"EMAIL ERROR:",
-err.message
-);
-
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-
-if(!row){
-
-return res.status(404).json({
-
-success:false,
-message:"Student Not Found"
-
-});
-
-}
-
-
-
-res.json({
-
-success:true,
-student:row
-
-});
-
-
-});
-
-
-});
-
-
-
-
 
 
 // ====================================
 // ADD STUDENT
 // ====================================
 
-router.post("/",(req,res)=>{
+router.post("/", (req, res) => {
 
+    const {
+        name,
+        roll,
+        department,
+        year,
+        email,
+        phone,
+        password
+    } = req.body;
 
-const {
+    if (
+        !name ||
+        !roll ||
+        !department ||
+        !year ||
+        !email ||
+        !phone
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "All fields are required"
+        });
+    }
 
-name,
-roll,
-department,
-year,
-email,
-phone,
-password
+    db.get(
+        "SELECT * FROM students WHERE roll=? OR email=?",
+        [roll, email],
+        (err, row) => {
 
-}=req.body;
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
 
+            if (row) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Student already exists"
+                });
+            }
 
+            db.run(
+                `
+                INSERT INTO students
+                (
+                    name,
+                    roll,
+                    department,
+                    year,
+                    email,
+                    phone,
+                    password
+                )
+                VALUES(?,?,?,?,?,?,?)
+                `,
+                [
+                    name,
+                    roll,
+                    department.toUpperCase(),
+                    year,
+                    email,
+                    phone,
+                    password || "1234"
+                ],
+                function(err) {
 
-if(
-!name ||
-!roll ||
-!department ||
-!year ||
-!email ||
-!phone
-){
+                    if (err) {
+                        return res.status(500).json({
+                            success: false,
+                            message: err.message
+                        });
+                    }
 
-return res.status(400).json({
+                    res.json({
+                        success: true,
+                        message: "Student Added Successfully",
+                        studentId: this.lastID
+                    });
 
-success:false,
-message:"All fields are required"
+                }
+            );
 
-});
-
-}
-
-
-
-
-db.run(
-
-`
-INSERT INTO students
-(
-name,
-roll,
-department,
-year,
-email,
-phone,
-password
-)
-
-VALUES(?,?,?,?,?,?,?)
-`,
-
-[
-
-name,
-roll,
-department.toUpperCase(),
-year,
-email,
-phone,
-password || "1234"
-
-],
-
-
-function(err){
-
-
-if(err){
-
-return res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-
-res.json({
-
-success:true,
-message:"Student Added Successfully",
-studentId:this.lastID
-
-});
-
+        }
+    );
 
 });
-
-
-});
-
-
-
-
-
 
 // ====================================
 // UPDATE STUDENT
