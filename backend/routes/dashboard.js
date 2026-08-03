@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models/database");
 
+
 // ======================================
 // ADMIN DASHBOARD
 // ======================================
@@ -15,37 +16,53 @@ router.get("/", (req, res) => {
         FROM students
     `, (err, studentData) => {
 
-        if (err) {
+        if (err)
             return res.status(500).json({
                 success:false,
                 message:err.message
             });
-        }
 
 
         // ================================
-        // TODAY ATTENDANCE
+        // ATTENDANCE
         // ================================
 
         db.get(`
+
             SELECT
-                COUNT(*) AS totalAttendance,
-                SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END) AS presentStudents,
-                SUM(CASE WHEN status='Absent' THEN 1 ELSE 0 END) AS absentStudents
+
+                COUNT(DISTINCT roll) AS totalAttendance,
+
+                COUNT(
+                    DISTINCT CASE
+                    WHEN status='Present'
+                    THEN roll END
+                ) AS presentStudents,
+
+
+                COUNT(
+                    DISTINCT CASE
+                    WHEN status='Absent'
+                    THEN roll END
+                ) AS absentStudents
+
+
             FROM attendance
+
+
             WHERE date = (
                 SELECT MAX(date)
                 FROM attendance
             )
+
         `,(attErr,attendanceData)=>{
 
 
-            if(attErr){
+            if(attErr)
                 return res.status(500).json({
                     success:false,
                     message:attErr.message
                 });
-            }
 
 
 
@@ -53,33 +70,39 @@ router.get("/", (req, res) => {
             // RESULTS
             // ================================
 
+
             db.get(`
+
                 SELECT
+
                     COUNT(*) AS resultsCount,
+
                     AVG(marks) AS averageMarks,
+
+
                     SUM(
-                        CASE WHEN status='Pass'
+                        CASE
+                        WHEN status='Pass'
                         THEN 1 ELSE 0 END
                     ) AS passStudents
+
+
                 FROM results
+
 
             `,(resErr,resultData)=>{
 
 
-                if(resErr){
+                if(resErr)
                     return res.status(500).json({
                         success:false,
                         message:resErr.message
                     });
-                }
 
 
-
-                // ================================
-                // LATEST STUDENT
-                // ================================
 
                 db.get(`
+
                     SELECT name
                     FROM students
                     ORDER BY id DESC
@@ -88,168 +111,206 @@ router.get("/", (req, res) => {
                 `,(latestErr,latestStudent)=>{
 
 
-                    if(latestErr){
+                    if(latestErr)
                         return res.status(500).json({
                             success:false,
                             message:latestErr.message
                         });
-                    }
 
 
 
                     // ================================
-                    // DEPARTMENT DETAILS
+                    // DEPARTMENT PERFORMANCE
                     // ================================
 
 
                     db.all(`
 
-                        SELECT
 
-                            s.department,
+                    SELECT
 
-                            COUNT(DISTINCT s.roll)
-                            AS totalStudents,
+                        s.department,
 
 
-                            COALESCE(
+                        COUNT(DISTINCT s.roll)
+                        AS totalStudents,
+
+
+                        COALESCE(
                             att.attendancePercentage,
                             0
-                            )
-                            AS attendancePercentage,
+                        )
+                        AS attendancePercentage,
 
 
-                            COALESCE(
+                        COALESCE(
                             res.averageMarks,
                             0
+                        )
+                        AS averageMarks,
+
+
+                        COALESCE(
+                            res.passPercentage,
+                            0
+                        )
+                        AS passPercentage
+
+
+
+                    FROM students s
+
+
+
+                    LEFT JOIN (
+
+
+                        SELECT
+
+
+                            st.department,
+
+
+                            ROUND(
+
+                                100.0 *
+
+                                COUNT(
+                                    DISTINCT CASE
+                                    WHEN a.status='Present'
+                                    THEN a.roll END
+                                )
+
+                                /
+
+                                NULLIF(
+                                    COUNT(DISTINCT a.roll),
+                                    0
+                                ),
+
+                                2
+
+                            )
+
+                            AS attendancePercentage
+
+
+
+                        FROM attendance a
+
+
+
+                        INNER JOIN students st
+
+                        ON st.roll=a.roll
+
+
+
+                        WHERE a.date = (
+
+                            SELECT MAX(date)
+                            FROM attendance
+
+                        )
+
+
+
+                        GROUP BY st.department
+
+
+
+                    ) att
+
+
+
+                    ON LOWER(att.department)
+                    =
+                    LOWER(s.department)
+
+
+
+
+                    LEFT JOIN (
+
+
+                        SELECT
+
+
+                            st.department,
+
+
+                            ROUND(
+                                AVG(r.marks),
+                                2
                             )
                             AS averageMarks,
 
 
-                            COALESCE(
-                            res.passPercentage,
-                            0
+
+                            ROUND(
+
+                                100.0 *
+
+                                SUM(
+                                    CASE
+                                    WHEN r.status='Pass'
+                                    THEN 1 ELSE 0 END
+                                )
+
+                                /
+
+                                NULLIF(
+                                    COUNT(r.id),
+                                    0
+                                ),
+
+                                2
+
                             )
                             AS passPercentage
 
 
 
-                        FROM students s
+                        FROM results r
 
 
 
-                        LEFT JOIN (
+                        INNER JOIN students st
 
-                            SELECT
-
-                                st.department,
-
-
-                                ROUND(
-                                    100.0 *
-                                    SUM(
-                                        CASE 
-                                        WHEN a.status='Present'
-                                        THEN 1 ELSE 0 END
-                                    )
-                                    /
-                                    NULLIF(COUNT(a.id),0),
-                                    2
-                                )
-                                AS attendancePercentage
-
-
-                            FROM attendance a
-
-
-                            INNER JOIN students st
-                            ON st.roll=a.roll
-
-
-                            WHERE a.date = (
-                                SELECT MAX(date)
-                                FROM attendance
-                            )
-
-
-                            GROUP BY st.department
-
-
-                        ) att
-
-
-                        ON LOWER(att.department)
-                        =
-                        LOWER(s.department)
+                        ON st.roll=r.roll
 
 
 
-                        LEFT JOIN (
-
-                            SELECT
-
-                                st.department,
-
-                                ROUND(
-                                    AVG(r.marks),
-                                    2
-                                )
-                                AS averageMarks,
-
-
-                                ROUND(
-
-                                    100.0 *
-                                    SUM(
-                                    CASE 
-                                    WHEN r.status='Pass'
-                                    THEN 1 ELSE 0 END
-                                    )
-                                    /
-                                    NULLIF(COUNT(r.id),0),
-
-                                    2
-
-                                )
-                                AS passPercentage
-
-
-                            FROM results r
-
-
-                            INNER JOIN students st
-                            ON st.roll=r.roll
-
-
-                            GROUP BY st.department
-
-
-                        ) res
-
-
-                        ON LOWER(res.department)
-                        =
-                        LOWER(s.department)
+                        GROUP BY st.department
 
 
 
-                        GROUP BY s.department
+                    ) res
 
 
-                        ORDER BY s.department
+
+                    ON LOWER(res.department)
+                    =
+                    LOWER(s.department)
+
+
+
+                    GROUP BY s.department
+
+
+
+                    ORDER BY s.department
 
 
 
                     `,(deptErr,departments)=>{
 
 
-                        if(deptErr){
+                        if(deptErr)
                             return res.status(500).json({
                                 success:false,
                                 message:deptErr.message
                             });
-                        }
-
 
 
 
@@ -266,15 +327,12 @@ router.get("/", (req, res) => {
                             studentData.totalDepartments,
 
 
-
                             presentStudents:
                             attendanceData.presentStudents || 0,
 
 
-
                             absentStudents:
                             attendanceData.absentStudents || 0,
-
 
 
                             attendancePercentage:
@@ -285,16 +343,13 @@ router.get("/", (req, res) => {
 
                             Math.round(
 
-                                attendanceData.presentStudents
-                                *
-                                100
-                                /
+                                attendanceData.presentStudents *
+                                100 /
                                 attendanceData.totalAttendance
 
                             )
 
                             :
-
                             0,
 
 
@@ -310,7 +365,6 @@ router.get("/", (req, res) => {
                             ).toFixed(2)
 
                             :
-
                             0,
 
 
@@ -323,23 +377,19 @@ router.get("/", (req, res) => {
 
                             Math.round(
 
-                                resultData.passStudents
-                                *
-                                100
-                                /
+                                resultData.passStudents *
+                                100 /
                                 resultData.resultsCount
 
                             )
 
                             :
-
                             0,
 
 
 
                             resultsCount:
                             resultData.resultsCount,
-
 
 
                             latestStudent:
@@ -353,16 +403,11 @@ router.get("/", (req, res) => {
 
 
                             departments:
-
                             departments.map(d=>({
 
-                                department:
-                                d.department,
+                                department:d.department,
 
-
-                                totalStudents:
-                                d.totalStudents,
-
+                                totalStudents:d.totalStudents,
 
                                 attendancePercentage:
                                 d.attendancePercentage || 0,
@@ -380,22 +425,28 @@ router.get("/", (req, res) => {
                         });
 
 
-
                     });
+
 
 
                 });
 
 
+
             });
+
 
 
         });
 
 
+
     });
 
+
+
 });
+
 
 
 
@@ -416,46 +467,16 @@ COUNT(DISTINCT s.roll)
 AS totalStudents,
 
 
-COALESCE(
-att.presentStudents,
-0
-)
+COALESCE(att.presentStudents,0)
 AS presentStudents,
 
 
-COALESCE(
-att.absentStudents,
-0
-)
+COALESCE(att.absentStudents,0)
 AS absentStudents,
 
 
-COALESCE(
-att.attendancePercentage,
-0
-)
-AS attendancePercentage,
-
-
-COALESCE(
-res.averageMarks,
-0
-)
-AS averageMarks,
-
-
-COALESCE(
-res.passPercentage,
-0
-)
-AS passPercentage,
-
-
-COALESCE(
-res.resultsCount,
-0
-)
-AS resultsCount
+COALESCE(att.attendancePercentage,0)
+AS attendancePercentage
 
 
 
@@ -467,19 +488,22 @@ LEFT JOIN (
 
 SELECT
 
+
 st.department,
 
 
-SUM(
-CASE WHEN a.status='Present'
-THEN 1 ELSE 0 END
+COUNT(
+DISTINCT CASE
+WHEN a.status='Present'
+THEN a.roll END
 )
 AS presentStudents,
 
 
-SUM(
-CASE WHEN a.status='Absent'
-THEN 1 ELSE 0 END
+COUNT(
+DISTINCT CASE
+WHEN a.status='Absent'
+THEN a.roll END
 )
 AS absentStudents,
 
@@ -488,14 +512,18 @@ ROUND(
 
 100.0 *
 
-SUM(
-CASE WHEN a.status='Present'
-THEN 1 ELSE 0 END
+COUNT(
+DISTINCT CASE
+WHEN a.status='Present'
+THEN a.roll END
 )
 
 /
 
-NULLIF(COUNT(a.id),0),
+NULLIF(
+COUNT(DISTINCT a.roll),
+0
+),
 
 2
 
@@ -508,18 +536,20 @@ AS attendancePercentage
 FROM attendance a
 
 
+
 INNER JOIN students st
 
 ON st.roll=a.roll
 
 
 
-WHERE a.date = (
+WHERE a.date=(
 
 SELECT MAX(date)
 FROM attendance
 
 )
+
 
 
 GROUP BY st.department
@@ -529,72 +559,15 @@ GROUP BY st.department
 ) att
 
 
+
 ON LOWER(att.department)
 =
 LOWER(s.department)
 
 
 
-
-LEFT JOIN (
-
-SELECT
-
-st.department,
-
-COUNT(r.id)
-AS resultsCount,
-
-
-ROUND(
-AVG(r.marks),
-2
-)
-AS averageMarks,
-
-
-ROUND(
-
-100.0 *
-
-SUM(
-CASE WHEN r.status='Pass'
-THEN 1 ELSE 0 END
-)
-
-/
-
-NULLIF(COUNT(r.id),0),
-
-2
-
-)
-
-AS passPercentage
-
-
-
-FROM results r
-
-
-INNER JOIN students st
-
-ON st.roll=r.roll
-
-
-GROUP BY st.department
-
-
-) res
-
-
-ON LOWER(res.department)
-=
-LOWER(s.department)
-
-
-
 GROUP BY s.department
+
 
 
 ORDER BY s.department
@@ -604,17 +577,13 @@ ORDER BY s.department
 `,(err,rows)=>{
 
 
-if(err){
-
+if(err)
 return res.status(500).json({
 
 success:false,
-
 message:err.message
 
 });
-
-}
 
 
 res.json({
@@ -630,6 +599,7 @@ departments:rows
 
 
 });
+
 
 
 module.exports = router;
