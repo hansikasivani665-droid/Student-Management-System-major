@@ -85,6 +85,51 @@ filterStudents
 
 
 
+const markPresentBtn =
+document.getElementById("markPresent");
+
+
+if(markPresentBtn){
+
+markPresentBtn.addEventListener(
+"click",
+markAllPresent
+);
+
+}
+
+
+
+const markAbsentBtn =
+document.getElementById("markAbsent");
+
+
+if(markAbsentBtn){
+
+markAbsentBtn.addEventListener(
+"click",
+markAllAbsent
+);
+
+}
+
+
+
+const attendanceForm =
+document.getElementById("attendanceForm");
+
+
+if(attendanceForm){
+
+attendanceForm.addEventListener(
+"submit",
+saveAttendance
+);
+
+}
+
+
+
 });
 
 
@@ -566,6 +611,178 @@ student.year===year
 
 
 renderTable(filtered);
+
+
+
+}
+
+
+
+
+
+
+
+
+// ===============================
+// MARK ALL PRESENT
+// ===============================
+
+
+function markAllPresent(){
+
+
+document
+.querySelectorAll('input[value="Present"]')
+.forEach(input=>{
+
+
+input.checked = true;
+
+
+
+let student =
+attendanceData.find(
+s=>s.roll === input.dataset.roll
+);
+
+
+
+if(student){
+
+student.status = "Present";
+
+}
+
+
+});
+
+
+
+updateStatistics(attendanceData);
+
+
+}
+
+
+
+
+
+
+
+
+// ===============================
+// MARK ALL ABSENT
+// ===============================
+
+
+function markAllAbsent(){
+
+
+document
+.querySelectorAll('input[value="Absent"]')
+.forEach(input=>{
+
+
+input.checked = true;
+
+
+
+let student =
+attendanceData.find(
+s=>s.roll === input.dataset.roll
+);
+
+
+
+if(student){
+
+student.status = "Absent";
+
+}
+
+
+});
+
+
+
+updateStatistics(attendanceData);
+
+
+}
+
+
+
+
+
+
+
+
+// ===============================
+// SAVE ATTENDANCE
+// ===============================
+
+
+async function saveAttendance(e){
+
+
+e.preventDefault();
+
+
+try{
+
+
+for(let student of attendanceData){
+
+
+await fetch(ATTENDANCE_API,{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+roll:student.roll,
+
+status:student.status
+
+})
+
+});
+
+
+}
+
+
+
+alert("Attendance Saved Successfully");
+
+
+
+loadAttendance();
+
+
+
+}
+
+
+catch(error){
+
+
+console.log(
+"Save Attendance Error:",
+error
+);
+
+
+alert("Attendance Save Failed");
+
+
+}
 
 
 
