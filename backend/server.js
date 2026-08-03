@@ -48,8 +48,11 @@ const app = express();
 
 app.use(cors({
 
-    origin:
-    "https://student-management-system-major-1.onrender.com",
+    origin:[
+        "https://student-management-system-major-1.onrender.com",
+        "http://127.0.0.1:5500",
+        "http://localhost:5500"
+    ],
 
     methods:[
         "GET",
@@ -86,11 +89,13 @@ app.use(express.urlencoded({
 // =====================================================
 
 
-app.use(
-    express.static(
-        path.join(__dirname,"../")
-    )
-);
+app.use("/css", express.static(path.join(__dirname, "../css")));
+
+app.use("/js", express.static(path.join(__dirname, "../js")));
+
+app.use("/assets", express.static(path.join(__dirname, "../assets")));
+
+app.use("/html", express.static(path.join(__dirname, "../html")));
 
 
 
@@ -145,9 +150,7 @@ app.use(
 
 app.get("/",(req,res)=>{
 
-    res.send(
-        "Student Management System Backend Running"
-    );
+    res.redirect("/html/login.html");
 
 });
 
