@@ -450,10 +450,6 @@ router.get("/", (req, res) => {
 
 
 
-// ======================================
-// DEPARTMENT DASHBOARD
-// ======================================
-
 router.get("/department",(req,res)=>{
 
 
@@ -463,8 +459,7 @@ SELECT
 
 s.department,
 
-COUNT(DISTINCT s.roll)
-AS totalStudents,
+COUNT(DISTINCT s.roll) AS totalStudents,
 
 
 COALESCE(att.presentStudents,0)
@@ -476,7 +471,15 @@ AS absentStudents,
 
 
 COALESCE(att.attendancePercentage,0)
-AS attendancePercentage
+AS attendancePercentage,
+
+
+COALESCE(resultsData.resultsCount,0)
+AS resultsCount,
+
+
+COALESCE(resultsData.averageMarks,0)
+AS averageMarks
 
 
 
@@ -487,7 +490,6 @@ FROM students s
 LEFT JOIN (
 
 SELECT
-
 
 st.department,
 
@@ -536,7 +538,6 @@ AS attendancePercentage
 FROM attendance a
 
 
-
 INNER JOIN students st
 
 ON st.roll=a.roll
@@ -551,23 +552,58 @@ FROM attendance
 )
 
 
-
 GROUP BY st.department
-
 
 
 ) att
 
 
 
-ON LOWER(att.department)
+ON LOWER(att.department)=LOWER(s.department)
+
+
+
+LEFT JOIN (
+
+SELECT
+
+st.department,
+
+
+COUNT(r.id)
+AS resultsCount,
+
+
+ROUND(
+AVG(r.marks),
+2
+)
+AS averageMarks
+
+
+
+FROM results r
+
+
+INNER JOIN students st
+
+ON st.roll=r.roll
+
+
+GROUP BY st.department
+
+
+) resultsData
+
+
+
+ON LOWER(resultsData.department)
 =
 LOWER(s.department)
 
 
 
 GROUP BY s.department
-
 
 
 ORDER BY s.department
@@ -577,13 +613,17 @@ ORDER BY s.department
 `,(err,rows)=>{
 
 
-if(err)
+if(err){
+
 return res.status(500).json({
 
 success:false,
+
 message:err.message
 
 });
+
+}
 
 
 res.json({
@@ -599,7 +639,6 @@ departments:rows
 
 
 });
-
 
 
 module.exports = router;

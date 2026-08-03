@@ -295,6 +295,8 @@ item.value
 
 };
 
+console.log("Sending Attendance:", attendanceData);
+
 try{
 
 const response =
