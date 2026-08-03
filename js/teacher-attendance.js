@@ -343,15 +343,15 @@ console.log(error);
 
 }
 
-if(
-successCount === statusList.length
-){
+if(successCount === statusList.length)
+{
 
 message.style.color="green";
 
 message.innerHTML =
-
 `Attendance Saved For ${successCount} Students`;
+
+loadStudents();
 
 }
 
