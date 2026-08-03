@@ -306,6 +306,8 @@ function markAllAbsent() {
 
 async function saveAttendance(e) {
 
+    async function saveAttendance(e) {
+
     e.preventDefault();
 
     const today = new Date().toISOString().split("T")[0];
