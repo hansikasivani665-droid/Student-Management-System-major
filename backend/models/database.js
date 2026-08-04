@@ -155,29 +155,30 @@ db.serialize(() => {
 
         CREATE TABLE IF NOT EXISTS teachers(
 
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            teacherId TEXT,
+    teacherId TEXT,
 
-            name TEXT,
+    name TEXT,
 
-            department TEXT,
+    department TEXT,
 
-            subject TEXT,
+    year TEXT,
 
-            email TEXT,
+    subject TEXT,
 
-            phone TEXT,
+    email TEXT,
 
-            qualification TEXT,
+    phone TEXT,
 
-            experience TEXT,
+    qualification TEXT,
 
-            password TEXT,
+    experience TEXT,
 
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    password TEXT,
 
-        )
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+)
 
     `);
 
@@ -314,6 +315,28 @@ db.serialize(() => {
     );
 
 });
+
+//Teacher Migration//
+
+db.all(
+    `PRAGMA table_info(teachers)`,
+    (err, columns) => {
+
+        if (err) return;
+
+        const yearExists =
+            columns.some(c => c.name === "year");
+
+        if (!yearExists) {
+
+            db.run(
+                `ALTER TABLE teachers ADD COLUMN year TEXT`
+            );
+
+        }
+
+    }
+);
 
 // ======================================
 // INSERT SAMPLE STUDENTS
@@ -914,6 +937,7 @@ db.get(
                     "T001",
                     "Ravi Kumar",
                     "CSE",
+                    "III",
                     "DBMS",
                     "ravi.kumar@gmail.com",
                     "9876543210",
@@ -927,6 +951,7 @@ db.get(
                     "T002",
                     "Suresh Reddy",
                     "ECE",
+                    "II",
                     "Digital Electronics",
                     "suresh.reddy@gmail.com",
                     "9876543211",
@@ -940,6 +965,7 @@ db.get(
                     "T003",
                     "Priya Sharma",
                     "EEE",
+                    "I",
                     "Electrical Machines",
                     "priya.sharma@gmail.com",
                     "9876543212",
@@ -953,6 +979,7 @@ db.get(
                     "T004",
                     "Anil Kumar",
                     "Mechanical",
+                    "II",
                     "Thermodynamics",
                     "anil.kumar@gmail.com",
                     "9876543213",
@@ -966,6 +993,7 @@ db.get(
                     "T005",
                     "Lakshmi Devi",
                     "Civil",
+                    "IV",
                     "Structural Engineering",
                     "lakshmi.devi@gmail.com",
                     "9876543214",
@@ -982,6 +1010,7 @@ db.get(
                     "ECE001",
                     "Arjun",
                     "ECE",
+                    "III",
                     "Digital Electronics",
                     "arjun.ece@gmail.com",
                     "9876501001",
@@ -994,6 +1023,7 @@ db.get(
                     "ECE002",
                     "Kavya",
                     "ECE",
+                    "I",
                     "Digital Electronics",
                     "kavya.ece@gmail.com",
                     "9876501002",
@@ -1006,6 +1036,7 @@ db.get(
                     "ECE003",
                     "Rohit",
                     "ECE",
+                    "IV",
                     "Digital Electronics",
                     "rohit.ece@gmail.com",
                     "9876501003",
@@ -1022,6 +1053,7 @@ db.get(
                     "EEE001",
                     "Ramesh",
                     "EEE",
+                    "II",
                     "Electrical Machines",
                     "ramesh.eee@gmail.com",
                     "9876502001",
@@ -1034,6 +1066,7 @@ db.get(
                     "EEE002",
                     "Divya",
                     "EEE",
+                    "III",
                     "Electrical Machines",
                     "divya.eee@gmail.com",
                     "9876502002",
@@ -1050,6 +1083,7 @@ db.get(
                     "CIV001",
                     "Ravi",
                     "Civil",
+                    "II",
                     "Structural Engineering",
                     "ravi.civil@gmail.com",
                     "9876503001",
@@ -1062,6 +1096,7 @@ db.get(
                     "CIV002",
                     "Anusha",
                     "Civil",
+                    "III",
                     "Structural Engineering",
                     "anusha.civil@gmail.com",
                     "9876503002",
@@ -1078,6 +1113,7 @@ db.get(
                     "MEC001",
                     "Vamsi",
                     "Mechanical",
+                    "I",
                     "Thermodynamics",
                     "vamsi.mech@gmail.com",
                     "9876504001",
@@ -1090,6 +1126,7 @@ db.get(
                     "MEC002",
                     "Sowmya",
                     "Mechanical",
+                    "III",
                     "Thermodynamics",
                     "sowmya.mech@gmail.com",
                     "9876504002",
@@ -1113,6 +1150,7 @@ db.get(
                         teacherId,
                         name,
                         department,
+                        year,
                         subject,
                         email,
                         phone,

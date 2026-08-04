@@ -10,15 +10,36 @@ const search = document.getElementById("search");
 let students = [];
 
 
-// =====================================
-// Load Students
-// =====================================
-
 async function loadStudents() {
+
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
+
+    if (!teacher) {
+
+        table.innerHTML = `
+
+        <tr>
+
+            <td colspan="6">
+
+                Teacher not logged in
+
+            </td>
+
+        </tr>
+
+        `;
+
+        return;
+
+    }
 
     try {
 
-        const response = await fetch(`${API}/students`);
+        const response = await fetch(
+            `${API}/teachers/${teacher.teacherId}/students`
+        );
 
         const data = await response.json();
 

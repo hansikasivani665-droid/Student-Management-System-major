@@ -41,6 +41,39 @@ const message =
 document.getElementById("message");
 
 
+// =====================================
+// LOAD LOGGED-IN TEACHER
+// =====================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
+
+    if (!teacher) {
+
+        alert("Teacher not logged in.");
+        return;
+
+    }
+
+    // Teacher ID
+    teacherIdInput.value = teacher.teacherId;
+    teacherIdInput.readOnly = true;
+
+    // Subject
+    subjectInput.value = teacher.subject;
+    subjectInput.readOnly = true;
+
+    // Department
+    department.value = teacher.department;
+    department.disabled = true;
+
+    // Year
+    year.value = teacher.year;
+    year.disabled = true;
+
+});
 
 
 // =====================================
@@ -48,72 +81,44 @@ document.getElementById("message");
 // =====================================
 
 loadButton.addEventListener(
-"click",
-loadStudents
+    "click",
+    loadStudents
 );
 
 
+async function loadStudents() {
 
-async function loadStudents(){
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
 
+    if (!teacher) {
 
-const dept =
-department.value;
+        alert("Teacher not logged in.");
+        return;
 
+    }
 
-const yr =
-year.value;
+    try {
 
+        const response =
+        await fetch(
+            `${API}/teachers/${teacher.teacherId}/students`
+        );
 
+        const data =
+        await response.json();
 
-if(
-!teacherIdInput.value ||
-!subjectInput.value ||
-!dept ||
-!yr
-){
+        if (data.success) {
 
-alert(
-"Enter Teacher ID, Subject, Department and Year"
-);
+            displayStudents(
+                data.students
+            );
 
-return;
+        }
 
-}
+        else {
 
-
-
-try{
-
-
-const response =
-await fetch(
-
-`${API}/students?department=${dept}&year=${yr}`
-
-);
-
-
-
-const data =
-await response.json();
-
-
-
-if(data.success){
-
-
-displayStudents(
-data.students
-);
-
-
-}
-
-else{
-
-
-studentTable.innerHTML = `
+            studentTable.innerHTML = `
 
 <tr>
 
@@ -127,319 +132,232 @@ No Students Found
 
 `;
 
-}
+        }
 
+    }
 
-}
+    catch (error) {
 
-catch(error){
+        console.log(error);
 
+        message.style.color = "red";
 
-console.log(error);
+        message.innerHTML =
+        "Unable to load students";
 
-
-message.innerHTML =
-"❌ Unable to load students";
-
-
-}
-
+    }
 
 }
-
-
-
-
-
 
 // =====================================
 // DISPLAY STUDENTS
 // =====================================
 
+function displayStudents(students) {
 
-function displayStudents(students){
+    studentTable.innerHTML = "";
 
+    if (students.length === 0) {
 
-studentTable.innerHTML = "";
-
-
-
-students.forEach(student=>{
-
-
-studentTable.innerHTML += `
-
+        studentTable.innerHTML = `
 
 <tr>
 
+<td colspan="3">
 
-<td>
-${student.roll}
+No Students Found
+
 </td>
 
+</tr>
+
+`;
+
+        return;
+
+    }
+
+    students.forEach(student => {
+
+        studentTable.innerHTML += `
+
+<tr>
+
+<td>${student.roll}</td>
+
+<td>${student.name}</td>
 
 <td>
-${student.name}
-</td>
 
-
-<td>
-
-<input 
-
+<input
 type="number"
-
 class="marks"
-
 data-roll="${student.roll}"
-
 placeholder="Enter Marks"
-
 min="0"
-
 max="100">
 
 </td>
 
-
 </tr>
-
 
 `;
 
-
-
-});
-
+    });
 
 }
-
-
-
-
 
 
 // =====================================
 // SAVE RESULTS
 // =====================================
 
-
 saveButton.addEventListener(
 
 "click",
 
-async()=>{
+async () => {
 
+    const marksInputs =
+    document.querySelectorAll(".marks");
 
-const marksInputs =
-document.querySelectorAll(".marks");
+    if (marksInputs.length === 0) {
 
+        alert("Load Students First");
 
+        return;
 
-if(marksInputs.length===0){
+    }
 
-alert(
-"Load Students First"
-);
+    let count = 0;
 
-return;
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
 
-}
+    for (const input of marksInputs) {
 
+        const marks =
+        Number(input.value);
 
+        if (isNaN(marks)) {
 
-let count = 0;
+            continue;
 
+        }
 
+        let grade = "";
 
-for(
-const input of marksInputs
-){
+        if (marks >= 90) {
 
+            grade = "A+";
 
+        }
 
-const marks =
-Number(input.value);
+        else if (marks >= 80) {
 
+            grade = "A";
 
+        }
 
-if(
-isNaN(marks)
-){
+        else if (marks >= 70) {
 
-continue;
+            grade = "B+";
 
-}
+        }
 
+        else if (marks >= 60) {
 
+            grade = "B";
 
-let grade = "";
+        }
 
+        else if (marks >= 50) {
 
+            grade = "C";
 
-if(marks >= 90){
+        }
 
-grade = "A+";
+        else {
 
-}
-else if(marks >= 80){
+            grade = "F";
 
-grade = "A";
+        }
 
-}
-else if(marks >= 70){
+        const status =
+        marks >= 35
+        ? "Pass"
+        : "Fail";
 
-grade = "B+";
+        const result = {
 
-}
-else if(marks >= 60){
+            roll: input.dataset.roll,
 
-grade = "B";
+            subject: teacher.subject,
 
-}
-else if(marks >= 50){
+            teacherId: teacher.teacherId,
 
-grade = "C";
+            marks,
 
-}
-else{
+            grade,
 
-grade = "F";
+            status
 
-}
+        };
 
+        try {
 
+            const response =
+            await fetch(`${API}/results`, {
 
-const status =
-marks >= 35
-?
-"Pass"
-:
-"Fail";
+                method: "POST",
 
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
+                body: JSON.stringify(result)
 
+            });
 
+            const data =
+            await response.json();
 
-const result = {
+            console.log(data);
 
+            if (data.success) {
 
-roll:
-input.dataset.roll,
+                count++;
 
+            }
 
-subject:
-subjectInput.value,
+        }
 
+               catch (error) {
 
-teacherId:
-teacherIdInput.value,
+            console.log(error);
 
+        }
 
-marks,
+    }
 
-grade,
+    if (count === marksInputs.length) {
 
-status
+        message.style.color = "green";
 
+        message.innerHTML =
+        `✅ Results Saved For ${count} Students`;
 
-};
+        loadStudents();
 
+    }
 
+    else {
 
+        message.style.color = "red";
 
-try{
+        message.innerHTML =
+        `Saved ${count} of ${marksInputs.length} results`;
 
+    }
 
-const response =
-await fetch(
-
-`${API}/results`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify(result)
-
-}
-
-);
-
-
-
-const data =
-await response.json();
-
-
-
-console.log(data);
-
-
-
-if(data.success){
-
-count++;
-
-}
-
-
-
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-}
-
-
-
-}
-
-
-
-
-if(count === marksInputs.length){
-
-
-message.style.color =
-"green";
-
-
-message.innerHTML =
-
-`✅ Results Saved For ${count} Students`;
-
-
-}
-
-else{
-
-
-message.style.color =
-"red";
-
-
-message.innerHTML =
-
-"❌ Some Results Failed";
-
-
-}
-
-
-
-}
-
-);
+});

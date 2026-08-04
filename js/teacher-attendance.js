@@ -4,7 +4,16 @@
 
 console.log("Teacher Attendance Module Loaded");
 
+// =====================================
+// API
+// =====================================
+
 const API = window.API_BASE || window.location.origin;
+
+
+// =====================================
+// DOM ELEMENTS
+// =====================================
 
 const studentTable =
 document.getElementById("studentTable");
@@ -33,126 +42,135 @@ document.getElementById("teacherId");
 const loadButton =
 document.getElementById("loadStudents");
 
-const today =
-new Date()
-.toISOString()
-.split("T")[0];
 
-if(attendanceDate){
+// =====================================
+// SET TODAY'S DATE
+// =====================================
+
+const today =
+new Date().toISOString().split("T")[0];
+
+if (attendanceDate) {
 
     attendanceDate.value = today;
     attendanceDate.readOnly = true;
 
 }
 
+
+// =====================================
+// LOAD LOGGED-IN TEACHER DETAILS
+// =====================================
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const teacher =
     JSON.parse(localStorage.getItem("teacher") || "null");
 
-    if(teacher){
+    if (!teacher) {
 
-        if(teacherIdInput && teacher.teacherId){
-            teacherIdInput.value = teacher.teacherId;
-        }
+        alert("Teacher not logged in.");
 
-        if(subject && teacher.subject){
-            subject.value = teacher.subject;
-        }
+        return;
 
-        if(department && teacher.department){
+    }
 
-            const options =
-            department.querySelectorAll("option");
+    // Teacher ID
+    if (teacherIdInput) {
 
-            options.forEach(option => {
+        teacherIdInput.value = teacher.teacherId;
+        teacherIdInput.readOnly = true;
 
-                if(
-                option.value.toLowerCase() ===
-                teacher.department.toLowerCase()
-                ){
-                    department.value = option.value;
-                }
+    }
 
-            });
+    // Subject
+    if (subject) {
 
-            if(!department.value){
-                department.value = teacher.department;
-            }
+        subject.value = teacher.subject;
+        subject.readOnly = true;
 
-        }
+    }
+
+    // Department
+    if (department) {
+
+        department.value = teacher.department;
+        department.disabled = true;
+
+    }
+
+    // Year
+    if (year) {
+
+        year.value = teacher.year;
+        year.disabled = true;
 
     }
 
 });
 
-async function loadStudents(){
 
-const dept =
-department.value;
+// =====================================
+// LOAD STUDENTS
+// =====================================
 
-const yr =
-year.value;
+async function loadStudents() {
 
-if(
-!dept ||
-!yr ||
-!teacherIdInput.value ||
-!subject.value
-){
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
 
-alert(
-"Enter Teacher ID, Subject, Department and Year"
-);
+    if (!teacher) {
 
-return;
+        alert("Teacher not logged in.");
 
-}
+        return;
 
-try{
+    }
 
-const response =
-await fetch(
+    try {
 
-`${API}/students?department=${encodeURIComponent(dept)}&year=${encodeURIComponent(yr)}`
+        const response =
+        await fetch(
+            `${API}/teachers/${teacher.teacherId}/students`
+        );
 
-);
+        const data =
+        await response.json();
 
-const data =
-await response.json();
+        if (data.success) {
 
-if(data.success){
+            const attendanceQuery =
+            new URLSearchParams({
 
-const attendanceQuery =
-new URLSearchParams({
-department: dept,
-year: yr,
-subject: subject.value,
-teacherId: teacherIdInput.value,
-date: attendanceDate.value
-}).toString();
+                department: teacher.department,
+                year: teacher.year,
+                subject: teacher.subject,
+                teacherId: teacher.teacherId,
+                date: attendanceDate.value
 
-const attendanceResponse =
-await fetch(`${API}/attendance?${attendanceQuery}`);
+            }).toString();
 
-const attendanceData =
-await attendanceResponse.json();
+            const attendanceResponse =
+            await fetch(`${API}/attendance?${attendanceQuery}`);
 
-const existingRecords =
-attendanceData.success
-? attendanceData.attendance
-: [];
+            const attendanceData =
+            await attendanceResponse.json();
 
-displayStudents(
-data.students,
-existingRecords
-);
+            const existingRecords =
+            attendanceData.success
+                ? attendanceData.attendance
+                : [];
 
-}
+            displayStudents(
+                data.students,
+                existingRecords
+            );
 
-else{
+        }
 
-studentTable.innerHTML = `
+        else {
+
+            studentTable.innerHTML = `
 
 <tr>
 
@@ -166,72 +184,95 @@ No Students Found
 
 `;
 
-}
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.style.color = "red";
+
+        message.innerHTML =
+        "Unable to load students";
+
+    }
 
 }
 
-catch(error){
+// =====================================
+// DISPLAY STUDENTS
+// =====================================
 
-console.log(error);
+function displayStudents(students, existingRecords = []) {
 
-message.innerHTML =
-"Unable to load students";
+    studentTable.innerHTML = "";
 
-}
+    if (students.length === 0) {
 
-}
-
-function displayStudents(students, existingRecords = []){
-
-studentTable.innerHTML="";
-
-students.forEach(student=>{
-
-const existing =
-existingRecords.find(
-record =>
-record.roll === student.roll &&
-record.status !== "Not Marked"
-);
-
-const statusValue =
-existing ? existing.status : "Present";
-
-studentTable.innerHTML += `
+        studentTable.innerHTML = `
 
 <tr>
 
-<td>
-${student.roll}
+<td colspan="6">
+
+No Students Found
+
 </td>
 
-<td>
-${student.name}
-</td>
+</tr>
+
+`;
+
+        return;
+
+    }
+
+    students.forEach(student => {
+
+        const existing = existingRecords.find(record =>
+
+            record.roll === student.roll &&
+            record.status !== "Not Marked"
+
+        );
+
+        const statusValue =
+            existing ? existing.status : "Present";
+
+        studentTable.innerHTML += `
+
+<tr>
+
+<td>${student.roll}</td>
+
+<td>${student.name}</td>
+
+<td>${student.department}</td>
+
+<td>${student.year}</td>
+
+<td>${subject.value}</td>
 
 <td>
-${student.department}
-</td>
 
-<td>
-${student.year}
-</td>
-
-<td>
-${subject.value}
-</td>
-
-<td>
-
-<select class="status"
+<select
+class="status"
 data-roll="${student.roll}">
 
-<option value="Present" ${statusValue === "Present" ? "selected" : ""}>
+<option value="Present"
+${statusValue === "Present" ? "selected" : ""}>
+
 Present
+
 </option>
 
-<option value="Absent" ${statusValue === "Absent" ? "selected" : ""}>
+<option value="Absent"
+${statusValue === "Absent" ? "selected" : ""}>
+
 Absent
+
 </option>
 
 </select>
@@ -242,131 +283,130 @@ Absent
 
 `;
 
-});
+    });
 
 }
 
-loadButton.addEventListener(
-"click",
-loadStudents
-);
+
+// =====================================
+// LOAD BUTTON
+// =====================================
+
+if (loadButton) {
+
+    loadButton.addEventListener(
+        "click",
+        loadStudents
+    );
+
+}
+
+
+// =====================================
+// SAVE ATTENDANCE
+// =====================================
+
+if (saveButton) {
 
 saveButton.addEventListener(
 
 "click",
 
-async()=>{
+async () => {
 
-const statusList =
-document.querySelectorAll(".status");
+    const statusList =
+    document.querySelectorAll(".status");
 
-if(statusList.length===0){
+    if (statusList.length === 0) {
 
-alert(
-"Load students first"
-);
+        alert("Load students first");
 
-return;
+        return;
 
-}
+    }
 
-let successCount=0;
+    let successCount = 0;
 
-for(
-const item of statusList
-){
+    const teacher =
+    JSON.parse(localStorage.getItem("teacher") || "null");
 
-const attendanceData = {
+    for (const item of statusList) {
 
-roll:
-item.dataset.roll,
+        const attendanceData = {
 
-subject:
-subject.value,
+            roll: item.dataset.roll,
 
-teacherId:
-teacherIdInput.value,
+            subject: teacher.subject,
 
-date:
-attendanceDate.value,
+            teacherId: teacher.teacherId,
 
-status:
-item.value
+            date: attendanceDate.value,
 
-};
+            status: item.value
 
-console.log("Sending Attendance:", attendanceData);
+        };
 
-try{
+        console.log("Sending Attendance:", attendanceData);
 
-const response =
-await fetch(
+        try {
 
-`${API}/attendance`,
+            const response =
+            await fetch(`${API}/attendance`, {
 
-{
+                method: "POST",
 
-method:"POST",
+                headers: {
 
-headers:{
+                    "Content-Type": "application/json"
 
-"Content-Type":
-"application/json"
+                },
 
-},
+                body: JSON.stringify(attendanceData)
 
-body:
-JSON.stringify(
-attendanceData
-)
+            });
 
-}
+            const result =
+            await response.json();
 
-);
+            console.log(result);
 
-const result =
-await response.json();
+            if (result.success) {
 
-console.log(result);
+                successCount++;
 
-if(result.success){
+            }
 
-successCount++;
+        }
 
-}
+        catch (error) {
 
-}
+            console.error(error);
 
-catch(error){
+        }
 
-console.log(error);
+    }
 
-}
+        if (successCount === statusList.length) {
 
-}
+        message.style.color = "green";
 
-if(successCount === statusList.length)
-{
+        message.innerHTML =
+        `Attendance Saved For ${successCount} Students`;
 
-message.style.color="green";
+        // Reload attendance after saving
+        loadStudents();
 
-message.innerHTML =
-`Attendance Saved For ${successCount} Students`;
+    }
 
-loadStudents();
+    else {
+
+        message.style.color = "red";
+
+        message.innerHTML =
+        `Saved ${successCount} of ${statusList.length} attendance records`;
+
+    }
+
+});
 
 }
-
-else{
-
-message.style.color="red";
-
-message.innerHTML =
-
-"Some attendance records failed";
-
-}
-
-}
-
-);
