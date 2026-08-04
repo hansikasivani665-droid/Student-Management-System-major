@@ -29,7 +29,7 @@ const teacher={
 name:
 document.getElementById("teacherName").value,
 
-teacherId:
+employeeId:
 document.getElementById("teacherEmployeeId").value,
 
 email:
@@ -38,7 +38,7 @@ document.getElementById("teacherEmail").value,
 department:
 document.getElementById("teacherDepartment").value,
 
-subject:
+qualification:
 document.getElementById("teacherSubject").value,
 
 phone:
@@ -110,7 +110,7 @@ table.innerHTML += `
 
 <td>${t.department}</td>
 
-<td>${t.subject}</td>
+<td>${t.qualification || "-"}</td>
 
 <td>${t.phone}</td>
 
