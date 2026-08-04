@@ -1,1572 +1,945 @@
-// =====================================================
-// STUDENT MANAGEMENT SYSTEM
-// ADMIN DASHBOARD.JS
-// Developer : Hansika Sivani
-// Render Compatible Version
-// =====================================================
+const express = require("express");
+const router = express.Router();
 
+const db = require("../models/database");
 
-// ===============================
-// API URL
-// ===============================
 
-const API = window.API_BASE || window.location.origin;
+// ==========================================
+// ADMIN DASHBOARD DATA
+// ==========================================
 
+router.get("/", (req, res) => {
 
 
-// ===============================
-// Chart Variables
-// ===============================
+    // ======================================
+    // TOTAL STUDENTS QUERY
+    // ======================================
 
-let studentChartInstance = null;
-let attendanceChartInstance = null;
-let departmentChartInstance = null;
-let marksChartInstance = null;
+    const studentQuery = `
 
+        SELECT
 
+            COUNT(*) AS totalStudents,
 
-// =====================================================
-// DATE & TIME
-// =====================================================
+            COUNT(DISTINCT department) AS totalDepartments
 
-function updateDateTime(){
+        FROM students
 
+    `;
 
-const now = new Date();
 
 
-const dateElement =
-document.getElementById("currentDate");
+    // ======================================
+    // ATTENDANCE QUERY
+    // Latest attendance date only
+    // ======================================
 
+    const attendanceQuery = `
 
-const timeElement =
-document.getElementById("currentTime");
+        SELECT
 
 
+            SUM(
 
-if(dateElement){
+                CASE
 
-dateElement.innerText =
-now.toLocaleDateString("en-IN",{
+                    WHEN status = 'Present'
 
-weekday:"long",
-year:"numeric",
-month:"long",
-day:"numeric"
+                    THEN 1
 
-});
+                    ELSE 0
 
-}
+                END
 
+            ) AS presentStudents,
 
 
-if(timeElement){
 
-timeElement.innerText =
-now.toLocaleTimeString();
+            SUM(
 
-}
+                CASE
 
+                    WHEN status = 'Absent'
 
-}
+                    THEN 1
 
+                    ELSE 0
 
+                END
 
+            ) AS absentStudents,
 
-setInterval(
-updateDateTime,
-1000
-);
 
 
+            COUNT(*) AS totalAttendance
 
 
 
-// =====================================================
-// UPDATE CARD
-// =====================================================
+        FROM attendance
 
 
-function updateCard(id,value){
 
+        WHERE date = (
 
-const element =
-document.getElementById(id);
+            SELECT MAX(date)
 
+            FROM attendance
 
+        )
 
-if(element){
+    `;
 
-element.innerText =
-value ?? 0;
 
-}
 
+    // ======================================
+    // RESULTS QUERY
+    // ======================================
 
-}
+    const resultQuery = `
 
+        SELECT
 
 
+            AVG(marks) AS averageMarks,
 
 
-// =====================================================
-// LOAD DASHBOARD DATA
-// =====================================================
+            COUNT(*) AS resultsCount,
 
 
-async function loadDashboard(){
 
+            SUM(
 
-try{
+                CASE
 
+                    WHEN marks >= 40
 
-console.log(
-"Loading Dashboard Data..."
-);
+                    THEN 1
 
+                    ELSE 0
 
+                END
 
-const response =
-await fetch(
-`${API}/dashboard`
-);
+            ) AS passCount
 
 
 
-const data =
-await response.json();
+        FROM results
 
+    `;
 
 
-console.log(
-"Dashboard Response:",
-data
-);
 
+    // ======================================
+    // LATEST STUDENT QUERY
+    // ======================================
 
+    const latestStudentQuery = `
 
-if(!data.success){
+        SELECT name
 
-console.log(
-"Dashboard API failed"
-);
+        FROM students
 
-return;
+        ORDER BY id DESC
 
-}
+        LIMIT 1
 
+    `;
 
 
-// ===============================
-// MAIN CARDS
-// ===============================
 
 
-updateCard(
-"totalStudents",
-data.totalStudents
-);
+    // ======================================
+    // RUN STUDENT QUERY
+    // ======================================
 
+    db.get(studentQuery, [], (err, studentData) => {
 
 
-updateCard(
-"attendancePercentage",
-data.attendancePercentage + "%"
-);
+        if (err) {
 
+            return res.status(500).json({
 
+                success: false,
 
-updateCard(
-"averageMarks",
-data.averageMarks
-);
+                message: err.message
 
+            });
 
+        }
 
-updateCard(
-"passPercentage",
-data.passPercentage + "%"
-);
 
 
+        // ======================================
+        // RUN ATTENDANCE QUERY
+        // ======================================
 
-updateCard(
-"totalDepartments",
-data.totalDepartments
-);
+        db.get(attendanceQuery, [], (err, attendanceData) => {
 
 
+            if (err) {
 
-updateCard(
-"resultsCount",
-data.resultsCount
-);
 
+                return res.status(500).json({
 
+                    success: false,
 
-updateCard(
-"presentStudents",
-data.presentStudents
-);
+                    message: err.message
 
+                });
 
 
-updateCard(
-"absentStudents",
-data.absentStudents
-);
+            }
 
 
 
+            // ======================================
+            // RUN RESULTS QUERY
+            // ======================================
 
-// Latest student if exists
+            db.get(resultQuery, [], (err, resultData) => {
 
-const latest =
-document.getElementById(
-"latestStudent"
-);
 
+                if (err) {
 
 
-if(latest){
+                    return res.status(500).json({
 
-latest.innerText =
-data.latestStudent || "-";
+                        success: false,
 
-}
+                        message: err.message
 
+                    });
 
 
-console.log(
-"Dashboard Cards Updated"
-);
+                }
 
 
 
-}
+                // ======================================
+                // RUN LATEST STUDENT QUERY
+                // ======================================
 
+                db.get(
+                    latestStudentQuery,
+                    [],
+                    (err, latestStudent) => {
 
-catch(error){
 
+                        if (err) {
 
-console.error(
-"Dashboard Loading Error:",
-error
-);
 
+                            return res.status(500).json({
 
-}
+                                success: false,
 
+                                message: err.message
 
+                            });
 
-}
 
+                        }
 
 
 
+                        // ======================================
+                        // ATTENDANCE PERCENTAGE
+                        // ======================================
 
+                        let attendancePercentage = 0;
 
-// =====================================================
-// LOAD DEPARTMENT DATA
-// =====================================================
 
+                        if (
+                            attendanceData &&
+                            attendanceData.totalAttendance > 0
+                        ) {
 
-async function loadDepartmentData(){
 
+                            attendancePercentage =
 
+                                (
 
-try{
+                                    attendanceData.presentStudents /
 
+                                    attendanceData.totalAttendance
 
-console.log(
-"Loading Department Data..."
-);
+                                ) * 100;
 
 
+                        }
 
-const response =
-await fetch(
-`${API}/dashboard/department`
-);
 
 
+                        // ======================================
+                        // PASS PERCENTAGE
+                        // ======================================
 
-const data =
-await response.json();
+                        let passPercentage = 0;
 
 
+                        if (
 
-console.log(
-"Department Response:",
-data
-);
+                            resultData &&
 
+                            resultData.resultsCount > 0
 
+                        ) {
 
-if(!data.success)
-return;
 
+                            passPercentage =
 
+                                (
 
-displayDepartmentCards(
-data.departments
-);
+                                    resultData.passCount /
 
-function updateFixedDepartmentCards(departments){
+                                    resultData.resultsCount
 
+                                ) * 100;
 
-departments.forEach(dep=>{
 
+                        }
 
-let dept =
-dep.department.toLowerCase();
+                        // ======================================
+                        // DEPARTMENT PERFORMANCE QUERY
+                        // ======================================
 
+                        const departmentQuery = `
 
 
-if(dept==="cse"){
+                            SELECT
 
-document.getElementById("cseStudents").innerHTML = dep.totalStudents;
-document.getElementById("csePresent").innerHTML = dep.presentStudents || 0;
-document.getElementById("cseAbsent").innerHTML = dep.absentStudents || 0;
-document.getElementById("cseAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
-document.getElementById("cseResults").innerHTML = dep.resultsCount || 0;
-document.getElementById("cseAverage").innerHTML = dep.averageMarks || 0;
 
-}
+                                s.department,
 
 
-if(dept==="ece"){
+                                COUNT(DISTINCT s.roll) AS totalStudents,
 
-document.getElementById("eceStudents").innerHTML = dep.totalStudents;
-document.getElementById("ecePresent").innerHTML = dep.presentStudents || 0;
-document.getElementById("eceAbsent").innerHTML = dep.absentStudents || 0;
-document.getElementById("eceAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
-document.getElementById("eceResults").innerHTML = dep.resultsCount || 0;
-document.getElementById("eceAverage").innerHTML = dep.averageMarks || 0;
 
-}
 
+                                SUM(
 
-if(dept==="eee"){
+                                    CASE
 
-document.getElementById("eeeStudents").innerHTML = dep.totalStudents;
-document.getElementById("eeePresent").innerHTML = dep.presentStudents || 0;
-document.getElementById("eeeAbsent").innerHTML = dep.absentStudents || 0;
-document.getElementById("eeeAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
-document.getElementById("eeeResults").innerHTML = dep.resultsCount || 0;
-document.getElementById("eeeAverage").innerHTML = dep.averageMarks || 0;
+                                        WHEN a.status = 'Present'
 
-}
+                                        THEN 1
 
+                                        ELSE 0
 
-if(dept==="mechanical"){
+                                    END
 
-document.getElementById("mechStudents").innerHTML = dep.totalStudents;
-document.getElementById("mechPresent").innerHTML = dep.presentStudents || 0;
-document.getElementById("mechAbsent").innerHTML = dep.absentStudents || 0;
-document.getElementById("mechAttendance").innerHTML = (dep.attendancePercentage || 0)+"%";
-document.getElementById("mechResults").innerHTML = dep.resultsCount || 0;
-document.getElementById("mechAverage").innerHTML = dep.averageMarks || 0;
+                                ) AS presentStudents,
 
-}
 
 
-});
+                                SUM(
 
-}
+                                    CASE
 
-updateFixedDepartmentCards(
-data.departments
-);
+                                        WHEN a.status = 'Absent'
 
+                                        THEN 1
 
+                                        ELSE 0
 
-}
+                                    END
 
+                                ) AS absentStudents,
 
 
-catch(error){
 
+                                ROUND(
 
-console.error(
-"Department Loading Error:",
-error
-);
+                                    AVG(r.marks),
 
+                                    2
 
-}
+                                ) AS averageMarks
 
 
 
-}
+                            FROM students s
 
 
 
+                            LEFT JOIN attendance a
 
 
-// =====================================================
-// DISPLAY DEPARTMENT CARDS
-// =====================================================
+                            ON s.roll = a.roll
 
 
-function displayDepartmentCards(departments){
 
+                            AND a.date = (
 
+                                SELECT MAX(date)
 
-const container =
-document.getElementById(
-"departmentCards"
-);
+                                FROM attendance
 
+                            )
 
 
-if(!container){
 
-console.log(
-"departmentCards not found"
-);
+                            LEFT JOIN results r
 
-return;
 
-}
+                            ON s.roll = r.roll
 
 
 
-container.innerHTML="";
+                            GROUP BY s.department
 
 
 
-departments.forEach(dep=>{
+                            ORDER BY s.department
 
 
-const card =
-document.createElement("div");
 
+                        `;
 
 
-card.className =
-"card";
 
 
+                        // ======================================
+                        // GET DEPARTMENT DATA
+                        // ======================================
 
-card.innerHTML = `
 
+                        db.all(
 
-<h3>
-${dep.department}
-</h3>
+                            departmentQuery,
 
+                            [],
 
-<p>
-Students :
-<b>
-${dep.totalStudents}
-</b>
-</p>
+                            (err, departmentData) => {
 
 
-<p>
-Attendance :
-<b>
-${dep.attendancePercentage}%
-</b>
-</p>
+                                if (err) {
 
 
-<p>
-Average Marks :
-<b>
-${dep.averageMarks}
-</b>
-</p>
+                                    return res.status(500).json({
 
+                                        success: false,
 
-<p>
-Pass :
-<b>
-${dep.passPercentage}%
-</b>
-</p>
+                                        message: err.message
 
+                                    });
 
-`;
 
+                                }
 
 
-container.appendChild(card);
 
 
 
-});
+                                // ======================================
+                                // FORMAT DEPARTMENT RESPONSE
+                                // ======================================
 
 
+                                const departments = departmentData.map(dep => {
 
-}
 
-// =====================================================
-// RECENT STUDENTS
-// =====================================================
+                                    return {
 
 
-async function loadRecentStudents(){
+                                        department:
+                                            dep.department || "-",
 
 
-try{
 
+                                        totalStudents:
+                                            dep.totalStudents || 0,
 
-console.log(
-"Loading Recent Students..."
-);
 
 
+                                        presentStudents:
+                                            dep.presentStudents || 0,
 
-const response =
-await fetch(
-`${API}/students`
-);
 
 
+                                        absentStudents:
+                                            dep.absentStudents || 0,
 
-const data =
-await response.json();
 
 
+                                        averageMarks:
+                                            dep.averageMarks || 0
 
-console.log(
-"Students Response:",
-data
-);
 
 
+                                    };
 
-let students = [];
 
+                                });
 
 
-// Handle API formats
 
-if(Array.isArray(data)){
 
-students = data;
 
-}
 
-else if(data.students){
+                                // ======================================
+                                // DEPARTMENT ATTENDANCE PERCENTAGE QUERY
+                                // ======================================
 
-students = data.students;
 
-}
+                                const departmentAttendanceQuery = `
 
-else if(data.results){
 
-students = data.results;
+                                    SELECT
 
-}
 
 
+                                        s.department,
 
 
 
-displayRecentStudents(
-students
-);
+                                        ROUND(
 
+                                            (
 
+                                                SUM(
 
-}
+                                                    CASE
 
+                                                        WHEN a.status='Present'
 
+                                                        THEN 1
 
-catch(error){
+                                                        ELSE 0
 
+                                                    END
 
-console.error(
-"Recent Students Error:",
-error
-);
+                                                )
 
+                                                /
 
-}
+                                                COUNT(a.id)
 
+                                            ) * 100,
 
+                                            2
 
-}
+                                        ) AS attendancePercentage
 
 
 
+                                    FROM students s
 
 
 
-// =====================================================
-// DISPLAY RECENT STUDENTS
-// =====================================================
+                                    LEFT JOIN attendance a
 
 
-function displayRecentStudents(students){
 
+                                    ON s.roll = a.roll
 
 
-const table =
-document.getElementById(
-"recentStudentTable"
-);
 
+                                    AND a.date = (
 
+                                        SELECT MAX(date)
 
-if(!table){
+                                        FROM attendance
 
-console.log(
-"recentStudentTable not found"
-);
+                                    )
 
-return;
 
-}
 
+                                    GROUP BY s.department
 
 
-table.innerHTML="";
 
+                                `;
 
 
 
 
-if(
-!students ||
-students.length===0
-){
+                                db.all(
 
+                                    departmentAttendanceQuery,
 
-table.innerHTML = `
+                                    [],
 
-<tr>
+                                    (err, attendanceDepartments) => {
 
-<td colspan="5">
 
-No Students Available
+                                        if (err) {
 
-</td>
 
-</tr>
+                                            return res.status(500).json({
 
-`;
+                                                success: false,
 
-return;
+                                                message: err.message
 
-}
+                                            });
 
 
+                                        }
 
 
-// latest 5 students
 
-const recent =
-students
-.slice()
-.reverse()
-.slice(0,5);
 
 
 
+                                        // ======================================
+                                        // ADD ATTENDANCE % TO DEPARTMENTS
+                                        // ======================================
 
 
-recent.forEach(student=>{
+                                        departments.forEach(dep => {
 
 
-const row =
-document.createElement("tr");
+                                            const attendance =
 
+                                                attendanceDepartments.find(item =>
 
+                                                    item.department === dep.department
 
-row.innerHTML = `
+                                                );
 
 
-<td>
-${student.name || "-"}
-</td>
 
+                                            dep.attendancePercentage =
 
-<td>
-${student.roll || "-"}
-</td>
+                                                attendance ?
 
+                                                    attendance.attendancePercentage || 0
 
-<td>
-${student.department || "-"}
-</td>
+                                                    :
 
+                                                    0;
 
-<td>
-${student.year || "-"}
-</td>
 
 
-<td>
+                                        });
 
-<span class="success">
 
-Active
+                                        // ======================================
+                                        // FINAL DASHBOARD RESPONSE
+                                        // ======================================
 
-</span>
 
-</td>
+                                        res.json({
 
 
-`;
+                                            success: true,
 
 
 
-table.appendChild(row);
+                                            totalStudents:
 
+                                                studentData.totalStudents || 0,
 
 
-});
 
+                                            totalDepartments:
 
+                                                studentData.totalDepartments || 0,
 
-}
 
 
+                                            presentStudents:
 
+                                                attendanceData.presentStudents || 0,
 
 
 
-// =====================================================
-// DEPARTMENT COUNT CALCULATION
-// =====================================================
+                                            absentStudents:
 
+                                                attendanceData.absentStudents || 0,
 
-function calculateDepartmentCount(students){
 
 
+                                            attendancePercentage:
 
-const count = {};
+                                                Number(
 
+                                                    attendancePercentage.toFixed(2)
 
+                                                ),
 
-students.forEach(student=>{
 
 
-const dept =
-student.department || "Unknown";
+                                            averageMarks:
 
+                                                Number(
 
+                                                    resultData.averageMarks || 0
 
-if(count[dept]){
+                                                ),
 
-count[dept]++;
 
-}
 
-else{
+                                            resultsCount:
 
-count[dept]=1;
+                                                resultData.resultsCount || 0,
 
-}
+
+
+                                            passPercentage:
+
+                                                Number(
+
+                                                    passPercentage.toFixed(2)
+
+                                                ),
+
+
+
+                                            latestStudent:
+
+                                                latestStudent ?
+
+                                                    latestStudent.name
+
+                                                    :
+
+                                                    "-",
+
+
+
+                                            departments: departments
+
+
+
+                                        });
+
+
+
+                                    }
+
+
+
+                                );
+
+
+
+                            }
+
+
+
+                        );
+
+
+
+                    }
+
+
+
+                );
+
+
+
+            }
+
+
+
+            );
+
+
+
+        });
+
+
+
+    });
 
 
 });
 
 
+    // ==========================================
+    // DEPARTMENT DETAILS API
+    // ==========================================
 
-return count;
+    router.get("/department", (req, res) => {
 
 
-}
+        const query = `
 
-// =====================================================
-// CHARTS SECTION
-// =====================================================
 
+        SELECT
 
 
-// =====================================================
-// LOAD ALL CHARTS
-// =====================================================
 
+            s.department,
 
-async function loadCharts(){
 
 
-try{
+            COUNT(DISTINCT s.roll) AS totalStudents,
 
 
-console.log(
-"Loading Chart Data..."
-);
 
+            SUM(
 
+                CASE
 
-const response =
-await fetch(
-`${API}/dashboard/department`
-);
+                    WHEN a.status='Present'
 
+                    THEN 1
 
+                    ELSE 0
 
-const data =
-await response.json();
+                END
 
+            ) AS presentStudents,
 
 
-console.log(
-"Chart Data:",
-data
-);
 
+            SUM(
 
+                CASE
 
-if(!data.success)
-return;
+                    WHEN a.status='Absent'
 
+                    THEN 1
 
+                    ELSE 0
 
-createDepartmentChart(
-data.departments
-);
+                END
 
+            ) AS absentStudents,
 
 
-createAttendanceChart();
 
+            ROUND(
 
+                AVG(r.marks),
 
-createMarksChart();
+                2
 
+            ) AS averageMarks
 
 
-}
 
+        FROM students s
 
-catch(error){
 
 
-console.error(
-"Chart Loading Error:",
-error
-);
+        LEFT JOIN attendance a
 
 
-}
 
+        ON s.roll = a.roll
 
 
-}
 
+        AND a.date=(
 
+            SELECT MAX(date)
 
+            FROM attendance
 
+        )
 
-// =====================================================
-// DEPARTMENT BAR CHART
-// =====================================================
 
 
-function createDepartmentChart(departments){
+        LEFT JOIN results r
 
 
 
-const canvas =
-document.getElementById(
-"studentChart"
-);
+        ON s.roll = r.roll
 
 
 
-if(!canvas)
-return;
+        GROUP BY s.department
 
 
 
+        ORDER BY s.department
 
-const labels =
-departments.map(
-d=>d.department
-);
 
 
+    `;
 
-const values =
-departments.map(
-d=>d.totalStudents
-);
 
 
 
+        db.all(query, [], (err, rows) => {
 
-if(studentChartInstance){
 
-studentChartInstance.destroy();
+            if (err) {
 
-}
 
+                return res.status(500).json({
 
 
+                    success: false,
 
-studentChartInstance =
-new Chart(
-canvas,
-{
 
+                    message: err.message
 
-type:"bar",
 
+                });
 
-data:{
 
+            }
 
-labels:labels,
 
 
-datasets:[
 
-{
+            res.json({
 
-label:"Students",
 
-data:values
+                success: true,
 
-}
 
-]
+                departments: rows.map(row => ({
 
 
-},
+                    department:
 
+                        row.department || "-",
 
 
-options:{
 
+                    totalStudents:
 
-responsive:true,
+                        row.totalStudents || 0,
 
 
-plugins:{
 
+                    presentStudents:
 
-legend:{
+                        row.presentStudents || 0,
 
 
-display:true
 
+                    absentStudents:
 
-}
+                        row.absentStudents || 0,
 
 
-}
 
+                    averageMarks:
 
+                        row.averageMarks || 0
 
-}
 
 
+                }))
 
-}
 
-);
 
+            });
 
 
 
+        });
 
-}
 
 
+    });
 
 
 
 
+    // ==========================================
+    // EXPORT ROUTER
+    // ==========================================
 
 
-// =====================================================
-// ATTENDANCE DOUGHNUT CHART
-// =====================================================
+    module.exports = router;
 
 
-async function createAttendanceChart(){
-
-
-
-const canvas =
-document.getElementById(
-"attendanceChart"
-);
-
-
-
-if(!canvas)
-return;
-
-
-
-
-try{
-
-
-const response =
-await fetch(
-`${API}/dashboard`
-);
-
-
-
-const data =
-await response.json();
-
-
-
-
-if(attendanceChartInstance){
-
-attendanceChartInstance.destroy();
-
-}
-
-
-
-
-
-attendanceChartInstance =
-new Chart(
-canvas,
-{
-
-
-type:"doughnut",
-
-
-
-data:{
-
-
-labels:[
-
-"Present",
-
-"Absent"
-
-],
-
-
-
-datasets:[
-
-
-{
-
-
-label:"Attendance",
-
-
-data:[
-
-
-data.presentStudents || 0,
-
-
-data.absentStudents || 0
-
-
-]
-
-
-}
-
-
-]
-
-
-},
-
-
-
-options:{
-
-
-responsive:true,
-
-
-plugins:{
-
-
-legend:{
-
-
-position:"bottom"
-
-
-}
-
-
-}
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-}
-
-
-
-catch(error){
-
-
-console.error(
-"Attendance Chart Error:",
-error
-);
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-// =====================================================
-// MARKS PERFORMANCE CHART
-// =====================================================
-
-
-async function createMarksChart(){
-
-
-
-const canvas =
-document.getElementById(
-"attendanceChart"
-);
-
-
-
-if(!canvas)
-return;
-
-
-
-try{
-
-
-const response =
-await fetch(
-`${API}/results`
-);
-
-
-
-const data =
-await response.json();
-
-
-
-let results=[];
-
-
-
-if(Array.isArray(data)){
-
-results=data;
-
-}
-
-else if(data.results){
-
-results=data.results;
-
-}
-
-
-
-
-let pass=0;
-
-let fail=0;
-
-
-
-results.forEach(result=>{
-
-
-if(result.status==="Pass"){
-
-pass++;
-
-}
-
-else{
-
-fail++;
-
-}
-
-
-});
-
-
-
-
-const existing =
-window.marksChartInstance;
-
-
-
-if(existing){
-
-existing.destroy();
-
-}
-
-
-
-
-window.marksChartInstance =
-new Chart(
-canvas,
-{
-
-
-type:"pie",
-
-
-data:{
-
-
-labels:[
-
-"Pass",
-
-"Fail"
-
-],
-
-
-
-datasets:[
-
-{
-
-label:"Results",
-
-data:[
-
-pass,
-
-fail
-
-]
-
-}
-
-]
-
-
-},
-
-
-
-options:{
-
-
-responsive:true,
-
-
-plugins:{
-
-
-legend:{
-
-
-position:"bottom"
-
-
-}
-
-
-}
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-}
-
-
-
-catch(error){
-
-
-console.error(
-"Marks Chart Error:",
-error
-);
-
-
-}
-
-
-
-}
-
-// =====================================================
-// LOGOUT FUNCTION
-// =====================================================
-
-
-function logout(){
-
-
-localStorage.removeItem(
-"user"
-);
-
-
-localStorage.removeItem(
-"token"
-);
-
-
-localStorage.removeItem(
-"loggedIn"
-);
-
-
-
-window.location.href =
-"/html/login.html";
-
-
-}
-
-
-
-
-
-
-// =====================================================
-// LOGOUT BUTTON EVENT
-// =====================================================
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-const logoutBtn =
-document.getElementById(
-"logout"
-);
-
-
-
-if(logoutBtn){
-
-
-logoutBtn.addEventListener(
-"click",
-logout
-);
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-// =====================================================
-// ADMIN PROFILE
-// =====================================================
-
-
-function loadAdminProfile(){
-
-
-
-const adminName =
-document.getElementById(
-"adminName"
-);
-
-
-
-const storedUser =
-localStorage.getItem(
-"user"
-);
-
-
-
-if(
-adminName &&
-storedUser
-){
-
-
-try{
-
-
-const user =
-JSON.parse(
-storedUser
-);
-
-
-
-adminName.innerText =
-user.name || "Administrator";
-
-
-
-}
-
-catch(error){
-
-
-adminName.innerText =
-"Administrator";
-
-
-}
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-// =====================================================
-// REFRESH DASHBOARD
-// =====================================================
-
-
-function refreshDashboard(){
-
-
-
-console.log(
-"Refreshing Dashboard..."
-);
-
-
-
-loadDashboard();
-
-loadDepartmentData();
-
-loadRecentStudents();
-
-loadCharts();
-
-
-
-}
-
-
-
-
-
-// Refresh every 60 seconds
-
-setInterval(
-refreshDashboard,
-60000
-);
-
-
-
-
-
-
-
-// =====================================================
-// FINAL PAGE LOAD
-// =====================================================
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-console.log(
-"================================="
-);
-
-
-console.log(
-"Student Management Dashboard Loaded"
-);
-
-
-
-console.log(
-"Render API:",
-API
-);
-
-
-
-console.log(
-"================================="
-);
-
-
-
-updateDateTime();
-
-
-loadDashboard();
-
-
-loadDepartmentData();
-
-
-loadRecentStudents();
-
-
-loadCharts();
-
-
-loadAdminProfile();
-
-
-
-});
+     

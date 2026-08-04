@@ -1,435 +1,808 @@
+// =====================================================
+// DASHBOARD ROUTES
+// =====================================================
+
 const express = require("express");
 const router = express.Router();
+
 const db = require("../models/database");
 
 
-// ======================================
-// ADMIN DASHBOARD
-// ======================================
+
+
+// =====================================================
+// ADMIN DASHBOARD DATA
+// GET /dashboard
+// =====================================================
 
 router.get("/", (req, res) => {
 
-    db.get(`
+
+
+    // ======================================
+    // TOTAL STUDENTS QUERY
+    // ======================================
+
+    const studentQuery = `
+
         SELECT
+
             COUNT(*) AS totalStudents,
+
             COUNT(DISTINCT department) AS totalDepartments
+
         FROM students
-    `, (err, studentData) => {
 
-        if (err)
-            return res.status(500).json({
-                success:false,
-                message:err.message
-            });
+    `;
 
 
-        // ================================
-        // ATTENDANCE
-        // ================================
-
-        db.get(`
-
-            SELECT
-
-                COUNT(DISTINCT roll) AS totalAttendance,
-
-                COUNT(
-                    DISTINCT CASE
-                    WHEN status='Present'
-                    THEN roll END
-                ) AS presentStudents,
 
 
-                COUNT(
-                    DISTINCT CASE
-                    WHEN status='Absent'
-                    THEN roll END
-                ) AS absentStudents
+    // ======================================
+    // TOTAL TEACHERS QUERY
+    // ======================================
 
+    const teacherQuery = `
+
+        SELECT
+
+            COUNT(*) AS totalTeachers
+
+        FROM teachers
+
+    `;
+
+
+
+
+    // ======================================
+    // LATEST ATTENDANCE QUERY
+    // ======================================
+
+    const attendanceQuery = `
+
+        SELECT
+
+
+            SUM(
+
+                CASE
+
+                    WHEN status = 'Present'
+
+                    THEN 1
+
+                    ELSE 0
+
+                END
+
+            ) AS presentStudents,
+
+
+
+            SUM(
+
+                CASE
+
+                    WHEN status = 'Absent'
+
+                    THEN 1
+
+                    ELSE 0
+
+                END
+
+            ) AS absentStudents,
+
+
+
+            COUNT(*) AS totalAttendance
+
+
+
+        FROM attendance
+
+
+
+        WHERE date = (
+
+            SELECT MAX(date)
 
             FROM attendance
 
+        )
 
-            WHERE date = (
-                SELECT MAX(date)
-                FROM attendance
-            )
-
-        `,(attErr,attendanceData)=>{
+    `;
 
 
-            if(attErr)
+
+
+    // ======================================
+    // RESULTS QUERY
+    // ======================================
+
+    const resultQuery = `
+
+        SELECT
+
+
+            AVG(marks) AS averageMarks,
+
+
+            COUNT(*) AS resultsCount,
+
+
+
+            SUM(
+
+                CASE
+
+                    WHEN marks >= 40
+
+                    THEN 1
+
+                    ELSE 0
+
+                END
+
+            ) AS passCount
+
+
+
+        FROM results
+
+    `;
+
+
+
+
+    // ======================================
+    // LATEST STUDENT QUERY
+    // ======================================
+
+    const latestStudentQuery = `
+
+        SELECT
+
+            name
+
+        FROM students
+
+        ORDER BY id DESC
+
+        LIMIT 1
+
+    `;
+
+
+
+
+
+    // ======================================
+    // STUDENT DATA
+    // ======================================
+
+    db.get(studentQuery, [], (err, studentData) => {
+
+
+
+        if (err) {
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+
+
+
+        // ======================================
+        // TEACHER DATA
+        // ======================================
+
+        db.get(teacherQuery, [], (err, teacherData) => {
+
+
+
+            if (err) {
+
                 return res.status(500).json({
-                    success:false,
-                    message:attErr.message
+
+                    success: false,
+
+                    message: err.message
+
                 });
 
+            }
 
 
-            // ================================
-            // RESULTS
-            // ================================
 
 
-            db.get(`
 
-                SELECT
+            // ======================================
+            // ATTENDANCE DATA
+            // ======================================
 
-                    COUNT(*) AS resultsCount,
-
-                    AVG(marks) AS averageMarks,
-
-
-                    SUM(
-                        CASE
-                        WHEN status='Pass'
-                        THEN 1 ELSE 0 END
-                    ) AS passStudents
+            db.get(attendanceQuery, [], (err, attendanceData) => {
 
 
-                FROM results
 
+                if (err) {
 
-            `,(resErr,resultData)=>{
-
-
-                if(resErr)
                     return res.status(500).json({
-                        success:false,
-                        message:resErr.message
+
+                        success: false,
+
+                        message: err.message
+
                     });
 
+                }
 
 
-                db.get(`
-
-                    SELECT name
-                    FROM students
-                    ORDER BY id DESC
-                    LIMIT 1
-
-                `,(latestErr,latestStudent)=>{
 
 
-                    if(latestErr)
+
+                // ======================================
+                // RESULTS DATA
+                // ======================================
+
+                db.get(resultQuery, [], (err, resultData) => {
+
+
+
+                    if (err) {
+
                         return res.status(500).json({
-                            success:false,
-                            message:latestErr.message
-                        });
 
+                            success: false,
 
-
-                    // ================================
-                    // DEPARTMENT PERFORMANCE
-                    // ================================
-
-
-                    db.all(`
-
-
-                    SELECT
-
-                        s.department,
-
-
-                        COUNT(DISTINCT s.roll)
-                        AS totalStudents,
-
-
-                        COALESCE(
-                            att.attendancePercentage,
-                            0
-                        )
-                        AS attendancePercentage,
-
-
-                        COALESCE(
-                            res.averageMarks,
-                            0
-                        )
-                        AS averageMarks,
-
-
-                        COALESCE(
-                            res.passPercentage,
-                            0
-                        )
-                        AS passPercentage
-
-
-
-                    FROM students s
-
-
-
-                    LEFT JOIN (
-
-
-                        SELECT
-
-
-                            st.department,
-
-
-                            ROUND(
-
-                                100.0 *
-
-                                COUNT(
-                                    DISTINCT CASE
-                                    WHEN a.status='Present'
-                                    THEN a.roll END
-                                )
-
-                                /
-
-                                NULLIF(
-                                    COUNT(DISTINCT a.roll),
-                                    0
-                                ),
-
-                                2
-
-                            )
-
-                            AS attendancePercentage
-
-
-
-                        FROM attendance a
-
-
-
-                        INNER JOIN students st
-
-                        ON st.roll=a.roll
-
-
-
-                        WHERE a.date = (
-
-                            SELECT MAX(date)
-                            FROM attendance
-
-                        )
-
-
-
-                        GROUP BY st.department
-
-
-
-                    ) att
-
-
-
-                    ON LOWER(att.department)
-                    =
-                    LOWER(s.department)
-
-
-
-
-                    LEFT JOIN (
-
-
-                        SELECT
-
-
-                            st.department,
-
-
-                            ROUND(
-                                AVG(r.marks),
-                                2
-                            )
-                            AS averageMarks,
-
-
-
-                            ROUND(
-
-                                100.0 *
-
-                                SUM(
-                                    CASE
-                                    WHEN r.status='Pass'
-                                    THEN 1 ELSE 0 END
-                                )
-
-                                /
-
-                                NULLIF(
-                                    COUNT(r.id),
-                                    0
-                                ),
-
-                                2
-
-                            )
-                            AS passPercentage
-
-
-
-                        FROM results r
-
-
-
-                        INNER JOIN students st
-
-                        ON st.roll=r.roll
-
-
-
-                        GROUP BY st.department
-
-
-
-                    ) res
-
-
-
-                    ON LOWER(res.department)
-                    =
-                    LOWER(s.department)
-
-
-
-                    GROUP BY s.department
-
-
-
-                    ORDER BY s.department
-
-
-
-                    `,(deptErr,departments)=>{
-
-
-                        if(deptErr)
-                            return res.status(500).json({
-                                success:false,
-                                message:deptErr.message
-                            });
-
-
-
-                        res.json({
-
-                            success:true,
-
-
-                            totalStudents:
-                            studentData.totalStudents,
-
-
-                            totalDepartments:
-                            studentData.totalDepartments,
-
-
-                            presentStudents:
-                            attendanceData.presentStudents || 0,
-
-
-                            absentStudents:
-                            attendanceData.absentStudents || 0,
-
-
-                            attendancePercentage:
-
-                            attendanceData.totalAttendance
-
-                            ?
-
-                            Math.round(
-
-                                attendanceData.presentStudents *
-                                100 /
-                                attendanceData.totalAttendance
-
-                            )
-
-                            :
-                            0,
-
-
-
-                            averageMarks:
-
-                            resultData.averageMarks
-
-                            ?
-
-                            Number(
-                                resultData.averageMarks
-                            ).toFixed(2)
-
-                            :
-                            0,
-
-
-
-                            passPercentage:
-
-                            resultData.resultsCount
-
-                            ?
-
-                            Math.round(
-
-                                resultData.passStudents *
-                                100 /
-                                resultData.resultsCount
-
-                            )
-
-                            :
-                            0,
-
-
-
-                            resultsCount:
-                            resultData.resultsCount,
-
-
-                            latestStudent:
-
-                            latestStudent
-                            ?
-                            latestStudent.name
-                            :
-                            "-",
-
-
-
-                            departments:
-                            departments.map(d=>({
-
-                                department:d.department,
-
-                                totalStudents:d.totalStudents,
-
-                                attendancePercentage:
-                                d.attendancePercentage || 0,
-
-
-                                averageMarks:
-                                d.averageMarks || 0,
-
-
-                                passPercentage:
-                                d.passPercentage || 0
-
-                            }))
+                            message: err.message
 
                         });
 
-
-                    });
-
+                    }
 
 
-                });
+
+
+
+                    // ======================================
+                    // LATEST STUDENT DATA
+                    // ======================================
+
+                    db.get(
+                        latestStudentQuery,
+                        [],
+                        (err, latestStudent) => {
+
+
+                            if (err) {
+
+                                return res.status(500).json({
+
+                                    success: false,
+
+                                    message: err.message
+
+                                });
+
+                            }
+
+
+
+
+                            // ======================================
+                            // ATTENDANCE PERCENTAGE
+                            // ======================================
+
+                            let attendancePercentage = 0;
+
+
+
+                            if (
+                                attendanceData &&
+                                attendanceData.totalAttendance > 0
+                            ) {
+
+                                attendancePercentage =
+
+                                    (
+
+                                        attendanceData.presentStudents /
+
+                                        attendanceData.totalAttendance
+
+                                    ) * 100;
+
+                            }
+
+
+
+
+
+                            // ======================================
+                            // PASS PERCENTAGE
+                            // ======================================
+
+                            let passPercentage = 0;
+
+
+
+                            if (
+                                resultData &&
+                                resultData.resultsCount > 0
+                            ) {
+
+                                passPercentage =
+
+                                    (
+
+                                        resultData.passCount /
+
+                                        resultData.resultsCount
+
+                                    ) * 100;
+
+                            }
+
+
+
+
+
+                            // ======================================
+                            // DEPARTMENT PERFORMANCE QUERY
+                            // ======================================
+
+                            const departmentQuery = `
+
+
+                                SELECT
+
+
+                                    s.department,
+
+
+                                    COUNT(DISTINCT s.roll) AS totalStudents,
+
+
+
+                                    SUM(
+
+                                        CASE
+
+                                            WHEN a.status = 'Present'
+
+                                            THEN 1
+
+                                            ELSE 0
+
+                                        END
+
+                                    ) AS presentStudents,
+
+
+
+                                    SUM(
+
+                                        CASE
+
+                                            WHEN a.status = 'Absent'
+
+                                            THEN 1
+
+                                            ELSE 0
+
+                                        END
+
+                                    ) AS absentStudents,
+
+
+
+                                    ROUND(
+
+                                        AVG(r.marks),
+
+                                        2
+
+                                    ) AS averageMarks
+
+
+
+                                FROM students s
+
+
+
+                                LEFT JOIN attendance a
+
+
+                                ON s.roll = a.roll
+
+
+
+                                AND a.date = (
+
+                                    SELECT MAX(date)
+
+                                    FROM attendance
+
+                                )
+
+
+
+                                LEFT JOIN results r
+
+
+                                ON s.roll = r.roll
+
+
+
+                                GROUP BY s.department
+
+
+
+                                ORDER BY s.department
+
+
+
+                            `;
+
+
+
+
+                            // ======================================
+                            // GET DEPARTMENT DATA
+                            // ======================================
+
+                            db.all(
+
+                                departmentQuery,
+
+                                [],
+
+                                (err, departmentData) => {
+
+
+                                    if (err) {
+
+
+                                        return res.status(500).json({
+
+                                            success: false,
+
+                                            message: err.message
+
+                                        });
+
+
+                                    }
+
+
+
+
+
+                                    const departments = departmentData.map(dep => {
+
+
+                                        return {
+
+
+                                            department:
+
+                                                dep.department || "-",
+
+
+
+                                            totalStudents:
+
+                                                dep.totalStudents || 0,
+
+
+
+                                            presentStudents:
+
+                                                dep.presentStudents || 0,
+
+
+
+                                            absentStudents:
+
+                                                dep.absentStudents || 0,
+
+
+
+                                            averageMarks:
+
+                                                dep.averageMarks || 0
+
+
+
+                                        };
+
+
+                                    });
+
+
+
+
+
+
+
+                                    // ======================================
+                                    // DEPARTMENT ATTENDANCE %
+                                    // ======================================
+
+
+                                    const departmentAttendanceQuery = `
+
+
+                                        SELECT
+
+
+                                            s.department,
+
+
+
+                                            ROUND(
+
+                                                (
+
+                                                    SUM(
+
+                                                        CASE
+
+                                                            WHEN a.status='Present'
+
+                                                            THEN 1
+
+                                                            ELSE 0
+
+                                                        END
+
+                                                    )
+
+                                                    /
+
+                                                    COUNT(a.id)
+
+                                                ) * 100,
+
+                                                2
+
+                                            ) AS attendancePercentage
+
+
+
+                                        FROM students s
+
+
+
+                                        LEFT JOIN attendance a
+
+
+
+                                        ON s.roll = a.roll
+
+
+
+                                        AND a.date=(
+
+                                            SELECT MAX(date)
+
+                                            FROM attendance
+
+                                        )
+
+
+
+                                        GROUP BY s.department
+
+
+
+                                    `;
+
+
+
+
+
+                                    db.all(
+
+                                        departmentAttendanceQuery,
+
+                                        [],
+
+                                        (err, attendanceDepartments) => {
+
+
+                                            if (err) {
+
+
+                                                return res.status(500).json({
+
+                                                    success: false,
+
+                                                    message: err.message
+
+                                                });
+
+
+                                            }
+
+
+
+
+
+                                            // ======================================
+                                            // MERGE ATTENDANCE PERCENTAGE
+                                            // ======================================
+
+
+                                            departments.forEach(dep => {
+
+
+                                                const attendance =
+
+                                                    attendanceDepartments.find(item =>
+
+                                                        item.department === dep.department
+
+                                                    );
+
+
+
+                                                dep.attendancePercentage =
+
+
+                                                    attendance
+
+                                                        ?
+
+                                                        attendance.attendancePercentage || 0
+
+                                                        :
+
+                                                        0;
+
+
+
+                                            });
+
+
+                                            // ======================================
+                                            // FINAL DASHBOARD RESPONSE
+                                            // ======================================
+
+
+                                            res.json({
+
+
+                                                success: true,
+
+
+                                                totalStudents:
+
+                                                    studentData.totalStudents || 0,
+
+
+
+                                                totalTeachers:
+
+                                                    teacherData.totalTeachers || 0,
+
+
+
+                                                totalDepartments:
+
+                                                    studentData.totalDepartments || 0,
+
+
+
+                                                presentStudents:
+
+                                                    attendanceData.presentStudents || 0,
+
+
+
+                                                absentStudents:
+
+                                                    attendanceData.absentStudents || 0,
+
+
+
+                                                attendancePercentage:
+
+                                                    Number(
+
+                                                        attendancePercentage.toFixed(2)
+
+                                                    ),
+
+
+
+                                                averageMarks:
+
+                                                    Number(
+
+                                                        resultData.averageMarks || 0
+
+                                                    ),
+
+
+
+                                                resultsCount:
+
+                                                    resultData.resultsCount || 0,
+
+
+
+                                                passPercentage:
+
+                                                    Number(
+
+                                                        passPercentage.toFixed(2)
+
+                                                    ),
+
+
+
+                                                latestStudent:
+
+
+                                                    latestStudent
+
+                                                        ?
+
+                                                        latestStudent.name
+
+                                                        :
+
+                                                        "-",
+
+
+
+                                                departments: departments
+
+
+
+                                            });
+
+
+
+                                        }
+
+
+
+                                    );
+
+
+
+                                }
+
+
+
+                            );
+
+
+
+                        }
+
+
+
+                    );
+
+
+
+                }
+
+
+
+                );
 
 
 
@@ -445,200 +818,197 @@ router.get("/", (req, res) => {
 
 
 
-});
 
 
 
 
-router.get("/department",(req,res)=>{
+    // =====================================================
+    // DEPARTMENT DETAILS API
+    // GET /dashboard/department
+    // =====================================================
 
 
-db.all(`
+    router.get("/department", (req, res) => {
 
-SELECT
 
-s.department,
+        const query = `
 
-COUNT(DISTINCT s.roll) AS totalStudents,
 
+        SELECT
 
-COALESCE(att.presentStudents,0)
-AS presentStudents,
 
+            s.department,
 
-COALESCE(att.absentStudents,0)
-AS absentStudents,
 
+            COUNT(DISTINCT s.roll) AS totalStudents,
 
-COALESCE(att.attendancePercentage,0)
-AS attendancePercentage,
 
 
-COALESCE(resultsData.resultsCount,0)
-AS resultsCount,
+            SUM(
 
+                CASE
 
-COALESCE(resultsData.averageMarks,0)
-AS averageMarks
+                    WHEN a.status='Present'
 
+                    THEN 1
 
+                    ELSE 0
 
-FROM students s
+                END
 
+            ) AS presentStudents,
 
 
-LEFT JOIN (
 
-SELECT
+            SUM(
 
-st.department,
+                CASE
 
+                    WHEN a.status='Absent'
 
-COUNT(
-DISTINCT CASE
-WHEN a.status='Present'
-THEN a.roll END
-)
-AS presentStudents,
+                    THEN 1
 
+                    ELSE 0
 
-COUNT(
-DISTINCT CASE
-WHEN a.status='Absent'
-THEN a.roll END
-)
-AS absentStudents,
+                END
 
+            ) AS absentStudents,
 
-ROUND(
 
-100.0 *
 
-COUNT(
-DISTINCT CASE
-WHEN a.status='Present'
-THEN a.roll END
-)
+            ROUND(
 
-/
+                AVG(r.marks),
 
-NULLIF(
-COUNT(DISTINCT a.roll),
-0
-),
+                2
 
-2
+            ) AS averageMarks
 
-)
 
-AS attendancePercentage
 
+        FROM students s
 
 
-FROM attendance a
 
+        LEFT JOIN attendance a
 
-INNER JOIN students st
 
-ON st.roll=a.roll
 
+        ON s.roll = a.roll
 
 
-WHERE a.date=(
 
-SELECT MAX(date)
-FROM attendance
+        AND a.date=(
 
-)
+            SELECT MAX(date)
 
+            FROM attendance
 
-GROUP BY st.department
+        )
 
 
-) att
 
+        LEFT JOIN results r
 
 
-ON LOWER(att.department)=LOWER(s.department)
 
+        ON s.roll = r.roll
 
 
-LEFT JOIN (
 
-SELECT
+        GROUP BY s.department
 
-st.department,
 
 
-COUNT(r.id)
-AS resultsCount,
+        ORDER BY s.department
 
 
-ROUND(
-AVG(r.marks),
-2
-)
-AS averageMarks
 
+    `;
 
 
-FROM results r
 
 
-INNER JOIN students st
+        db.all(query, [], (err, rows) => {
 
-ON st.roll=r.roll
 
+            if (err) {
 
-GROUP BY st.department
 
+                return res.status(500).json({
 
-) resultsData
+                    success: false,
 
+                    message: err.message
 
+                });
 
-ON LOWER(resultsData.department)
-=
-LOWER(s.department)
 
+            }
 
 
-GROUP BY s.department
 
 
-ORDER BY s.department
+            res.json({
 
 
+                success: true,
 
-`,(err,rows)=>{
 
+                departments: rows.map(row => ({
 
-if(err){
 
-return res.status(500).json({
+                    department:
 
-success:false,
+                        row.department || "-",
 
-message:err.message
 
-});
 
-}
+                    totalStudents:
 
+                        row.totalStudents || 0,
 
-res.json({
 
-success:true,
 
-departments:rows
+                    presentStudents:
 
-});
+                        row.presentStudents || 0,
 
 
-});
 
+                    absentStudents:
 
-});
+                        row.absentStudents || 0,
 
 
-module.exports = router;
+
+                    averageMarks:
+
+                        row.averageMarks || 0
+
+
+
+                }))
+
+
+            });
+
+
+
+        });
+
+
+
+    });
+
+
+
+
+
+
+    // =====================================================
+    // EXPORT ROUTER
+    // =====================================================
+
+
+    module.exports = router;
