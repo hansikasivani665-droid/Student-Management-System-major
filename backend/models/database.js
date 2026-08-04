@@ -1047,100 +1047,64 @@ console.log(
 
 
 
-
 const results = [
 
+["CSE001","DBMS",85],
+["CSE002","DBMS",92],
+["CSE003","DBMS",78],
+["CSE004","DBMS",88],
+["CSE005","DBMS",91],
+["CSE006","DBMS",74],
+["CSE007","DBMS",95],
+["CSE008","DBMS",82],
+["CSE009","DBMS",89],
+["CSE010","DBMS",90],
 
+["ECE001","Digital Electronics",86],
+["ECE002","Digital Electronics",80],
+["ECE003","Digital Electronics",77],
+["ECE004","Digital Electronics",93],
+["ECE005","Digital Electronics",88],
+["ECE006","Digital Electronics",84],
+["ECE007","Digital Electronics",91],
+["ECE008","Digital Electronics",76],
+["ECE009","Digital Electronics",83],
+["ECE010","Digital Electronics",89],
 
-[
-"CSE001",
-"Rahul Kumar",
-"CSE",
-"DBMS",
-92,
-"A+",
-"Pass"
-],
+["EEE001","Electrical Machines",81],
+["EEE002","Electrical Machines",75],
+["EEE003","Electrical Machines",87],
+["EEE004","Electrical Machines",90],
+["EEE005","Electrical Machines",86],
+["EEE006","Electrical Machines",79],
+["EEE007","Electrical Machines",84],
+["EEE008","Electrical Machines",92],
+["EEE009","Electrical Machines",88],
+["EEE010","Electrical Machines",80],
 
+["CIV001","Surveying",82],
+["CIV002","Surveying",76],
+["CIV003","Surveying",89],
+["CIV004","Surveying",91],
+["CIV005","Surveying",83],
+["CIV006","Surveying",87],
+["CIV007","Surveying",78],
+["CIV008","Surveying",85],
+["CIV009","Surveying",90],
+["CIV010","Surveying",84],
 
-
-[
-"CSE002",
-"Anjali Sharma",
-"CSE",
-"DBMS",
-88,
-"A",
-"Pass"
-],
-
-
-
-[
-"CSE003",
-"Priya Reddy",
-"CSE",
-"DBMS",
-81,
-"A",
-"Pass"
-],
-
-
-
-[
-"ECE001",
-"Arjun",
-"ECE",
-"Computer Networks",
-90,
-"A+",
-"Pass"
-],
-
-
-
-[
-"EEE001",
-"Ramesh",
-"EEE",
-"Operating Systems",
-89,
-"A",
-"Pass"
-],
-
-
-
-[
-"CIV001",
-"Ravi",
-"Civil",
-"Surveying",
-91,
-"A+",
-"Pass"
-],
-
-
-
-[
-"MEC001",
-"Vamsi",
-"Mechanical",
-"Thermodynamics",
-90,
-"A+",
-"Pass"
-]
-
+["MEC001","Thermodynamics",88],
+["MEC002","Thermodynamics",79],
+["MEC003","Thermodynamics",81],
+["MEC004","Thermodynamics",86],
+["MEC005","Thermodynamics",92],
+["MEC006","Thermodynamics",84],
+["MEC007","Thermodynamics",77],
+["MEC008","Thermodynamics",89],
+["MEC009","Thermodynamics",90],
+["MEC010","Thermodynamics",85]
 
 ];
-
-
-
-
-
 
 results.forEach(result=>{
 
