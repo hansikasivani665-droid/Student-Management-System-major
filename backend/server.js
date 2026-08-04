@@ -16,7 +16,7 @@ const path = require("path");
 const studentRoutes = require("./routes/students");
 const attendanceRoutes = require("./routes/attendance");
 const resultsRoutes = require("./routes/results");
-// const dashboardRoutes = require("./routes/dashboard");   // DISABLED: syntax error crashing server, not used by frontend
+const dashboardRoutes = require("./routes/dashboard");
 const authRoutes = require("./routes/auth");
 const teacherRoutes = require("./routes/teachers");
 
@@ -40,30 +40,52 @@ const app = express();
 
 
 
-
 // =====================================================
 // CORS CONFIGURATION
 // =====================================================
 
 
 const allowedOrigins = [
+
     "https://student-management-system-major-1.onrender.com",
+
     "http://127.0.0.1:5500",
+
     "http://localhost:5500",
+
     "http://localhost:5000",
+
     "http://127.0.0.1:5000"
+
 ];
 
+
 app.use(cors({
-    origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
+
+    origin(origin, callback){
+
+        if(!origin || allowedOrigins.includes(origin)){
+
+            callback(null,true);
+
         }
+        else{
+
+            callback(new Error("Not allowed by CORS"));
+
+        }
+
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+
+    methods:[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+    ],
+
+    credentials:true
+
 }));
 
 
@@ -84,20 +106,41 @@ app.use(express.urlencoded({
 
 
 
-
 // =====================================================
 // STATIC FILES
 // =====================================================
 
 
-app.use("/css", express.static(path.join(__dirname, "../css")));
+app.use(
+    "/css",
+    express.static(
+        path.join(__dirname,"../css")
+    )
+);
 
-app.use("/js", express.static(path.join(__dirname, "../js")));
 
-app.use("/assets", express.static(path.join(__dirname, "../assets")));
+app.use(
+    "/js",
+    express.static(
+        path.join(__dirname,"../js")
+    )
+);
 
-app.use("/html", express.static(path.join(__dirname, "../html")));
 
+app.use(
+    "/assets",
+    express.static(
+        path.join(__dirname,"../assets")
+    )
+);
+
+
+app.use(
+    "/html",
+    express.static(
+        path.join(__dirname,"../html")
+    )
+);
 
 
 
@@ -107,40 +150,62 @@ app.use("/html", express.static(path.join(__dirname, "../html")));
 
 
 app.use(
+
     "/students",
+
     studentRoutes
+
 );
 
 
+
 app.use(
+
     "/attendance",
+
     attendanceRoutes
+
 );
 
 
+
 app.use(
+
     "/results",
+
     resultsRoutes
+
 );
 
 
-// app.use(
-//     "/dashboard",
-//     dashboardRoutes
-// );
+
+app.use(
+
+    "/dashboard",
+
+    dashboardRoutes
+
+);
+
 
 
 app.use(
+
     "/auth",
+
     authRoutes
+
 );
+
 
 
 app.use(
-    "/teachers",
-    teacherRoutes
-);
 
+    "/teachers",
+
+    teacherRoutes
+
+);
 
 
 
@@ -148,18 +213,50 @@ app.use(
 // HEALTH CHECK (RENDER)
 // =====================================================
 
-app.get("/health", (req, res) => {
-    res.json({ success: true, status: "ok" });
+
+app.get("/health",(req,res)=>{
+
+    res.json({
+
+        success:true,
+
+        status:"ok"
+
+    });
+
 });
 
+
+
 // =====================================================
-// HOME
+// HOME ROUTE
 // =====================================================
 
-app.get("/", (req, res) => {
+
+app.get("/",(req,res)=>{
+
     res.redirect("/html/login.html");
+
 });
 
+
+
+// =====================================================
+// 404 HANDLER
+// =====================================================
+
+
+app.use((req,res)=>{
+
+    res.status(404).json({
+
+        success:false,
+
+        message:"API Route Not Found"
+
+    });
+
+});
 
 
 
@@ -168,9 +265,7 @@ app.get("/", (req, res) => {
 // =====================================================
 
 
-const PORT =
-process.env.PORT || 5000;
-
+const PORT = process.env.PORT || 5000;
 
 
 app.listen(PORT,()=>{
