@@ -60,53 +60,51 @@ FROM teachers
 
 const attendanceQuery = `
 
-
 SELECT
 
 
-COUNT(
-DISTINCT
+SUM(
+
 CASE
 
-WHEN status='Present'
+WHEN a.status='Present'
 
-THEN roll
+THEN 1
+
+ELSE 0
 
 END
-)
 
-AS presentStudents,
-
+) AS presentStudents,
 
 
-COUNT(
-DISTINCT
+SUM(
+
 CASE
 
-WHEN status='Absent'
+WHEN a.status='Absent'
+OR a.status IS NULL
 
-THEN roll
+THEN 1
+
+ELSE 0
 
 END
-)
 
-AS absentStudents,
-
+) AS absentStudents,
 
 
-COUNT(
-DISTINCT roll
-)
-
-AS totalAttendance
+COUNT(s.roll) AS totalAttendance
 
 
-
-FROM attendance
-
+FROM students s
 
 
-WHERE date=(
+LEFT JOIN attendance a
+
+ON s.roll=a.roll
+
+AND a.date=(
 
 SELECT MAX(date)
 
@@ -114,10 +112,7 @@ FROM attendance
 
 )
 
-
 `;
-
-
 
 
 // =====================================================
@@ -354,50 +349,43 @@ resultData.resultsCount
 
 const departmentQuery = `
 
-
 SELECT
-
 
 s.department,
 
 
-
-COUNT(DISTINCT s.roll)
-
-AS totalStudents,
+COUNT(DISTINCT s.roll) AS totalStudents,
 
 
-
-COUNT(DISTINCT
+SUM(
 
 CASE
 
 WHEN a.status='Present'
 
-THEN a.roll
+THEN 1
+
+ELSE 0
 
 END
 
-)
-
-AS presentStudents,
+) AS presentStudents,
 
 
-
-COUNT(DISTINCT
+SUM(
 
 CASE
 
 WHEN a.status='Absent'
+OR a.status IS NULL
 
-THEN a.roll
+THEN 1
+
+ELSE 0
 
 END
 
-)
-
-AS absentStudents,
-
+) AS absentStudents,
 
 
 ROUND(
@@ -406,21 +394,15 @@ AVG(r.marks),
 
 2
 
-)
-
-AS averageMarks
-
+) AS averageMarks
 
 
 FROM students s
 
 
-
 LEFT JOIN attendance a
 
-
 ON s.roll=a.roll
-
 
 AND a.date=(
 
@@ -431,25 +413,17 @@ FROM attendance
 )
 
 
-
 LEFT JOIN results r
 
-
 ON s.roll=r.roll
-
 
 
 GROUP BY s.department
 
 
-
 ORDER BY s.department
 
-
-
 `;
-
-
 
 
 
