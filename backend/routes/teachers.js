@@ -67,12 +67,13 @@ router.get("/", (req, res) => {
 
 
 
+
 // =====================================================
 // GET TEACHER BY EMAIL
 // GET /teachers/email/:email
 // =====================================================
 
-router.get("/email/:email", (req,res)=>{
+router.get("/email/:email",(req,res)=>{
 
 
     const email = req.params.email;
@@ -163,7 +164,6 @@ router.get("/:teacherId/students",(req,res)=>{
         `
         SELECT
             department,
-            year,
             subject,
             teacherId
         FROM teachers
@@ -213,15 +213,12 @@ router.get("/:teacherId/students",(req,res)=>{
                 SELECT *
                 FROM students
                 WHERE LOWER(department)=LOWER(?)
-                AND LOWER(year)=LOWER(?)
                 ORDER BY roll
                 `,
 
                 [
 
-                    teacher.department,
-
-                    teacher.year
+                    teacher.department
 
                 ],
 
@@ -267,11 +264,6 @@ router.get("/:teacherId/students",(req,res)=>{
 
 });
 
-
-
-
-
-
 // =====================================================
 // FIX DEFAULT TEACHER DATA
 // GET /teachers/fix-subjects
@@ -289,7 +281,6 @@ router.get("/fix-subjects",(req,res)=>{
 
             SET
                 subject='DBMS',
-                year='III',
                 department='CSE'
 
             WHERE teacherId='T001'
@@ -304,7 +295,6 @@ router.get("/fix-subjects",(req,res)=>{
 
             SET
                 subject='Computer Networks',
-                year='II',
                 department='ECE'
 
             WHERE teacherId='T002'
@@ -319,7 +309,6 @@ router.get("/fix-subjects",(req,res)=>{
 
             SET
                 subject='Operating Systems',
-                year='III',
                 department='EEE'
 
             WHERE teacherId='T003'
@@ -334,7 +323,6 @@ router.get("/fix-subjects",(req,res)=>{
 
             SET
                 subject='Thermodynamics',
-                year='III',
                 department='Mechanical'
 
             WHERE teacherId='T004'
@@ -349,7 +337,6 @@ router.get("/fix-subjects",(req,res)=>{
 
             SET
                 subject='Structural Engineering',
-                year='III',
                 department='Civil'
 
             WHERE teacherId='T005'
@@ -373,6 +360,9 @@ router.get("/fix-subjects",(req,res)=>{
 
 
 });
+
+
+
 
 
 
@@ -455,6 +445,8 @@ router.get("/:id",(req,res)=>{
 
 
 
+
+
 // =====================================================
 // ADD TEACHER
 // POST /teachers
@@ -472,8 +464,6 @@ router.post("/",(req,res)=>{
 
         department,
 
-        year,
-
         subject,
 
         email,
@@ -488,6 +478,7 @@ router.post("/",(req,res)=>{
 
 
     } = req.body;
+
 
 
 
@@ -516,6 +507,7 @@ router.post("/",(req,res)=>{
         });
 
     }
+
 
 
 
@@ -555,6 +547,7 @@ router.post("/",(req,res)=>{
 
 
 
+
             if(row){
 
                 return res.status(400).json({
@@ -571,6 +564,7 @@ router.post("/",(req,res)=>{
 
 
 
+
             db.run(
 
                 `
@@ -579,7 +573,6 @@ router.post("/",(req,res)=>{
                     teacherId,
                     name,
                     department,
-                    year,
                     subject,
                     email,
                     phone,
@@ -588,9 +581,10 @@ router.post("/",(req,res)=>{
                     password
                 )
 
-                VALUES (?,?,?,?,?,?,?,?,?,?)
+                VALUES (?,?,?,?,?,?,?,?,?)
 
                 `,
+
 
                 [
 
@@ -599,8 +593,6 @@ router.post("/",(req,res)=>{
                     name,
 
                     department,
-
-                    year || "",
 
                     subject || "",
 
@@ -616,6 +608,7 @@ router.post("/",(req,res)=>{
 
 
                 ],
+
 
 
                 function(err){
@@ -662,12 +655,6 @@ router.post("/",(req,res)=>{
 
 });
 
-
-
-
-
-
-
 // =====================================================
 // UPDATE TEACHER
 // PUT /teachers/:id
@@ -684,8 +671,6 @@ router.put("/:id",(req,res)=>{
         teacherId,
 
         department,
-
-        year,
 
         subject,
 
@@ -706,6 +691,7 @@ router.put("/:id",(req,res)=>{
 
 
 
+
     db.run(
 
         `
@@ -719,8 +705,6 @@ router.put("/:id",(req,res)=>{
             name=?,
 
             department=?,
-
-            year=?,
 
             subject=?,
 
@@ -748,8 +732,6 @@ router.put("/:id",(req,res)=>{
 
             department,
 
-            year,
-
             subject,
 
             email,
@@ -766,6 +748,7 @@ router.put("/:id",(req,res)=>{
 
 
         ],
+
 
 
         function(err){
@@ -803,6 +786,12 @@ router.put("/:id",(req,res)=>{
 
 
 });
+
+
+
+
+
+
 
 
 // =====================================================
@@ -848,6 +837,7 @@ router.delete("/:id",(req,res)=>{
 
 
 
+
             res.json({
 
                 success:true,
@@ -870,9 +860,10 @@ router.delete("/:id",(req,res)=>{
 
 
 
+
+
 // =====================================================
 // EXPORT ROUTER
 // =====================================================
 
 module.exports = router;
-
