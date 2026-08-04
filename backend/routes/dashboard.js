@@ -770,18 +770,7 @@ latestStudent.name
 departments:departments
 
 
-
 });
-
-
-
-});
-
-
-
-});
-
-
 
 
 
@@ -800,6 +789,12 @@ departments:departments
 });
 
 
+
+});
+
+});
+
+});
 
 });
 
