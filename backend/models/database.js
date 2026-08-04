@@ -506,113 +506,64 @@ db.get(
             );
 
 
+           const students = [
 
-            const students = [
+["Rahul Kumar","CSE001","CSE","I","rahul@gmail.com","9876543201","1234"],
+["Anjali Sharma","CSE002","CSE","I","anjali@gmail.com","9876543202","1234"],
+["Priya Reddy","CSE003","CSE","I","priya@gmail.com","9876543203","1234"],
+["Sai Teja","CSE004","CSE","II","sai@gmail.com","9876543204","1234"],
+["Kiran Kumar","CSE005","CSE","II","kiran@gmail.com","9876543205","1234"],
+["Harsha Vardhan","CSE006","CSE","II","harsha@gmail.com","9876543206","1234"],
+["Nikhil Reddy","CSE007","CSE","III","nikhil@gmail.com","9876543207","1234"],
+["Keerthana","CSE008","CSE","III","keerthana@gmail.com","9876543208","1234"],
+["Bhavana","CSE009","CSE","IV","bhavana@gmail.com","9876543209","1234"],
+["Sandeep","CSE010","CSE","IV","sandeep@gmail.com","9876543210","1234"],
 
+["Rohit","ECE001","ECE","I","rohit.ece@gmail.com","9876500001","1234"],
+["Divya","ECE002","ECE","I","divya.ece@gmail.com","9876500002","1234"],
+["Karthik","ECE003","ECE","II","karthik.ece@gmail.com","9876500003","1234"],
+["Meghana","ECE004","ECE","II","meghana.ece@gmail.com","9876500004","1234"],
+["Ajay","ECE005","ECE","III","ajay.ece@gmail.com","9876500005","1234"],
+["Naveen","ECE006","ECE","III","naveen.ece@gmail.com","9876500006","1234"],
+["Pooja","ECE007","ECE","IV","pooja.ece@gmail.com","9876500007","1234"],
+["Vamsi","ECE008","ECE","IV","vamsi.ece@gmail.com","9876500008","1234"],
+["Sneha","ECE009","ECE","IV","sneha.ece@gmail.com","9876500009","1234"],
+["Akhil","ECE010","ECE","IV","akhil.ece@gmail.com","9876500010","1234"],
 
-                [
-                    "Rahul Kumar",
-                    "CSE001",
-                    "CSE",
-                    "I",
-                    "rahul@gmail.com",
-                    "9876543201",
-                    "1234"
-                ],
+["Rakesh","EEE001","EEE","I","rakesh.eee@gmail.com","9876510001","1234"],
+["Swathi","EEE002","EEE","I","swathi.eee@gmail.com","9876510002","1234"],
+["Vinay","EEE003","EEE","II","vinay.eee@gmail.com","9876510003","1234"],
+["Lavanya","EEE004","EEE","II","lavanya.eee@gmail.com","9876510004","1234"],
+["Sai Krishna","EEE005","EEE","III","saikrishna.eee@gmail.com","9876510005","1234"],
+["Deepthi","EEE006","EEE","III","deepthi.eee@gmail.com","9876510006","1234"],
+["Mahesh","EEE007","EEE","IV","mahesh.eee@gmail.com","9876510007","1234"],
+["Sravani","EEE008","EEE","IV","sravani.eee@gmail.com","9876510008","1234"],
+["Tarun","EEE009","EEE","IV","tarun.eee@gmail.com","9876510009","1234"],
+["Pavan","EEE010","EEE","IV","pavan.eee@gmail.com","9876510010","1234"],
 
+["Ravi","CIV001","Civil","I","ravi.civil@gmail.com","9876520001","1234"],
+["Sowmya","CIV002","Civil","I","sowmya.civil@gmail.com","9876520002","1234"],
+["Manoj","CIV003","Civil","II","manoj.civil@gmail.com","9876520003","1234"],
+["Kavya","CIV004","Civil","II","kavya.civil@gmail.com","9876520004","1234"],
+["Arun","CIV005","Civil","III","arun.civil@gmail.com","9876520005","1234"],
+["Divya","CIV006","Civil","III","divya.civil2@gmail.com","9876520006","1234"],
+["Ramesh","CIV007","Civil","IV","ramesh.civil@gmail.com","9876520007","1234"],
+["Bhavya","CIV008","Civil","IV","bhavya.civil@gmail.com","9876520008","1234"],
+["Ganesh","CIV009","Civil","IV","ganesh.civil@gmail.com","9876520009","1234"],
+["Pavani","CIV010","Civil","IV","pavani.civil@gmail.com","9876520010","1234"],
 
-                [
-                    "Anjali Sharma",
-                    "CSE002",
-                    "CSE",
-                    "I",
-                    "anjali@gmail.com",
-                    "9876543202",
-                    "1234"
-                ],
+["Pradeep","MEC001","Mechanical","I","pradeep.mech@gmail.com","9876530001","1234"],
+["Suresh","MEC002","Mechanical","I","suresh.mech@gmail.com","9876530002","1234"],
+["Vijay","MEC003","Mechanical","II","vijay.mech@gmail.com","9876530003","1234"],
+["Rohini","MEC004","Mechanical","II","rohini.mech@gmail.com","9876530004","1234"],
+["Kishore","MEC005","Mechanical","III","kishore.mech@gmail.com","9876530005","1234"],
+["Harini","MEC006","Mechanical","III","harini.mech@gmail.com","9876530006","1234"],
+["Naresh","MEC007","Mechanical","IV","naresh.mech@gmail.com","9876530007","1234"],
+["Snehal","MEC008","Mechanical","IV","snehal.mech@gmail.com","9876530008","1234"],
+["Lokesh","MEC009","Mechanical","IV","lokesh.mech@gmail.com","9876530009","1234"],
+["Aishwarya","MEC010","Mechanical","IV","aishwarya.mech@gmail.com","9876530010","1234"]
 
-
-                [
-                    "Priya Reddy",
-                    "CSE003",
-                    "CSE",
-                    "I",
-                    "priya@gmail.com",
-                    "9876543203",
-                    "1234"
-                ],
-
-
-                [
-                    "Sai Teja",
-                    "CSE004",
-                    "CSE",
-                    "II",
-                    "sai@gmail.com",
-                    "9876543204",
-                    "1234"
-                ],
-
-
-                [
-                    "Kiran Kumar",
-                    "CSE005",
-                    "CSE",
-                    "II",
-                    "kiran@gmail.com",
-                    "9876543205",
-                    "1234"
-                ],
-
-
-                [
-                    "Arjun",
-                    "ECE001",
-                    "ECE",
-                    "III",
-                    "arjun.ece@gmail.com",
-                    "9876501001",
-                    "1234"
-                ],
-
-
-                [
-                    "Ramesh",
-                    "EEE001",
-                    "EEE",
-                    "II",
-                    "ramesh.eee@gmail.com",
-                    "9876502001",
-                    "1234"
-                ],
-
-
-                [
-                    "Ravi",
-                    "CIV001",
-                    "Civil",
-                    "II",
-                    "ravi.civil@gmail.com",
-                    "9876503001",
-                    "1234"
-                ],
-
-
-                [
-                    "Vamsi",
-                    "MEC001",
-                    "Mechanical",
-                    "I",
-                    "vamsi.mech@gmail.com",
-                    "9876504001",
-                    "1234"
-                ]
-
-
-            ];
-
-
-
+];
 
 
             students.forEach(student=>{
