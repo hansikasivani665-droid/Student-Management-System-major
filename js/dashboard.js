@@ -3,14 +3,23 @@
 // =====================================================
 
 
-const API = window.location.origin;
+const API =
+    window.API_BASE ||
+    "https://student-management-system-major-1.onrender.com";
+
+
+
+let studentChartInstance;
+let attendanceChartInstance;
+
 
 
 // =====================================================
-// LOAD DASHBOARD DATA
+// PAGE LOAD
 // =====================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+
+document.addEventListener("DOMContentLoaded",()=>{
 
     loadDashboard();
 
@@ -24,160 +33,152 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
 // =====================================================
-// LOAD MAIN DASHBOARD
+// MAIN DASHBOARD
 // =====================================================
 
 
 async function loadDashboard(){
 
 
-    try{
+try{
 
 
-        const response = await fetch(
-            `${API}/dashboard`
-        );
+const response =
+await fetch(`${API}/dashboard`);
 
 
-        const data = await response.json();
 
+const data =
+await response.json();
 
-        console.log("Dashboard Data:", data);
 
 
+console.log(
+"Dashboard Data:",
+data
+);
 
-        if(!data.success){
 
-            console.log("Dashboard API Failed");
 
-            return;
+if(!data.success)
+return;
 
-        }
 
 
 
-        // ===============================
-        // TOP CARDS
-        // ===============================
+// ===============================
+// TOP CARDS
+// ===============================
 
 
-        document.getElementById("totalStudents").innerText =
-            data.totalStudents || 0;
+setText(
+"totalStudents",
+data.totalStudents
+);
 
 
+setText(
+"attendancePercentage",
+(data.attendancePercentage || 0)+"%"
+);
 
-        document.getElementById("attendancePercentage").innerText =
-            (data.attendancePercentage || 0) + "%";
 
+setText(
+"averageMarks",
+data.averageMarks
+);
 
 
-        document.getElementById("averageMarks").innerText =
-            data.averageMarks || 0;
+setText(
+"passPercentage",
+(data.passPercentage || 0)+"%"
+);
 
 
+setText(
+"totalDepartments",
+data.totalDepartments
+);
 
-        document.getElementById("passPercentage").innerText =
-            (data.passPercentage || 0) + "%";
 
+setText(
+"resultsCount",
+data.resultsCount
+);
 
 
-        document.getElementById("totalDepartments").innerText =
-            data.totalDepartments || 0;
+setText(
+"presentStudents",
+data.presentStudents
+);
 
 
 
-        document.getElementById("resultsCount").innerText =
-            data.resultsCount || 0;
 
+// ===============================
+// DEPARTMENT CARDS
+// ===============================
 
 
-        document.getElementById("presentStudents").innerText =
-            data.presentStudents || 0;
+if(data.departments){
 
 
+data.departments.forEach(dep=>{
 
-        // ===============================
-        // DEPARTMENT PERFORMANCE
-        // ===============================
 
+let id =
+dep.department
+.toLowerCase();
 
-        if(data.departments){
 
-            data.departments.forEach(dep=>{
 
+if(id==="computer science engineering")
+id="cse";
 
-                let department =
-                    dep.department.toLowerCase();
 
+if(id==="electronics and communication engineering")
+id="ece";
 
 
-                if(department==="cse"){
+if(id==="electrical and electronics engineering")
+id="eee";
 
-                    setDepartment(
-                        "cse",
-                        dep
-                    );
 
-                }
+if(id==="mechanical engineering")
+id="mech";
 
 
-                if(department==="ece"){
 
-                    setDepartment(
-                        "ece",
-                        dep
-                    );
+setDepartment(
+id,
+dep
+);
 
-                }
 
 
-                if(department==="eee"){
+});
 
-                    setDepartment(
-                        "eee",
-                        dep
-                    );
+}
 
-                }
 
 
-                if(
-                    department==="mechanical"
-                    ||
-                    department==="mech"
-                ){
+createCharts(data);
 
-                    setDepartment(
-                        "mech",
-                        dep
-                    );
 
-                }
 
+}
 
-            });
+catch(error){
 
+console.log(
+"Dashboard Error:",
+error
+);
 
-        }
 
-
-
-        createCharts(data);
-
-
-
-    }
-    catch(error){
-
-
-        console.log(
-            "Dashboard Loading Error:",
-            error
-        );
-
-
-    }
+}
 
 
 }
@@ -187,61 +188,80 @@ async function loadDashboard(){
 
 
 // =====================================================
-// SET DEPARTMENT CARDS
+// SAFE TEXT UPDATE
+// =====================================================
+
+
+function setText(id,value){
+
+
+const element =
+document.getElementById(id);
+
+
+
+if(element)
+
+element.innerText =
+value ?? 0;
+
+
+
+}
+
+
+
+
+
+
+// =====================================================
+// DEPARTMENT CARD UPDATE
 // =====================================================
 
 
 function setDepartment(id,dep){
 
 
-    const students =
-    document.getElementById(id+"Students");
 
-
-    const present =
-    document.getElementById(id+"Present");
-
-
-    const absent =
-    document.getElementById(id+"Absent");
-
-
-    const attendance =
-    document.getElementById(id+"Attendance");
-
-
-    const average =
-    document.getElementById(id+"Average");
+setText(
+id+"Students",
+dep.totalStudents
+);
 
 
 
-    if(students)
-        students.innerText =
-        dep.totalStudents || 0;
+setText(
+id+"Present",
+dep.presentStudents
+);
 
 
 
-    if(present)
-        present.innerText =
-        dep.presentStudents || 0;
+setText(
+id+"Absent",
+dep.absentStudents
+);
 
 
 
-    if(absent)
-        absent.innerText =
-        dep.absentStudents || 0;
+setText(
+id+"Attendance",
+(dep.attendancePercentage || 0)+"%"
+);
 
 
 
-    if(attendance)
-        attendance.innerText =
-        (dep.attendancePercentage || 0)+"%";
+setText(
+id+"Average",
+dep.averageMarks
+);
 
 
 
-    if(average)
-        average.innerText =
-        dep.averageMarks || 0;
+setText(
+id+"Results",
+dep.resultsCount || 0
+);
 
 
 
@@ -251,107 +271,123 @@ function setDepartment(id,dep){
 
 
 
+
+
+
 // =====================================================
-// LOAD DEPARTMENT OVERVIEW
+// DEPARTMENT OVERVIEW
 // =====================================================
 
 
 async function loadDepartmentDetails(){
 
 
-    try{
+try{
 
 
-        const response =
-        await fetch(
-            `${API}/dashboard/department`
-        );
-
-
-        const data =
-        await response.json();
+const response =
+await fetch(
+`${API}/dashboard/department`
+);
 
 
 
-        console.log(
-            "Department Data:",
-            data
-        );
+const data =
+await response.json();
 
 
 
-        const container =
-        document.getElementById(
-            "departmentCards"
-        );
+console.log(
+"Department Details:",
+data
+);
 
 
 
-        if(!container)
-            return;
+const container =
+document.getElementById(
+"departmentCards"
+);
 
 
 
-        container.innerHTML="";
+if(!container)
+return;
 
 
 
-        data.departments.forEach(dep=>{
-
-
-            container.innerHTML += `
-
-            <div class="card">
-
-
-                <h3>
-                    ${dep.department}
-                </h3>
-
-
-                <p>
-                    Students:
-                    ${dep.totalStudents}
-                </p>
-
-
-                <p>
-                    Present:
-                    ${dep.presentStudents}
-                </p>
-
-
-                <p>
-                    Absent:
-                    ${dep.absentStudents}
-                </p>
-
-
-                <p>
-                    Average Marks:
-                    ${dep.averageMarks}
-                </p>
-
-
-            </div>
-
-            `;
+container.innerHTML="";
 
 
 
-        });
+(data.departments || [])
+.forEach(dep=>{
+
+
+container.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>
+${dep.department}
+</h3>
+
+
+<p>
+Students :
+${dep.totalStudents}
+</p>
+
+
+<p>
+Present :
+${dep.presentStudents}
+</p>
+
+
+<p>
+Absent :
+${dep.absentStudents}
+</p>
+
+
+<p>
+Attendance :
+${dep.attendancePercentage}%
+</p>
+
+
+<p>
+Average Marks :
+${dep.averageMarks}
+</p>
+
+
+</div>
+
+
+`;
 
 
 
-    }
-    catch(error){
+});
 
-        console.log(
-            "Department Error:",
-            error
-        );
 
-    }
+
+}
+
+catch(error){
+
+
+console.log(
+"Department Error:",
+error
+);
+
+
+}
 
 
 }
@@ -360,101 +396,117 @@ async function loadDepartmentDetails(){
 
 
 
+
+
+
 // =====================================================
-// LOAD RECENT STUDENTS
+// RECENT STUDENTS
 // =====================================================
 
 
 async function loadRecentStudents(){
 
 
-    try{
+
+try{
 
 
-        const response =
-        await fetch(
-            `${API}/students`
-        );
-
-
-        const data =
-        await response.json();
+const response =
+await fetch(
+`${API}/students`
+);
 
 
 
-        const students =
-        data.students || [];
+const data =
+await response.json();
 
 
 
-        const table =
-        document.getElementById(
-            "recentStudentTable"
-        );
+const students =
+data.students ||
+data ||
+[];
 
 
 
-        if(!table)
-            return;
+const table =
+document.getElementById(
+"recentStudentTable"
+);
 
 
 
-        table.innerHTML="";
+if(!table)
+return;
 
 
 
-        students
-        .slice(0,5)
-        .forEach(student=>{
-
-
-            table.innerHTML += `
-
-            <tr>
-
-                <td>
-                    ${student.name}
-                </td>
-
-
-                <td>
-                    ${student.roll}
-                </td>
-
-
-                <td>
-                    ${student.department}
-                </td>
-
-
-                <td>
-                    ${student.year}
-                </td>
-
-
-                <td>
-                    Active
-                </td>
-
-
-            </tr>
-
-            `;
-
-
-        });
+table.innerHTML="";
 
 
 
-    }
-    catch(error){
+students
+.slice(0,5)
+.forEach(student=>{
 
-        console.log(
-            "Student Loading Error:",
-            error
-        );
 
-    }
+table.innerHTML +=`
+
+
+<tr>
+
+
+<td>
+${student.name}
+</td>
+
+
+<td>
+${student.roll}
+</td>
+
+
+<td>
+${student.department}
+</td>
+
+
+<td>
+${student.year}
+</td>
+
+
+<td>
+Active
+</td>
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+catch(error){
+
+
+console.log(
+"Recent Student Error:",
+error
+);
+
+
+
+}
+
 
 
 }
@@ -463,54 +515,49 @@ async function loadRecentStudents(){
 
 
 
+
+
+
+
 // =====================================================
-// DATE AND TIME
+// DATE TIME
 // =====================================================
 
 
 function loadDateTime(){
 
 
-    setInterval(()=>{
+setInterval(()=>{
 
 
-        const now =
-        new Date();
-
-
-
-        const date =
-        document.getElementById(
-            "currentDate"
-        );
-
-
-        const time =
-        document.getElementById(
-            "currentTime"
-        );
+const now =
+new Date();
 
 
 
-        if(date)
-
-            date.innerText =
-            now.toLocaleDateString();
-
-
-
-        if(time)
-
-            time.innerText =
-            now.toLocaleTimeString();
+setText(
+"currentDate",
+now.toLocaleDateString()
+);
 
 
 
-    },1000);
+setText(
+"currentTime",
+now.toLocaleTimeString()
+);
+
+
+
+},1000);
 
 
 
 }
+
+
+
+
 
 
 
@@ -524,104 +571,158 @@ function loadDateTime(){
 function createCharts(data){
 
 
-    if(typeof Chart==="undefined")
-        return;
+
+if(typeof Chart==="undefined")
+return;
 
 
 
-    const resultCanvas =
-    document.getElementById(
-        "studentChart"
-    );
 
-
-    const attendanceCanvas =
-    document.getElementById(
-        "attendanceChart"
-    );
+const resultCanvas =
+document.getElementById(
+"studentChart"
+);
 
 
 
-    if(resultCanvas){
-
-
-        new Chart(
-            resultCanvas,
-            {
-
-                type:"bar",
-
-                data:{
-
-                    labels:[
-                        "Average Marks",
-                        "Pass Percentage"
-                    ],
-
-                    datasets:[{
-
-                        label:"Statistics",
-
-                        data:[
-
-                            data.averageMarks || 0,
-
-                            data.passPercentage || 0
-
-                        ]
-
-                    }]
-
-                }
-
-            }
-
-        );
-
-
-    }
+const attendanceCanvas =
+document.getElementById(
+"attendanceChart"
+);
 
 
 
 
 
-    if(attendanceCanvas){
+if(resultChartInstance)
+
+studentChartInstance.destroy();
 
 
-        new Chart(
-            attendanceCanvas,
-            {
 
-                type:"pie",
+if(attendanceChartInstance)
 
-                data:{
-
-                    labels:[
-                        "Present",
-                        "Absent"
-                    ],
-
-                    datasets:[{
-
-                        data:[
-
-                            data.presentStudents || 0,
-
-                            data.absentStudents || 0
-
-                        ]
-
-                    }]
-
-                }
+attendanceChartInstance.destroy();
 
 
-            }
-
-        );
 
 
-    }
+
+
+if(resultCanvas){
+
+
+
+studentChartInstance =
+new Chart(
+resultCanvas,
+{
+
+
+type:"bar",
+
+
+data:{
+
+
+labels:[
+
+"Average Marks",
+
+"Pass Percentage"
+
+],
+
+
+
+datasets:[{
+
+label:"Performance",
+
+data:[
+
+data.averageMarks || 0,
+
+data.passPercentage || 0
+
+]
+
+
+}]
+
+
+}
+
+
+
+}
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+if(attendanceCanvas){
+
+
+
+attendanceChartInstance =
+new Chart(
+attendanceCanvas,
+{
+
+
+type:"pie",
+
+
+data:{
+
+
+labels:[
+
+"Present",
+
+"Absent"
+
+],
+
+
+
+datasets:[{
+
+
+data:[
+
+data.presentStudents || 0,
+
+data.absentStudents || 0
+
+]
+
+
+}]
+
+
+}
+
+
+
+}
+
+);
+
+
+
+}
+
+
 
 
 }
