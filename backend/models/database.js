@@ -124,19 +124,19 @@ CREATE TABLE IF NOT EXISTS attendance(
 
     status TEXT NOT NULL,
 
+    markedBy TEXT DEFAULT 'Teacher',
+
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+
     UNIQUE(
         roll,
         subject,
-        date,
-        teacherId
+        date
     )
 
 )
 
 `);
-
-
-
 
 
 // ======================================
@@ -329,12 +329,9 @@ console.log(
 );
 
 
-
-
-
-
-// ATTENDANCE MIGRATION
-
+// ======================================
+// ATTENDANCE COLUMN MIGRATION
+// ======================================
 
 db.all(
 
@@ -342,72 +339,61 @@ db.all(
 
 (err,columns)=>{
 
+if(err){
+    console.log(err);
+    return;
+}
 
-if(err)
-return;
 
-
-
-const subjectExists =
+const markedByExists =
 columns.some(
-column=>column.name==="subject"
+column=>column.name==="markedBy"
 );
 
 
-
-const teacherExists =
+const updatedAtExists =
 columns.some(
-column=>column.name==="teacherId"
+column=>column.name==="updatedAt"
 );
 
 
 
+if(!markedByExists){
 
-if(!subjectExists){
+db.run(`
 
-
-db.run(
-
-`
 ALTER TABLE attendance
-ADD COLUMN subject TEXT
-`
+ADD COLUMN markedBy TEXT DEFAULT 'Teacher'
 
+`);
+
+console.log(
+"✅ markedBy column added"
 );
-
 
 }
 
 
 
+if(!updatedAtExists){
 
+db.run(`
 
-if(!teacherExists){
-
-
-db.run(
-
-`
 ALTER TABLE attendance
-ADD COLUMN teacherId TEXT
-`
+ADD COLUMN updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 
+`);
+
+console.log(
+"✅ updatedAt column added"
 );
 
-
 }
-
-
-
-}
-
-);
-
 
 
 });
 
- 
+
 // ======================================
 // INSERT DEFAULT STUDENTS
 // ======================================

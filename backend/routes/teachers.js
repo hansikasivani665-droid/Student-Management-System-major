@@ -455,202 +455,177 @@ router.get("/:id",(req,res)=>{
 router.post("/",(req,res)=>{
 
 
-    const {
+let {
 
+name,
+teacherId,
+department,
+subject,
+email,
+phone,
+qualification,
+experience,
+password
 
-        name,
 
-        teacherId,
+}=req.body;
 
-        department,
 
-        subject,
+// accept frontend alternative names
 
-        email,
+name = name || req.body.teacherName;
 
-        phone,
+teacherId = teacherId || req.body.id;
 
-        qualification,
+department = department || req.body.dept;
 
-        experience,
+phone = phone || req.body.mobile;
 
-        password
 
 
-    } = req.body;
+if(
+!name ||
+!teacherId ||
+!department ||
+!email ||
+!phone
+){
 
+return res.status(400).json({
 
+success:false,
 
+message:"Required fields missing",
+received:req.body
 
+});
 
+}
 
-    if(
 
-        !name ||
 
-        !teacherId ||
 
-        !department ||
 
-        !email ||
+db.get(
 
-        !phone
+`
+SELECT id
+FROM teachers
+WHERE teacherId=?
+OR email=?
+`,
 
-    ){
+[
+teacherId,
+email
+],
 
-        return res.status(400).json({
 
-            success:false,
+(err,row)=>{
 
-            message:"Required fields missing"
 
-        });
+if(err){
 
-    }
+return res.status(500).json({
 
+success:false,
+message:err.message
 
+});
 
+}
 
 
 
-    db.get(
+if(row){
 
-        `
-        SELECT id
-        FROM teachers
-        WHERE teacherId=?
-        OR email=?
-        `,
+return res.status(400).json({
 
-        [
+success:false,
+message:"Teacher already exists"
 
-            teacherId,
+});
 
-            email
+}
 
-        ],
 
-        (err,row)=>{
 
 
-            if(err){
 
-                return res.status(500).json({
+db.run(
 
-                    success:false,
+`
 
-                    message:err.message
+INSERT INTO teachers
 
-                });
+(
+teacherId,
+name,
+department,
+subject,
+email,
+phone,
+qualification,
+experience,
+password
+)
 
-            }
+VALUES(?,?,?,?,?,?,?,?,?)
 
+`,
 
+[
 
+teacherId,
+name,
+department,
+subject || "",
+email,
+phone,
+qualification || "",
+experience || "",
+password || "Teacher@123"
 
-            if(row){
+],
 
-                return res.status(400).json({
 
-                    success:false,
+function(err){
 
-                    message:"Teacher already exists"
 
-                });
+if(err){
 
-            }
+return res.status(500).json({
 
+success:false,
+message:err.message
 
+});
 
+}
 
 
 
-            db.run(
+res.json({
 
-                `
-                INSERT INTO teachers
-                (
-                    teacherId,
-                    name,
-                    department,
-                    subject,
-                    email,
-                    phone,
-                    qualification,
-                    experience,
-                    password
-                )
+success:true,
 
-                VALUES (?,?,?,?,?,?,?,?,?)
+message:"Teacher Added Successfully",
 
-                `,
+id:this.lastID
 
+});
 
-                [
 
-                    teacherId,
+}
 
-                    name,
 
-                    department,
+);
 
-                    subject || "",
 
-                    email,
+}
 
-                    phone,
 
-                    qualification || "",
-
-                    experience || "",
-
-                    password || "Teacher@123"
-
-
-                ],
-
-
-
-                function(err){
-
-
-                    if(err){
-
-                        return res.status(500).json({
-
-                            success:false,
-
-                            message:err.message
-
-                        });
-
-                    }
-
-
-
-
-
-                    res.json({
-
-                        success:true,
-
-                        message:"Teacher Added Successfully",
-
-                        id:this.lastID
-
-                    });
-
-
-
-                }
-
-            );
-
-
-
-        }
-
-    );
+);
 
 
 });
