@@ -16,7 +16,7 @@ const path = require("path");
 const studentRoutes = require("./routes/students");
 const attendanceRoutes = require("./routes/attendance");
 const resultsRoutes = require("./routes/results");
-const dashboardRoutes = require("./routes/dashboard");
+// const dashboardRoutes = require("./routes/dashboard");   // DISABLED: syntax error crashing server, not used by frontend
 const authRoutes = require("./routes/auth");
 const teacherRoutes = require("./routes/teachers");
 
@@ -59,7 +59,7 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(null, true);
+            callback(new Error("Not allowed by CORS"));
         }
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -124,10 +124,10 @@ app.use(
 );
 
 
-app.use(
-    "/dashboard",
-    dashboardRoutes
-);
+// app.use(
+//     "/dashboard",
+//     dashboardRoutes
+// );
 
 
 app.use(
