@@ -4,181 +4,187 @@ const router = express.Router();
 const db = require("../models/database");
 
 
-
 // ==========================================
-// GET ATTENDANCE
+// GET ATTENDANCE (ADMIN + TEACHER)
 // ==========================================
 
-router.get("/", (req, res) => {
+router.get("/", (req,res)=>{
 
 
-    const {
-        department,
-        subject,
-        teacherId,
-        date
-    } = req.query;
+const {
+    department,
+    subject,
+    teacherId,
+    date
+}=req.query;
 
 
 
-    let query = `
+let selectedDate =
+date || new Date().toISOString().split("T")[0];
 
-        SELECT
 
-            students.roll,
 
-            students.name,
+let query = `
 
-            students.department,
+SELECT
 
-            attendance.subject,
+students.roll,
+students.name,
+students.department,
+students.year,
 
-            attendance.teacherId,
+attendance.subject,
+attendance.teacherId,
+attendance.date,
+attendance.status
 
-            attendance.date,
 
-            attendance.status
+FROM students
 
 
-        FROM students
+LEFT JOIN attendance
 
+ON students.roll = attendance.roll
 
-        LEFT JOIN attendance
+AND attendance.date = ?
 
-        ON students.roll = attendance.roll
+`;
 
-    `;
 
 
+let params=[
+    selectedDate
+];
 
-    let params = [];
 
-    const conditions = ["1=1"];
 
+let conditions=[];
 
 
 
-    if (department) {
+if(department){
 
-        conditions.push(
-            "LOWER(students.department)=LOWER(?)"
-        );
 
-        params.push(department);
+conditions.push(
+"LOWER(students.department)=LOWER(?)"
+);
 
-    }
 
+params.push(department);
 
 
+}
 
-    if (subject) {
 
-        conditions.push(
-            "LOWER(attendance.subject)=LOWER(?)"
-        );
 
-        params.push(subject);
+if(subject){
 
-    }
 
+conditions.push(
+"LOWER(attendance.subject)=LOWER(?)"
+);
 
 
+params.push(subject);
 
-    if (teacherId) {
 
-        conditions.push(
-            "attendance.teacherId=?"
-        );
+}
 
-        params.push(teacherId);
 
-    }
 
+if(teacherId){
 
 
+conditions.push(
+"attendance.teacherId=?"
+);
 
-    if (date) {
 
-        conditions.push(
-            "attendance.date=?"
-        );
+params.push(teacherId);
 
-        params.push(date);
 
-    }
+}
 
 
 
-    query += " WHERE " + conditions.join(" AND ");
+if(conditions.length){
 
-    query += " ORDER BY students.id DESC";
 
+query +=
+" WHERE " +
+conditions.join(" AND ");
 
 
+}
 
 
-    db.all(
 
-        query,
+query += `
 
-        params,
+ORDER BY students.id ASC
 
-        (err, rows) => {
+`;
 
 
 
-            if (err) {
 
-                console.log(
-                    "ATTENDANCE GET ERROR:",
-                    err.message
-                );
+db.all(
 
+query,
 
-                return res.status(500).json({
+params,
 
-                    success:false,
+(err,rows)=>{
 
-                    message:err.message
 
-                });
+if(err){
 
+console.log(
+"Attendance GET Error:",
+err.message
+);
 
-            }
 
+return res.status(500).json({
 
+success:false,
 
+message:err.message
 
+});
 
-            rows.forEach(student => {
 
+}
 
-                if (!student.status) {
 
-                    student.status = "Not Marked";
 
-                }
 
+rows.forEach(row=>{
 
-            });
 
+if(!row.status){
 
+row.status="Not Marked";
 
+}
 
 
-            res.json({
+});
 
-                success:true,
 
-                attendance:rows
 
-            });
+res.json({
 
+success:true,
 
+attendance:rows
 
-        }
+});
 
-    );
+
+
+});
 
 
 });
@@ -186,451 +192,368 @@ router.get("/", (req, res) => {
 
 
 
-
-
-
-
 // ==========================================
-// GET STUDENT ATTENDANCE BY ROLL
+// GET STUDENT ATTENDANCE
 // ==========================================
 
 
-router.get("/student/:roll", (req,res)=>{
+router.get("/student/:roll",(req,res)=>{
 
 
-    const roll = req.params.roll;
+const roll=req.params.roll;
 
 
 
-    db.all(
+db.all(
 
-        `
-        SELECT
+`
 
-            date,
+SELECT
 
-            subject,
+date,
+subject,
+teacherId,
+status
 
-            teacherId,
+FROM attendance
 
-            status
+WHERE roll=?
 
+ORDER BY date DESC
 
-        FROM attendance
+`,
 
+[roll],
 
-        WHERE roll=?
 
+(err,rows)=>{
 
-        ORDER BY date DESC
 
-        `,
+if(err){
 
+return res.status(500).json({
 
-        [
+success:false,
+message:err.message
 
-            roll
+});
 
-        ],
+}
 
 
-        (err,rows)=>{
 
+let totalDays=rows.length;
 
 
-            if(err){
+let present =
+rows.filter(
+x=>x.status==="Present"
+).length;
 
 
-                return res.status(500).json({
 
-                    success:false,
+let absent =
+rows.filter(
+x=>x.status==="Absent"
+).length;
 
-                    message:err.message
 
-                });
 
+let percentage =
+totalDays
+?
+Math.round(
+(present/totalDays)*100
+)
+:
+0;
 
-            }
 
 
+res.json({
 
+success:true,
 
+attendance:rows,
 
-            const totalDays = rows.length;
+summary:{
 
+totalDays,
+present,
+absent,
+percentage
 
-            const present = rows.filter(
-
-                r => r.status === "Present"
-
-            ).length;
-
-
-
-            const absent = rows.filter(
-
-                r => r.status === "Absent"
-
-            ).length;
-
-
-
-
-            const percentage = totalDays
-
-                ? Math.round((present / totalDays) * 100)
-
-                : 0;
-
-
-
-
-
-            res.json({
-
-                success:true,
-
-
-                attendance:rows,
-
-
-                summary:{
-
-
-                    totalDays,
-
-
-                    present,
-
-
-                    absent,
-
-
-                    percentage
-
-
-                }
-
-
-            });
-
-
-
-        }
-
-
-    );
-
+}
 
 
 });
+
+
+});
+
+
+});
+
+
+
 
 // ==========================================
 // SAVE / UPDATE ATTENDANCE
+// TEACHER + ADMIN
 // ==========================================
 
-router.post("/", (req, res) => {
 
+router.post("/",(req,res)=>{
 
-    const {
 
-        roll,
+let {
 
-        subject,
+roll,
+subject,
+teacherId,
+date,
+status
 
-        teacherId,
+}=req.body;
 
-        date,
 
-        status
 
+if(
+!roll ||
+!date ||
+!status
+){
 
-    } = req.body;
 
+return res.status(400).json({
 
+success:false,
 
+message:"Missing Attendance Details"
 
+});
 
-    if (
-        !roll ||
-        !subject ||
-        !teacherId ||
-        !date ||
-        !status
-    ) {
 
+}
 
-        return res.status(400).json({
 
-            success:false,
 
-            message:"Missing Attendance Details"
 
-        });
+// Default values for ADMIN
 
+subject =
+subject || "Admin";
 
-    }
 
+teacherId =
+teacherId || "ADMIN";
 
 
 
 
 
-    db.get(
+db.get(
 
-        `
-        SELECT id
+`
 
-        FROM attendance
+SELECT id
 
-        WHERE roll=?
+FROM attendance
 
-        AND subject=?
+WHERE roll=?
 
-        AND date=?
+AND subject=?
 
-        AND teacherId=?
+AND date=?
 
-        `,
+AND teacherId=?
 
+`,
 
-        [
+[
 
-            roll,
+roll,
+subject,
+date,
+teacherId
 
-            subject,
+],
 
-            date,
 
-            teacherId
 
-        ],
+(err,row)=>{
 
 
-        (err,row)=>{
+if(err){
 
 
+return res.status(500).json({
 
+success:false,
+message:err.message
 
+});
 
-            if(err){
 
+}
 
-                console.log(
-                    "CHECK ATTENDANCE ERROR:",
-                    err.message
-                );
 
 
-                return res.status(500).json({
 
-                    success:false,
+// UPDATE EXISTING
 
-                    message:err.message
+if(row){
 
-                });
 
 
-            }
+db.run(
 
+`
 
+UPDATE attendance
 
+SET status=?
 
+WHERE id=?
 
+`,
 
+[
 
-            // ===============================
-            // UPDATE EXISTING ATTENDANCE
-            // ===============================
+status,
+row.id
 
+],
 
-            if(row){
 
 
+function(error){
 
-                db.run(
 
-                    `
-                    UPDATE attendance
 
-                    SET status=?
+if(error){
 
-                    WHERE id=?
+return res.status(500).json({
 
-                    `,
+success:false,
+message:error.message
 
+});
 
-                    [
 
-                        status,
+}
 
-                        row.id
 
-                    ],
 
+res.json({
 
-                    (updateErr)=>{
+success:true,
 
+message:"Attendance Updated"
 
+});
 
-                        if(updateErr){
 
+}
 
-                            console.log(
-                                "UPDATE ATTENDANCE ERROR:",
-                                updateErr.message
-                            );
 
 
-                            return res.status(500).json({
+);
 
-                                success:false,
 
-                                message:updateErr.message
 
-                            });
+}
 
 
-                        }
 
 
+// INSERT NEW
 
+else{
 
 
-                        res.json({
 
-                            success:true,
+db.run(
 
-                            message:"Attendance Updated"
+`
 
-                        });
+INSERT INTO attendance
 
+(
 
+roll,
+subject,
+teacherId,
+date,
+status
 
+)
 
-                    }
+VALUES(?,?,?,?,?)
 
+`,
 
-                );
+[
 
+roll,
+subject,
+teacherId,
+date,status
 
+],
 
-            }
 
 
+function(error){
 
 
 
-            // ===============================
-            // INSERT NEW ATTENDANCE
-            // ===============================
+if(error){
 
 
-            else {
+return res.status(500).json({
 
+success:false,
+message:error.message
 
+});
 
-                db.run(
 
-                    `
-                    INSERT INTO attendance
+}
 
-                    (
-                        roll,
 
-                        subject,
 
-                        teacherId,
 
-                        date,
+res.json({
 
-                        status
+success:true,
 
-                    )
+message:"Attendance Saved",
 
+id:this.lastID
 
-                    VALUES(?,?,?,?,?)
 
-                    `,
+});
 
 
-                    [
 
-                        roll,
+}
 
-                        subject,
 
-                        teacherId,
 
-                        date,
+);
 
-                        status
 
-                    ],
 
+}
 
-                    (insertErr)=>{
 
 
+}
 
 
 
-                        if(insertErr){
-
-
-                            console.log(
-
-                                "INSERT ATTENDANCE ERROR:",
-
-                                insertErr.message
-
-                            );
-
-
-
-                            return res.status(500).json({
-
-                                success:false,
-
-                                message:insertErr.message
-
-                            });
-
-
-
-                        }
-
-
-
-
-
-                        res.json({
-
-                            success:true,
-
-                            message:"Attendance Saved"
-
-                        });
-
-
-
-
-                    }
-
-
-                );
-
-
-
-            }
-
-
-
-
-        }
-
-
-    );
+);
 
 
 
@@ -639,11 +562,58 @@ router.post("/", (req, res) => {
 
 
 
-
-
-
 // ==========================================
-// EXPORT ROUTER
+// DELETE ATTENDANCE
 // ==========================================
+
+
+router.delete("/:id",(req,res)=>{
+
+
+db.run(
+
+`
+
+DELETE FROM attendance
+
+WHERE id=?
+
+`,
+
+[req.params.id],
+
+
+function(err){
+
+
+if(err){
+
+return res.status(500).json({
+
+success:false,
+message:err.message
+
+});
+
+}
+
+
+
+res.json({
+
+success:true,
+
+message:"Attendance Deleted"
+
+});
+
+
+});
+
+
+});
+
+
+
 
 module.exports = router;
