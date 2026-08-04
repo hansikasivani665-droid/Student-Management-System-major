@@ -156,8 +156,13 @@ FROM results
 
 `;
 
-
-
+db.get(resultQuery, [], (err, resultData) => {
+        if (err) {
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 
 // =====================================================
 // LATEST STUDENT
