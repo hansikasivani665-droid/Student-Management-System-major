@@ -16,7 +16,7 @@ if (!fs.existsSync(dbDir)) {
     console.log("📁 Creating database directory...");
 
     fs.mkdirSync(dbDir, {
-        recursive: true
+        recursive:true
     });
 
 }
@@ -28,9 +28,11 @@ console.log(
 );
 
 
+
 // ======================================
 // DATABASE CONNECTION
 // ======================================
+
 
 const db = new sqlite3.Database(
 
@@ -40,13 +42,19 @@ const db = new sqlite3.Database(
 
         if(err){
 
-            console.log("❌ SQLite Connection Failed");
+            console.log(
+                "❌ SQLite Connection Failed"
+            );
+
             console.log(err.message);
 
         }
+
         else{
 
-            console.log("✅ SQLite Connected Successfully");
+            console.log(
+                "✅ SQLite Connected Successfully"
+            );
 
         }
 
@@ -56,20 +64,25 @@ const db = new sqlite3.Database(
 
 
 
+
 // ======================================
 // CREATE TABLES
 // ======================================
 
+
 db.serialize(()=>{
 
 
-console.log("📦 Creating Database Tables...");
+console.log(
+    "📦 Creating Database Tables..."
+);
 
 
 
-// ===============================
+// ======================================
 // STUDENTS TABLE
-// ===============================
+// YEAR REQUIRED
+// ======================================
 
 
 db.run(`
@@ -101,9 +114,9 @@ CREATE TABLE IF NOT EXISTS students(
 
 
 
-// ===============================
+// ======================================
 // ATTENDANCE TABLE
-// ===============================
+// ======================================
 
 
 db.run(`
@@ -122,7 +135,12 @@ CREATE TABLE IF NOT EXISTS attendance(
 
     status TEXT NOT NULL,
 
-    UNIQUE(roll,subject,date,teacherId)
+    UNIQUE(
+        roll,
+        subject,
+        date,
+        teacherId
+    )
 
 )
 
@@ -131,9 +149,9 @@ CREATE TABLE IF NOT EXISTS attendance(
 
 
 
-// ===============================
+// ======================================
 // RESULTS TABLE
-// ===============================
+// ======================================
 
 
 db.run(`
@@ -167,10 +185,11 @@ CREATE TABLE IF NOT EXISTS results(
 
 
 
-// ===============================
+
+// ======================================
 // TEACHERS TABLE
 // YEAR REMOVED
-// ===============================
+// ======================================
 
 
 db.run(`
@@ -206,9 +225,11 @@ CREATE TABLE IF NOT EXISTS teachers(
 
 
 
-// ===============================
+
+
+// ======================================
 // USERS TABLE
-// ===============================
+// ======================================
 
 
 db.run(`
@@ -237,7 +258,11 @@ CREATE TABLE IF NOT EXISTS users(
 
 
 
-console.log("✅ Database Tables Ready");
+
+console.log(
+    "✅ Database Tables Ready"
+);
+
 
 
 });
@@ -245,17 +270,19 @@ console.log("✅ Database Tables Ready");
 
 
 
+
 // ======================================
-// DATABASE MIGRATIONS
+// MIGRATIONS
 // ======================================
 
 
 db.serialize(()=>{
 
 
-// ===============================
+
+// ======================================
 // RESULTS MIGRATION
-// ===============================
+// ======================================
 
 
 db.all(
@@ -267,14 +294,22 @@ db.all(
 
 if(err){
 
-console.log("❌ Results migration error");
-return;
+    console.log(
+        "❌ Results migration error",
+        err.message
+    );
+
+    return;
 
 }
 
 
+
 const subjectExists =
-columns.some(column=>column.name==="subject");
+columns.some(
+    column=>column.name==="subject"
+);
+
 
 
 if(!subjectExists){
@@ -286,19 +321,19 @@ db.run(
 
 (err)=>{
 
-
 if(err){
 
 console.log(
-"Results migration:",
-err.message
+    "Results migration:",
+    err.message
 );
 
 }
+
 else{
 
 console.log(
-"✅ Subject column added to results"
+    "✅ Subject column added to results"
 );
 
 }
@@ -312,6 +347,7 @@ console.log(
 }
 
 
+
 }
 
 );
@@ -320,9 +356,10 @@ console.log(
 
 
 
-// ===============================
+
+// ======================================
 // ATTENDANCE MIGRATION
-// ===============================
+// ======================================
 
 
 db.all(
@@ -335,7 +372,8 @@ db.all(
 if(err){
 
 console.log(
-"❌ Attendance migration error"
+    "❌ Attendance migration error",
+    err.message
 );
 
 return;
@@ -344,12 +382,20 @@ return;
 
 
 
+
 const subjectExists =
-columns.some(column=>column.name==="subject");
+columns.some(
+    column=>column.name==="subject"
+);
+
 
 
 const teacherExists =
-columns.some(column=>column.name==="teacherId");
+columns.some(
+    column=>column.name==="teacherId"
+);
+
+
 
 
 
@@ -367,6 +413,7 @@ if(err){
 console.log(err.message);
 
 }
+
 else{
 
 console.log(
@@ -375,13 +422,14 @@ console.log(
 
 }
 
-
 }
 
 );
 
 
 }
+
+
 
 
 
@@ -401,6 +449,7 @@ if(err){
 console.log(err.message);
 
 }
+
 else{
 
 console.log(
@@ -419,9 +468,11 @@ console.log(
 
 
 
+
 }
 
 );
+
 
 
 });
@@ -429,6 +480,7 @@ console.log(
 // ======================================
 // INSERT SAMPLE STUDENTS
 // ======================================
+
 
 db.get(
 
@@ -445,13 +497,17 @@ db.get(
         }
 
 
-        if(row.count===0){
+
+        if(row.count === 0){
 
 
-            console.log("📥 Adding Sample Students...");
+            console.log(
+                "📥 Adding Sample Students..."
+            );
 
 
-            const students=[
+
+            const students = [
 
 
                 [
@@ -464,6 +520,7 @@ db.get(
                     "1234"
                 ],
 
+
                 [
                     "Anjali Sharma",
                     "CSE002",
@@ -473,6 +530,7 @@ db.get(
                     "9876543202",
                     "1234"
                 ],
+
 
                 [
                     "Priya Reddy",
@@ -504,9 +562,56 @@ db.get(
                     "kiran@gmail.com",
                     "9876543205",
                     "1234"
+                ],
+
+
+                [
+                    "Arjun",
+                    "ECE001",
+                    "ECE",
+                    "III",
+                    "arjun.ece@gmail.com",
+                    "9876501001",
+                    "1234"
+                ],
+
+
+                [
+                    "Ramesh",
+                    "EEE001",
+                    "EEE",
+                    "II",
+                    "ramesh.eee@gmail.com",
+                    "9876502001",
+                    "1234"
+                ],
+
+
+                [
+                    "Ravi",
+                    "CIV001",
+                    "Civil",
+                    "II",
+                    "ravi.civil@gmail.com",
+                    "9876503001",
+                    "1234"
+                ],
+
+
+                [
+                    "Vamsi",
+                    "MEC001",
+                    "Mechanical",
+                    "I",
+                    "vamsi.mech@gmail.com",
+                    "9876504001",
+                    "1234"
                 ]
 
+
             ];
+
+
 
 
 
@@ -517,6 +622,7 @@ db.get(
 
 `
 INSERT INTO students
+
 (
 name,
 roll,
@@ -536,35 +642,41 @@ student,
 
 (err)=>{
 
-
 if(err){
 
-console.log(err.message);
-
-}
-
-
-}
-
-
-);
-
-
-});
-
-
 console.log(
-"✅ Sample Students Inserted"
+"Student Insert Error:",
+err.message
 );
+
+}
 
 
 }
 
 
+);
 
-}
+
+
+            });
+
+
+
+            console.log(
+                "✅ Sample Students Inserted"
+            );
+
+
+        }
+
+
+
+    }
 
 );
+
+
 
 
 
@@ -585,29 +697,28 @@ db.get(
 
 if(err){
 
-console.log(err);
-return;
+    console.log(err);
+    return;
 
 }
 
 
 
-if(row.count===0){
+
+if(row.count === 0){
 
 
 
 console.log(
-"📥 Adding Sample Teachers..."
+    "📥 Adding Sample Teachers..."
 );
 
 
 
 
-const teachers=[
 
+const teachers = [
 
-
-// ================= MAIN TEACHERS =================
 
 
 [
@@ -623,6 +734,7 @@ const teachers=[
 ],
 
 
+
 [
 "T002",
 "Suresh Reddy",
@@ -634,6 +746,7 @@ const teachers=[
 "6 Years",
 "Suresh@123"
 ],
+
 
 
 [
@@ -649,6 +762,7 @@ const teachers=[
 ],
 
 
+
 [
 "T004",
 "Anil Kumar",
@@ -662,6 +776,7 @@ const teachers=[
 ],
 
 
+
 [
 "T005",
 "Lakshmi Devi",
@@ -672,63 +787,8 @@ const teachers=[
 "Ph.D",
 "8 Years",
 "Lakshmi@123"
-],
-
-
-
-// ================= EXTRA TEACHERS =================
-
-
-[
-"ECE001",
-"Arjun",
-"ECE",
-"Digital Electronics",
-"arjun.ece@gmail.com",
-"9876501001",
-"M.Tech",
-"2 Years",
-"1234"
-],
-
-
-[
-"EEE001",
-"Ramesh",
-"EEE",
-"Electrical Machines",
-"ramesh.eee@gmail.com",
-"9876502001",
-"M.Tech",
-"2 Years",
-"1234"
-],
-
-
-[
-"CIV001",
-"Ravi",
-"Civil",
-"Structural Engineering",
-"ravi.civil@gmail.com",
-"9876503001",
-"M.Tech",
-"2 Years",
-"1234"
-],
-
-
-[
-"MEC001",
-"Vamsi",
-"Mechanical",
-"Thermodynamics",
-"vamsi.mech@gmail.com",
-"9876504001",
-"M.Tech",
-"2 Years",
-"1234"
 ]
+
 
 
 ];
@@ -736,7 +796,10 @@ const teachers=[
 
 
 
+
+
 teachers.forEach(teacher=>{
+
 
 
 db.run(
@@ -746,6 +809,7 @@ db.run(
 INSERT INTO teachers
 
 (
+
 teacherId,
 name,
 department,
@@ -755,6 +819,7 @@ phone,
 qualification,
 experience,
 password
+
 )
 
 VALUES(?,?,?,?,?,?,?,?,?)
@@ -769,9 +834,13 @@ teacher,
 
 if(err){
 
-console.log(err.message);
+console.log(
+"Teacher Insert Error:",
+err.message
+);
 
 }
+
 
 
 }
@@ -785,6 +854,8 @@ console.log(err.message);
 
 
 
+
+
 console.log(
 "✅ Sample Teachers Inserted"
 );
@@ -795,7 +866,10 @@ console.log(
 
 
 
+
 }
+
+
 
 );
 
@@ -819,7 +893,8 @@ db.get(
         }
 
 
-        if(row.count===0){
+
+        if(row.count === 0){
 
 
             console.log(
@@ -827,14 +902,15 @@ db.get(
             );
 
 
+
             const today =
-            new Date()
-            .toISOString()
-            .split("T")[0];
+                new Date()
+                .toISOString()
+                .split("T")[0];
 
 
 
-            const attendance=[
+            const attendance = [
 
 
 
@@ -866,16 +942,16 @@ db.get(
 
 
                 [
-                    "ECE001",
-                    "Digital Electronics",
-                    "T002",
+                    "CSE004",
+                    "DBMS",
+                    "T001",
                     today,
                     "Present"
                 ],
 
 
                 [
-                    "ECE002",
+                    "ECE001",
                     "Digital Electronics",
                     "T002",
                     today,
@@ -910,8 +986,8 @@ db.get(
                 ]
 
 
-
             ];
+
 
 
 
@@ -926,11 +1002,13 @@ db.get(
 INSERT INTO attendance
 
 (
+
 roll,
 subject,
 teacherId,
 date,
 status
+
 )
 
 VALUES(?,?,?,?,?)
@@ -945,35 +1023,42 @@ record,
 
 if(err){
 
-console.log(err.message);
-
-}
-
-
-}
-
-
-);
-
-
-
-});
-
-
-
 console.log(
-"✅ Sample Attendance Inserted"
+"Attendance Insert Error:",
+err.message
 );
 
+}
 
 
 }
 
 
+);
 
-}
+
+
+            });
+
+
+
+
+
+            console.log(
+                "✅ Sample Attendance Inserted"
+            );
+
+
+        }
+
+
+
+    }
 
 );
+
+
+
 
 
 
@@ -993,25 +1078,26 @@ db.get(
 
 if(err){
 
-console.log(err);
-return;
+    console.log(err);
+    return;
 
 }
 
 
 
-if(row.count===0){
+if(row.count === 0){
 
 
 
 console.log(
-"📥 Adding Sample Results..."
+    "📥 Adding Sample Results..."
 );
 
 
 
 
-const results=[
+
+const results = [
 
 
 
@@ -1033,6 +1119,18 @@ const results=[
 "CSE",
 "DBMS",
 88,
+"A",
+"Pass"
+],
+
+
+
+[
+"CSE003",
+"Priya Reddy",
+"CSE",
+"DBMS",
+81,
 "A",
 "Pass"
 ],
@@ -1086,14 +1184,15 @@ const results=[
 ]
 
 
-
 ];
 
 
 
 
 
+
 results.forEach(result=>{
+
 
 
 db.run(
@@ -1103,6 +1202,7 @@ db.run(
 INSERT INTO results
 
 (
+
 roll,
 name,
 department,
@@ -1110,6 +1210,7 @@ subject,
 marks,
 grade,
 status
+
 )
 
 VALUES(?,?,?,?,?,?,?)
@@ -1124,9 +1225,13 @@ result,
 
 if(err){
 
-console.log(err.message);
+console.log(
+"Result Insert Error:",
+err.message
+);
 
 }
+
 
 
 }
@@ -1137,6 +1242,8 @@ console.log(err.message);
 
 
 });
+
+
 
 
 
@@ -1152,7 +1259,10 @@ console.log(
 
 }
 
+
+
 );
+
 
 
 
