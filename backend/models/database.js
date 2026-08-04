@@ -1020,12 +1020,15 @@ err.message
 // ======================================
 
 
+// ======================================
+// INSERT SAMPLE RESULTS
+// ======================================
+
 db.get(
 
 "SELECT COUNT(*) AS count FROM results",
 
 (err,row)=>{
-
 
 if(err){
 
@@ -1035,9 +1038,7 @@ if(err){
 }
 
 
-
 if(row.count === 0){
-
 
 
 console.log(
@@ -1046,67 +1047,72 @@ console.log(
 
 
 
-
 const results = [
 
-    ('CSE001','Rahul Kumar','CSE','DBMS',85,'A','Pass'),
-('CSE002','Anjali Sharma','CSE','DBMS',92,'A+','Pass'),
-('CSE003','Priya Reddy','CSE','DBMS',78,'B+','Pass'),
-('CSE004','Sai Teja','CSE','DBMS',88,'A','Pass'),
-('CSE005','Kiran Kumar','CSE','DBMS',91,'A+','Pass'),
-('CSE006','Harsha Vardhan','CSE','DBMS',74,'B','Pass'),
-('CSE007','Nikhil Reddy','CSE','DBMS',95,'A+','Pass'),
-('CSE008','Keerthana','CSE','DBMS',82,'A','Pass'),
-('CSE009','Bhavana','CSE','DBMS',89,'A','Pass'),
-('CSE010','Sandeep','CSE','DBMS',90,'A+','Pass'),
+["CSE001","Rahul Kumar","CSE","DBMS",85,"A","Pass"],
+["CSE002","Anjali Sharma","CSE","DBMS",92,"A+","Pass"],
+["CSE003","Priya Reddy","CSE","DBMS",78,"B+","Pass"],
+["CSE004","Sai Teja","CSE","DBMS",88,"A","Pass"],
+["CSE005","Kiran Kumar","CSE","DBMS",91,"A+","Pass"],
+["CSE006","Harsha Vardhan","CSE","DBMS",74,"B","Pass"],
+["CSE007","Nikhil Reddy","CSE","DBMS",95,"A+","Pass"],
+["CSE008","Keerthana","CSE","DBMS",82,"A","Pass"],
+["CSE009","Bhavana","CSE","DBMS",89,"A","Pass"],
+["CSE010","Sandeep","CSE","DBMS",90,"A+","Pass"],
 
-('ECE001','Rohit','ECE','Digital Electronics',86,'A','Pass'),
-('ECE002','Divya','ECE','Digital Electronics',80,'A','Pass'),
-('ECE003','Karthik','ECE','Digital Electronics',77,'B+','Pass'),
-('ECE004','Meghana','ECE','Digital Electronics',93,'A+','Pass'),
-('ECE005','Ajay','ECE','Digital Electronics',88,'A','Pass'),
-('ECE006','Naveen','ECE','Digital Electronics',84,'A','Pass'),
-('ECE007','Pooja','ECE','Digital Electronics',91,'A+','Pass'),
-('ECE008','Vamsi','ECE','Digital Electronics',76,'B+','Pass'),
-('ECE009','Sneha','ECE','Digital Electronics',83,'A','Pass'),
-('ECE010','Akhil','ECE','Digital Electronics',89,'A','Pass'),
 
-('EEE001','Rakesh','EEE','Electrical Machines',81,'A','Pass'),
-('EEE002','Swathi','EEE','Electrical Machines',75,'B+','Pass'),
-('EEE003','Vinay','EEE','Electrical Machines',87,'A','Pass'),
-('EEE004','Lavanya','EEE','Electrical Machines',90,'A+','Pass'),
-('EEE005','Sai Krishna','EEE','Electrical Machines',86,'A','Pass'),
-('EEE006','Deepthi','EEE','Electrical Machines',79,'B+','Pass'),
-('EEE007','Mahesh','EEE','Electrical Machines',84,'A','Pass'),
-('EEE008','Sravani','EEE','Electrical Machines',92,'A+','Pass'),
-('EEE009','Tarun','EEE','Electrical Machines',88,'A','Pass'),
-('EEE010','Pavan','EEE','Electrical Machines',80,'A','Pass'),
+["ECE001","Rohit","ECE","Digital Electronics",86,"A","Pass"],
+["ECE002","Divya","ECE","Digital Electronics",80,"A","Pass"],
+["ECE003","Karthik","ECE","Digital Electronics",77,"B+","Pass"],
+["ECE004","Meghana","ECE","Digital Electronics",93,"A+","Pass"],
+["ECE005","Ajay","ECE","Digital Electronics",88,"A","Pass"],
+["ECE006","Naveen","ECE","Digital Electronics",84,"A","Pass"],
+["ECE007","Pooja","ECE","Digital Electronics",91,"A+","Pass"],
+["ECE008","Vamsi","ECE","Digital Electronics",76,"B+","Pass"],
+["ECE009","Sneha","ECE","Digital Electronics",83,"A","Pass"],
+["ECE010","Akhil","ECE","Digital Electronics",89,"A","Pass"],
 
-('CIV001','Ravi','Civil','Surveying',82,'A','Pass'),
-('CIV002','Sowmya','Civil','Surveying',76,'B+','Pass'),
-('CIV003','Manoj','Civil','Surveying',89,'A','Pass'),
-('CIV004','Kavya','Civil','Surveying',91,'A+','Pass'),
-('CIV005','Arun','Civil','Surveying',83,'A','Pass'),
-('CIV006','Divya','Civil','Surveying',87,'A','Pass'),
-('CIV007','Ramesh','Civil','Surveying',78,'B+','Pass'),
-('CIV008','Bhavya','Civil','Surveying',85,'A','Pass'),
-('CIV009','Ganesh','Civil','Surveying',90,'A+','Pass'),
-('CIV010','Pavani','Civil','Surveying',84,'A','Pass'),
 
-('MEC001','Pradeep','Mechanical','Thermodynamics',88,'A','Pass'),
-('MEC002','Suresh','Mechanical','Thermodynamics',79,'B+','Pass'),
-('MEC003','Vijay','Mechanical','Thermodynamics',81,'A','Pass'),
-('MEC004','Rohini','Mechanical','Thermodynamics',86,'A','Pass'),
-('MEC005','Kishore','Mechanical','Thermodynamics',92,'A+','Pass'),
-('MEC006','Harini','Mechanical','Thermodynamics',84,'A','Pass'),
-('MEC007','Naresh','Mechanical','Thermodynamics',77,'B+','Pass'),
-('MEC008','Snehal','Mechanical','Thermodynamics',89,'A','Pass'),
-('MEC009','Lokesh','Mechanical','Thermodynamics',90,'A+','Pass'),
-('MEC010','Aishwarya','Mechanical','Thermodynamics',85,'A','Pass')
+["EEE001","Rakesh","EEE","Electrical Machines",81,"A","Pass"],
+["EEE002","Swathi","EEE","Electrical Machines",75,"B+","Pass"],
+["EEE003","Vinay","EEE","Electrical Machines",87,"A","Pass"],
+["EEE004","Lavanya","EEE","Electrical Machines",90,"A+","Pass"],
+["EEE005","Sai Krishna","EEE","Electrical Machines",86,"A","Pass"],
+["EEE006","Deepthi","EEE","Electrical Machines",79,"B+","Pass"],
+["EEE007","Mahesh","EEE","Electrical Machines",84,"A","Pass"],
+["EEE008","Sravani","EEE","Electrical Machines",92,"A+","Pass"],
+["EEE009","Tarun","EEE","Electrical Machines",88,"A","Pass"],
+["EEE010","Pavan","EEE","Electrical Machines",80,"A","Pass"],
+
+
+["CIV001","Ravi","Civil","Surveying",82,"A","Pass"],
+["CIV002","Sowmya","Civil","Surveying",76,"B+","Pass"],
+["CIV003","Manoj","Civil","Surveying",89,"A","Pass"],
+["CIV004","Kavya","Civil","Surveying",91,"A+","Pass"],
+["CIV005","Arun","Civil","Surveying",83,"A","Pass"],
+["CIV006","Divya","Civil","Surveying",87,"A","Pass"],
+["CIV007","Ramesh","Civil","Surveying",78,"B+","Pass"],
+["CIV008","Bhavya","Civil","Surveying",85,"A","Pass"],
+["CIV009","Ganesh","Civil","Surveying",90,"A+","Pass"],
+["CIV010","Pavani","Civil","Surveying",84,"A","Pass"],
+
+
+["MEC001","Pradeep","Mechanical","Thermodynamics",88,"A","Pass"],
+["MEC002","Suresh","Mechanical","Thermodynamics",79,"B+","Pass"],
+["MEC003","Vijay","Mechanical","Thermodynamics",81,"A","Pass"],
+["MEC004","Rohini","Mechanical","Thermodynamics",86,"A","Pass"],
+["MEC005","Kishore","Mechanical","Thermodynamics",92,"A+","Pass"],
+["MEC006","Harini","Mechanical","Thermodynamics",84,"A","Pass"],
+["MEC007","Naresh","Mechanical","Thermodynamics",77,"B+","Pass"],
+["MEC008","Snehal","Mechanical","Thermodynamics",89,"A","Pass"],
+["MEC009","Lokesh","Mechanical","Thermodynamics",90,"A+","Pass"],
+["MEC010","Aishwarya","Mechanical","Thermodynamics",85,"A","Pass"]
+
 ];
 
-results.forEach(result=>{
 
+
+results.forEach(result=>{
 
 
 db.run(
@@ -1116,7 +1122,6 @@ db.run(
 INSERT INTO results
 
 (
-
 roll,
 name,
 department,
@@ -1124,7 +1129,6 @@ subject,
 marks,
 grade,
 status
-
 )
 
 VALUES(?,?,?,?,?,?,?)
@@ -1136,7 +1140,6 @@ result,
 
 (err)=>{
 
-
 if(err){
 
 console.log(
@@ -1146,39 +1149,25 @@ err.message
 
 }
 
-
-
 }
 
-
 );
-
 
 
 });
 
 
-
-
-
 console.log(
-"✅ Sample Results Inserted"
+"✅ Sample Results Inserted Correctly"
 );
-
 
 
 }
 
 
-
 }
 
-
-
 );
-
-
-
 
 
 
