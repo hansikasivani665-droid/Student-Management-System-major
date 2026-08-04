@@ -13,17 +13,15 @@ const dbPath = path.join(dbDir, "student.db");
 
 if (!fs.existsSync(dbDir)) {
 
-    console.log("📁 Creating database directory...");
-
     fs.mkdirSync(dbDir, {
-        recursive:true
+        recursive: true
     });
 
 }
 
 
 console.log(
-    "Initializing SQLite Database:",
+    "Initializing Database:",
     dbPath
 );
 
@@ -32,7 +30,6 @@ console.log(
 // ======================================
 // DATABASE CONNECTION
 // ======================================
-
 
 const db = new sqlite3.Database(
 
@@ -43,13 +40,11 @@ const db = new sqlite3.Database(
         if(err){
 
             console.log(
-                "❌ SQLite Connection Failed"
+                "❌ SQLite Connection Failed:",
+                err.message
             );
 
-            console.log(err.message);
-
         }
-
         else{
 
             console.log(
@@ -73,15 +68,8 @@ const db = new sqlite3.Database(
 db.serialize(()=>{
 
 
-console.log(
-    "📦 Creating Database Tables..."
-);
-
-
-
 // ======================================
 // STUDENTS TABLE
-// YEAR REQUIRED
 // ======================================
 
 
@@ -110,6 +98,7 @@ CREATE TABLE IF NOT EXISTS students(
 )
 
 `);
+
 
 
 
@@ -145,6 +134,7 @@ CREATE TABLE IF NOT EXISTS attendance(
 )
 
 `);
+
 
 
 
@@ -188,7 +178,6 @@ CREATE TABLE IF NOT EXISTS results(
 
 // ======================================
 // TEACHERS TABLE
-// YEAR REMOVED
 // ======================================
 
 
@@ -198,7 +187,7 @@ CREATE TABLE IF NOT EXISTS teachers(
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    teacherId TEXT,
+    teacherId TEXT UNIQUE,
 
     name TEXT,
 
@@ -206,7 +195,7 @@ CREATE TABLE IF NOT EXISTS teachers(
 
     subject TEXT,
 
-    email TEXT,
+    email TEXT UNIQUE,
 
     phone TEXT,
 
@@ -221,7 +210,6 @@ CREATE TABLE IF NOT EXISTS teachers(
 )
 
 `);
-
 
 
 
@@ -258,14 +246,13 @@ CREATE TABLE IF NOT EXISTS users(
 
 
 
-
 console.log(
     "✅ Database Tables Ready"
 );
 
 
-
 });
+
 
 
 
@@ -279,11 +266,7 @@ console.log(
 db.serialize(()=>{
 
 
-
-// ======================================
-// RESULTS MIGRATION
-// ======================================
-
+// RESULTS SUBJECT MIGRATION
 
 db.all(
 
@@ -292,22 +275,14 @@ db.all(
 (err,columns)=>{
 
 
-if(err){
-
-    console.log(
-        "❌ Results migration error",
-        err.message
-    );
-
-    return;
-
-}
+if(err)
+return;
 
 
 
 const subjectExists =
 columns.some(
-    column=>column.name==="subject"
+column=>column.name==="subject"
 );
 
 
@@ -317,49 +292,48 @@ if(!subjectExists){
 
 db.run(
 
-`ALTER TABLE results ADD COLUMN subject TEXT`,
+`
+ALTER TABLE results
+ADD COLUMN subject TEXT
+`,
 
 (err)=>{
 
 if(err){
 
 console.log(
-    "Results migration:",
-    err.message
+"Results migration:",
+err.message
 );
 
 }
-
 else{
 
 console.log(
-    "✅ Subject column added to results"
+"✅ Results subject column added"
 );
 
 }
-
-
-}
-
-);
-
-
-}
-
-
 
 }
 
 );
 
 
+}
+
+
+
+}
+
+);
 
 
 
 
-// ======================================
+
+
 // ATTENDANCE MIGRATION
-// ======================================
 
 
 db.all(
@@ -369,32 +343,22 @@ db.all(
 (err,columns)=>{
 
 
-if(err){
-
-console.log(
-    "❌ Attendance migration error",
-    err.message
-);
-
+if(err)
 return;
-
-}
-
 
 
 
 const subjectExists =
 columns.some(
-    column=>column.name==="subject"
+column=>column.name==="subject"
 );
 
 
 
 const teacherExists =
 columns.some(
-    column=>column.name==="teacherId"
+column=>column.name==="teacherId"
 );
-
 
 
 
@@ -404,31 +368,15 @@ if(!subjectExists){
 
 db.run(
 
-`ALTER TABLE attendance ADD COLUMN subject TEXT`,
-
-(err)=>{
-
-if(err){
-
-console.log(err.message);
-
-}
-
-else{
-
-console.log(
-"✅ Subject column added to attendance"
-);
-
-}
-
-}
+`
+ALTER TABLE attendance
+ADD COLUMN subject TEXT
+`
 
 );
 
 
 }
-
 
 
 
@@ -439,33 +387,15 @@ if(!teacherExists){
 
 db.run(
 
-`ALTER TABLE attendance ADD COLUMN teacherId TEXT`,
-
-(err)=>{
-
-
-if(err){
-
-console.log(err.message);
-
-}
-
-else{
-
-console.log(
-"✅ TeacherId column added to attendance"
-);
-
-}
-
-
-}
+`
+ALTER TABLE attendance
+ADD COLUMN teacherId TEXT
+`
 
 );
 
 
 }
-
 
 
 
@@ -477,36 +407,41 @@ console.log(
 
 });
 
+ 
 // ======================================
-// INSERT SAMPLE STUDENTS
+// INSERT DEFAULT STUDENTS
 // ======================================
 
 
 db.get(
 
-    "SELECT COUNT(*) AS count FROM students",
+"SELECT COUNT(*) AS count FROM students",
 
-    (err,row)=>{
-
-
-        if(err){
-
-            console.log(err);
-            return;
-
-        }
+(err,row)=>{
 
 
+if(err){
 
-        if(row.count === 0){
+console.log(err);
+return;
+
+}
 
 
-            console.log(
-                "📥 Adding Sample Students..."
-            );
+
+if(row.count === 0){
 
 
-           const students = [
+console.log(
+"📥 Adding Default Students..."
+);
+
+
+
+const students = [
+
+
+// CSE
 
 ["Rahul Kumar","CSE001","CSE","III","rahul@gmail.com","9876543201","1234"],
 ["Anjali Sharma","CSE002","CSE","III","anjali@gmail.com","9876543202","1234"],
@@ -519,6 +454,9 @@ db.get(
 ["Bhavana","CSE009","CSE","III","bhavana@gmail.com","9876543209","1234"],
 ["Sandeep","CSE010","CSE","III","sandeep@gmail.com","9876543210","1234"],
 
+
+// ECE
+
 ["Rohit","ECE001","ECE","III","rohit.ece@gmail.com","9876500001","1234"],
 ["Divya","ECE002","ECE","III","divya.ece@gmail.com","9876500002","1234"],
 ["Karthik","ECE003","ECE","III","karthik.ece@gmail.com","9876500003","1234"],
@@ -529,6 +467,9 @@ db.get(
 ["Vamsi","ECE008","ECE","III","vamsi.ece@gmail.com","9876500008","1234"],
 ["Sneha","ECE009","ECE","III","sneha.ece@gmail.com","9876500009","1234"],
 ["Akhil","ECE010","ECE","III","akhil.ece@gmail.com","9876500010","1234"],
+
+
+// EEE
 
 ["Rakesh","EEE001","EEE","III","rakesh.eee@gmail.com","9876510001","1234"],
 ["Swathi","EEE002","EEE","III","swathi.eee@gmail.com","9876510002","1234"],
@@ -541,6 +482,9 @@ db.get(
 ["Tarun","EEE009","EEE","III","tarun.eee@gmail.com","9876510009","1234"],
 ["Pavan","EEE010","EEE","III","pavan.eee@gmail.com","9876510010","1234"],
 
+
+// Civil
+
 ["Ravi","CIV001","Civil","III","ravi.civil@gmail.com","9876520001","1234"],
 ["Sowmya","CIV002","Civil","III","sowmya.civil@gmail.com","9876520002","1234"],
 ["Manoj","CIV003","Civil","III","manoj.civil@gmail.com","9876520003","1234"],
@@ -551,6 +495,9 @@ db.get(
 ["Bhavya","CIV008","Civil","III","bhavya.civil@gmail.com","9876520008","1234"],
 ["Ganesh","CIV009","Civil","III","ganesh.civil@gmail.com","9876520009","1234"],
 ["Pavani","CIV010","Civil","III","pavani.civil@gmail.com","9876520010","1234"],
+
+
+// Mechanical
 
 ["Pradeep","MEC001","Mechanical","III","pradeep.mech@gmail.com","9876530001","1234"],
 ["Suresh","MEC002","Mechanical","III","suresh.mech@gmail.com","9876530002","1234"],
@@ -566,14 +513,14 @@ db.get(
 ];
 
 
-            students.forEach(student=>{
+
+students.forEach(student=>{
 
 
-                db.run(
+db.run(
 
 `
 INSERT INTO students
-
 (
 name,
 roll,
@@ -588,54 +535,32 @@ VALUES(?,?,?,?,?,?,?)
 
 `,
 
-student,
+student
+
+);
 
 
-(err)=>{
+});
 
-if(err){
 
 console.log(
-"Student Insert Error:",
-err.message
+"✅ 50 Students Added"
 );
+
+
 
 }
 
 
-}
 
-
-);
-
-
-
-            });
-
-
-
-            console.log(
-                "✅ Sample Students Inserted"
-            );
-
-
-        }
-
-
-
-    }
-
-);
-
-
+});
 
 
 
 
 
 // ======================================
-// INSERT SAMPLE TEACHERS
-// YEAR REMOVED
+// INSERT DEFAULT TEACHERS
 // ======================================
 
 
@@ -646,30 +571,21 @@ db.get(
 (err,row)=>{
 
 
-if(err){
-
-    console.log(err);
-    return;
-
-}
+if(err)
+return;
 
 
 
-
-if(row.count === 0){
-
+if(row.count===0){
 
 
 console.log(
-    "📥 Adding Sample Teachers..."
+"📥 Adding Teachers..."
 );
 
 
 
-
-
-const teachers = [
-
+const teachers=[
 
 
 [
@@ -685,7 +601,6 @@ const teachers = [
 ],
 
 
-
 [
 "T002",
 "Suresh Reddy",
@@ -697,7 +612,6 @@ const teachers = [
 "6 Years",
 "Suresh@123"
 ],
-
 
 
 [
@@ -713,7 +627,6 @@ const teachers = [
 ],
 
 
-
 [
 "T004",
 "Anil Kumar",
@@ -725,7 +638,6 @@ const teachers = [
 "5 Years",
 "Anil@123"
 ],
-
 
 
 [
@@ -741,26 +653,18 @@ const teachers = [
 ]
 
 
-
 ];
-
-
-
 
 
 
 teachers.forEach(teacher=>{
 
 
-
 db.run(
 
 `
-
 INSERT INTO teachers
-
 (
-
 teacherId,
 name,
 department,
@@ -770,35 +674,28 @@ phone,
 qualification,
 experience,
 password
-
 )
 
 VALUES(?,?,?,?,?,?,?,?,?)
 
 `,
 
-teacher,
+teacher
+
+);
 
 
-(err)=>{
+});
 
 
-if(err){
 
 console.log(
-"Teacher Insert Error:",
-err.message
+"✅ 5 Teachers Added"
 );
-
-}
 
 
 
 }
-
-
-);
-
 
 
 });
@@ -807,372 +704,8 @@ err.message
 
 
 
-console.log(
-"✅ Sample Teachers Inserted"
-);
-
-
-
-}
-
-
-
-
-}
-
-
-
-);
-
 // ======================================
-// INSERT SAMPLE ATTENDANCE
-// ======================================
-
-
-db.get(
-
-    "SELECT COUNT(*) AS count FROM attendance",
-
-    (err,row)=>{
-
-
-        if(err){
-
-            console.log(err);
-            return;
-
-        }
-
-
-
-        if(row.count === 0){
-
-
-            console.log(
-                "📥 Adding Sample Attendance..."
-            );
-
-
-
-            const today =
-                new Date()
-                .toISOString()
-                .split("T")[0];
-
-
-
-            const attendance = [
-
-
-
-                [
-                    "CSE001",
-                    "DBMS",
-                    "T001",
-                    today,
-                    "Present"
-                ],
-
-
-                [
-                    "CSE002",
-                    "DBMS",
-                    "T001",
-                    today,
-                    "Present"
-                ],
-
-
-                [
-                    "CSE003",
-                    "DBMS",
-                    "T001",
-                    today,
-                    "Absent"
-                ],
-
-
-                [
-                    "CSE004",
-                    "DBMS",
-                    "T001",
-                    today,
-                    "Present"
-                ],
-
-
-                [
-                    "ECE001",
-                    "Digital Electronics",
-                    "T002",
-                    today,
-                    "Present"
-                ],
-
-
-                [
-                    "EEE001",
-                    "Electrical Machines",
-                    "T003",
-                    today,
-                    "Present"
-                ],
-
-
-                [
-                    "CIV001",
-                    "Structural Engineering",
-                    "T005",
-                    today,
-                    "Absent"
-                ],
-
-
-                [
-                    "MEC001",
-                    "Thermodynamics",
-                    "T004",
-                    today,
-                    "Present"
-                ]
-
-
-            ];
-
-
-
-
-
-            attendance.forEach(record=>{
-
-
-                db.run(
-
-`
-
-INSERT INTO attendance
-
-(
-
-roll,
-subject,
-teacherId,
-date,
-status
-
-)
-
-VALUES(?,?,?,?,?)
-
-`,
-
-record,
-
-
-(err)=>{
-
-
-if(err){
-
-console.log(
-"Attendance Insert Error:",
-err.message
-);
-
-}
-
-
-}
-
-
-);
-
-
-
-            });
-
-
-
-
-
-            console.log(
-                "✅ Sample Attendance Inserted"
-            );
-
-
-        }
-
-
-
-    }
-
-);
-
-
-
-
-
-
-
-
-// ======================================
-// INSERT SAMPLE RESULTS
-// ======================================
-
-
-// ======================================
-// INSERT SAMPLE RESULTS
-// ======================================
-
-db.get(
-
-"SELECT COUNT(*) AS count FROM results",
-
-(err,row)=>{
-
-if(err){
-
-    console.log(err);
-    return;
-
-}
-
-
-if(row.count === 0){
-
-
-console.log(
-    "📥 Adding Sample Results..."
-);
-
-
-
-const results = [
-
-["CSE001","Rahul Kumar","CSE","DBMS",85,"A","Pass"],
-["CSE002","Anjali Sharma","CSE","DBMS",92,"A+","Pass"],
-["CSE003","Priya Reddy","CSE","DBMS",78,"B+","Pass"],
-["CSE004","Sai Teja","CSE","DBMS",88,"A","Pass"],
-["CSE005","Kiran Kumar","CSE","DBMS",91,"A+","Pass"],
-["CSE006","Harsha Vardhan","CSE","DBMS",74,"B","Pass"],
-["CSE007","Nikhil Reddy","CSE","DBMS",95,"A+","Pass"],
-["CSE008","Keerthana","CSE","DBMS",82,"A","Pass"],
-["CSE009","Bhavana","CSE","DBMS",89,"A","Pass"],
-["CSE010","Sandeep","CSE","DBMS",90,"A+","Pass"],
-
-
-["ECE001","Rohit","ECE","Digital Electronics",86,"A","Pass"],
-["ECE002","Divya","ECE","Digital Electronics",80,"A","Pass"],
-["ECE003","Karthik","ECE","Digital Electronics",77,"B+","Pass"],
-["ECE004","Meghana","ECE","Digital Electronics",93,"A+","Pass"],
-["ECE005","Ajay","ECE","Digital Electronics",88,"A","Pass"],
-["ECE006","Naveen","ECE","Digital Electronics",84,"A","Pass"],
-["ECE007","Pooja","ECE","Digital Electronics",91,"A+","Pass"],
-["ECE008","Vamsi","ECE","Digital Electronics",76,"B+","Pass"],
-["ECE009","Sneha","ECE","Digital Electronics",83,"A","Pass"],
-["ECE010","Akhil","ECE","Digital Electronics",89,"A","Pass"],
-
-
-["EEE001","Rakesh","EEE","Electrical Machines",81,"A","Pass"],
-["EEE002","Swathi","EEE","Electrical Machines",75,"B+","Pass"],
-["EEE003","Vinay","EEE","Electrical Machines",87,"A","Pass"],
-["EEE004","Lavanya","EEE","Electrical Machines",90,"A+","Pass"],
-["EEE005","Sai Krishna","EEE","Electrical Machines",86,"A","Pass"],
-["EEE006","Deepthi","EEE","Electrical Machines",79,"B+","Pass"],
-["EEE007","Mahesh","EEE","Electrical Machines",84,"A","Pass"],
-["EEE008","Sravani","EEE","Electrical Machines",92,"A+","Pass"],
-["EEE009","Tarun","EEE","Electrical Machines",88,"A","Pass"],
-["EEE010","Pavan","EEE","Electrical Machines",80,"A","Pass"],
-
-
-["CIV001","Ravi","Civil","Surveying",82,"A","Pass"],
-["CIV002","Sowmya","Civil","Surveying",76,"B+","Pass"],
-["CIV003","Manoj","Civil","Surveying",89,"A","Pass"],
-["CIV004","Kavya","Civil","Surveying",91,"A+","Pass"],
-["CIV005","Arun","Civil","Surveying",83,"A","Pass"],
-["CIV006","Divya","Civil","Surveying",87,"A","Pass"],
-["CIV007","Ramesh","Civil","Surveying",78,"B+","Pass"],
-["CIV008","Bhavya","Civil","Surveying",85,"A","Pass"],
-["CIV009","Ganesh","Civil","Surveying",90,"A+","Pass"],
-["CIV010","Pavani","Civil","Surveying",84,"A","Pass"],
-
-
-["MEC001","Pradeep","Mechanical","Thermodynamics",88,"A","Pass"],
-["MEC002","Suresh","Mechanical","Thermodynamics",79,"B+","Pass"],
-["MEC003","Vijay","Mechanical","Thermodynamics",81,"A","Pass"],
-["MEC004","Rohini","Mechanical","Thermodynamics",86,"A","Pass"],
-["MEC005","Kishore","Mechanical","Thermodynamics",92,"A+","Pass"],
-["MEC006","Harini","Mechanical","Thermodynamics",84,"A","Pass"],
-["MEC007","Naresh","Mechanical","Thermodynamics",77,"B+","Pass"],
-["MEC008","Snehal","Mechanical","Thermodynamics",89,"A","Pass"],
-["MEC009","Lokesh","Mechanical","Thermodynamics",90,"A+","Pass"],
-["MEC010","Aishwarya","Mechanical","Thermodynamics",85,"A","Pass"]
-
-];
-
-
-
-results.forEach(result=>{
-
-
-db.run(
-
-`
-
-INSERT INTO results
-
-(
-roll,
-name,
-department,
-subject,
-marks,
-grade,
-status
-)
-
-VALUES(?,?,?,?,?,?,?)
-
-`,
-
-result,
-
-
-(err)=>{
-
-if(err){
-
-console.log(
-"Result Insert Error:",
-err.message
-);
-
-}
-
-}
-
-);
-
-
-});
-
-
-console.log(
-"✅ Sample Results Inserted Correctly"
-);
-
-
-}
-
-
-}
-
-);
-
-
-
-// ======================================
-// DATABASE EXPORT
+// EXPORT DATABASE
 // ======================================
 
 
