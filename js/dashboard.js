@@ -2,24 +2,18 @@
 // ADMIN DASHBOARD FRONTEND JAVASCRIPT
 // =====================================================
 
-
 const API =
     window.API_BASE ||
     "https://student-management-system-major-1.onrender.com";
 
-
-
 let studentChartInstance;
 let attendanceChartInstance;
-
-
 
 // =====================================================
 // PAGE LOAD
 // =====================================================
 
-
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     loadDashboard();
 
@@ -31,698 +25,384 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 });
 
-
-
-
 // =====================================================
 // MAIN DASHBOARD
 // =====================================================
 
+async function loadDashboard() {
 
-async function loadDashboard(){
+    try {
 
+        const response = await fetch(`${API}/dashboard`);
 
-try{
+        const data = await response.json();
 
+        console.log("Dashboard Data:", data);
 
-const response =
-await fetch(`${API}/dashboard`);
+        if (!data.success) return;
 
+        // ===============================
+        // TOP CARDS
+        // ===============================
 
+        setText("totalStudents", data.totalStudents);
 
-const data =
-await response.json();
+        setText(
+            "attendancePercentage",
+            (data.attendancePercentage || 0) + "%"
+        );
 
+        setText("averageMarks", data.averageMarks || 0);
 
+        setText(
+            "passPercentage",
+            (data.passPercentage || 0) + "%"
+        );
 
-console.log(
-"Dashboard Data:",
-data
-);
+        setText("totalDepartments", data.totalDepartments);
 
+        setText("resultsCount", data.resultsCount);
 
+        setText("presentStudents", data.presentStudents);
 
-if(!data.success)
-return;
+        // ===============================
+        // DEPARTMENT CARDS
+        // ===============================
 
+        (data.departments || []).forEach(dep => {
 
+            let id = dep.department.toLowerCase();
 
+            switch (id) {
 
-// ===============================
-// TOP CARDS
-// ===============================
+                case "cse":
+                case "computer science engineering":
+                    id = "cse";
+                    break;
 
+                case "ece":
+                case "electronics and communication engineering":
+                    id = "ece";
+                    break;
 
-setText(
-"totalStudents",
-data.totalStudents
-);
+                case "eee":
+                case "electrical and electronics engineering":
+                    id = "eee";
+                    break;
 
+                case "mechanical":
+                case "mechanical engineering":
+                    id = "mech";
+                    break;
 
-setText(
-"attendancePercentage",
-(data.attendancePercentage || 0)+"%"
-);
+                case "civil":
+                case "civil engineering":
+                    id = "civil";
+                    break;
 
+                default:
+                    return;
 
-setText(
-"averageMarks",
-data.averageMarks
-);
+            }
 
+            setDepartment(id, dep);
 
-setText(
-"passPercentage",
-(data.passPercentage || 0)+"%"
-);
+        });
 
+        createCharts(data);
 
-setText(
-"totalDepartments",
-data.totalDepartments
-);
+    }
 
+    catch (error) {
 
-setText(
-"resultsCount",
-data.resultsCount
-);
+        console.log("Dashboard Error:", error);
 
-
-setText(
-"presentStudents",
-data.presentStudents
-);
-
-
-
-
-// ===============================
-// DEPARTMENT CARDS
-// ===============================
-
-
-if(data.departments){
-
-
-data.departments.forEach(dep=>{
-
-
-let id =
-dep.department
-.toLowerCase();
-
-
-
-if(id==="computer science engineering")
-id="cse";
-
-
-if(id==="electronics and communication engineering")
-id="ece";
-
-
-if(id==="electrical and electronics engineering")
-id="eee";
-
-
-if(id==="mechanical engineering")
-id="mech";
-
-
-
-setDepartment(
-id,
-dep
-);
-
-
-
-});
+    }
 
 }
-
-
-
-createCharts(data);
-
-
-
-}
-
-catch(error){
-
-console.log(
-"Dashboard Error:",
-error
-);
-
-
-}
-
-
-}
-
-
-
-
 
 // =====================================================
 // SAFE TEXT UPDATE
 // =====================================================
 
+function setText(id, value) {
 
-function setText(id,value){
+    const element = document.getElementById(id);
 
+    if (element) {
 
-const element =
-document.getElementById(id);
+        element.innerText = value ?? 0;
 
-
-
-if(element)
-
-element.innerText =
-value ?? 0;
-
-
+    }
 
 }
 
-
-
-
-
-
 // =====================================================
-// DEPARTMENT CARD UPDATE
+// UPDATE DEPARTMENT CARD
 // =====================================================
 
+function setDepartment(id, dep) {
 
-function setDepartment(id,dep){
+    setText(id + "Students", dep.totalStudents || 0);
 
+    setText(id + "Present", dep.presentStudents || 0);
 
+    setText(id + "Absent", dep.absentStudents || 0);
 
-setText(
-id+"Students",
-dep.totalStudents
-);
+    setText(
+        id + "Attendance",
+        (dep.attendancePercentage || 0) + "%"
+    );
 
+    setText(id + "Average", dep.averageMarks || 0);
 
-
-setText(
-id+"Present",
-dep.presentStudents
-);
-
-
-
-setText(
-id+"Absent",
-dep.absentStudents
-);
-
-
-
-setText(
-id+"Attendance",
-(dep.attendancePercentage || 0)+"%"
-);
-
-
-
-setText(
-id+"Average",
-dep.averageMarks
-);
-
-
-
-setText(
-id+"Results",
-dep.resultsCount || 0
-);
-
-
+    setText(id + "Results", dep.resultsCount || 0);
 
 }
-
-
-
-
-
-
-
 
 // =====================================================
 // DEPARTMENT OVERVIEW
 // =====================================================
 
+async function loadDepartmentDetails() {
 
-async function loadDepartmentDetails(){
+    try {
 
+        const response =
+            await fetch(`${API}/dashboard/department`);
 
-try{
+        const data =
+            await response.json();
 
+        console.log("Department Details:", data);
 
-const response =
-await fetch(
-`${API}/dashboard/department`
-);
+        const container =
+            document.getElementById("departmentCards");
 
+        if (!container) return;
 
+        container.innerHTML = "";
 
-const data =
-await response.json();
+        (data.departments || []).forEach(dep => {
 
-
-
-console.log(
-"Department Details:",
-data
-);
-
-
-
-const container =
-document.getElementById(
-"departmentCards"
-);
-
-
-
-if(!container)
-return;
-
-
-
-container.innerHTML="";
-
-
-
-(data.departments || [])
-.forEach(dep=>{
-
-
-container.innerHTML += `
-
+            container.innerHTML += `
 
 <div class="card">
 
+<h3>${dep.department}</h3>
 
-<h3>
-${dep.department}
-</h3>
+<p><strong>Students:</strong> ${dep.totalStudents}</p>
 
+<p><strong>Present:</strong> ${dep.presentStudents}</p>
 
-<p>
-Students :
-${dep.totalStudents}
-</p>
+<p><strong>Absent:</strong> ${dep.absentStudents}</p>
 
+<p><strong>Attendance:</strong> ${dep.attendancePercentage}%</p>
 
-<p>
-Present :
-${dep.presentStudents}
-</p>
+<p><strong>Results:</strong> ${dep.resultsCount || 0}</p>
 
-
-<p>
-Absent :
-${dep.absentStudents}
-</p>
-
-
-<p>
-Attendance :
-${dep.attendancePercentage}%
-</p>
-
-
-<p>
-Average Marks :
-${dep.averageMarks}
-</p>
-
+<p><strong>Average Marks:</strong> ${dep.averageMarks}</p>
 
 </div>
 
-
 `;
 
+        });
 
+    }
 
-});
+    catch (error) {
 
+        console.log("Department Error:", error);
 
-
-}
-
-catch(error){
-
-
-console.log(
-"Department Error:",
-error
-);
-
+    }
 
 }
-
-
-}
-
-
-
-
-
-
-
 
 // =====================================================
 // RECENT STUDENTS
 // =====================================================
 
+async function loadRecentStudents() {
 
-async function loadRecentStudents(){
+    try {
 
+        const response =
+            await fetch(`${API}/students`);
 
+        const data =
+            await response.json();
 
-try{
+        const students =
+            data.students || [];
 
+        const table =
+            document.getElementById("recentStudentTable");
 
-const response =
-await fetch(
-`${API}/students`
-);
+        if (!table) return;
 
+        table.innerHTML = "";
 
+        students
+            .slice(0, 5)
+            .forEach(student => {
 
-const data =
-await response.json();
-
-
-
-const students =
-data.students ||
-data ||
-[];
-
-
-
-const table =
-document.getElementById(
-"recentStudentTable"
-);
-
-
-
-if(!table)
-return;
-
-
-
-table.innerHTML="";
-
-
-
-students
-.slice(0,5)
-.forEach(student=>{
-
-
-table.innerHTML +=`
-
+                table.innerHTML += `
 
 <tr>
 
+<td>${student.name}</td>
 
-<td>
-${student.name}
-</td>
+<td>${student.roll}</td>
 
+<td>${student.department}</td>
 
-<td>
-${student.roll}
-</td>
+<td>${student.year}</td>
 
-
-<td>
-${student.department}
-</td>
-
-
-<td>
-${student.year}
-</td>
-
-
-<td>
-Active
-</td>
-
+<td>Active</td>
 
 </tr>
 
-
 `;
 
+            });
 
+    }
 
-});
+    catch (error) {
 
+        console.log(error);
 
-
-}
-
-catch(error){
-
-
-console.log(
-"Recent Student Error:",
-error
-);
-
-
+    }
 
 }
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =====================================================
-// DATE TIME
+// DATE & TIME
 // =====================================================
 
+function loadDateTime() {
 
-function loadDateTime(){
+    setInterval(() => {
 
+        const now = new Date();
 
-setInterval(()=>{
+        setText(
+            "currentDate",
+            now.toLocaleDateString()
+        );
 
+        setText(
+            "currentTime",
+            now.toLocaleTimeString()
+        );
 
-const now =
-new Date();
-
-
-
-setText(
-"currentDate",
-now.toLocaleDateString()
-);
-
-
-
-setText(
-"currentTime",
-now.toLocaleTimeString()
-);
-
-
-
-},1000);
-
-
+    }, 1000);
 
 }
-
-
-
-
-
-
-
-
 
 // =====================================================
 // CHARTS
 // =====================================================
 
+function createCharts(data) {
 
-function createCharts(data){
+    if (typeof Chart === "undefined") return;
 
+    const resultCanvas =
+        document.getElementById("studentChart");
 
+    const attendanceCanvas =
+        document.getElementById("attendanceChart");
 
-if(typeof Chart==="undefined")
-return;
+    if (studentChartInstance) {
 
+        studentChartInstance.destroy();
 
+    }
 
+    if (attendanceChartInstance) {
 
-const resultCanvas =
-document.getElementById(
-"studentChart"
-);
+        attendanceChartInstance.destroy();
 
+    }
 
+    if (resultCanvas) {
 
-const attendanceCanvas =
-document.getElementById(
-"attendanceChart"
-);
+        studentChartInstance = new Chart(resultCanvas, {
 
+            type: "bar",
 
+            data: {
 
+                labels: [
 
+                    "Average Marks",
 
-if(resultChartInstance)
+                    "Pass Percentage"
 
-studentChartInstance.destroy();
+                ],
 
+                datasets: [
 
+                    {
 
-if(attendanceChartInstance)
+                        label: "Performance",
 
-attendanceChartInstance.destroy();
+                        data: [
 
+                            data.averageMarks || 0,
 
+                            data.passPercentage || 0
 
+                        ]
 
+                    }
 
+                ]
 
-if(resultCanvas){
+            }
 
+        });
 
+    }
 
-studentChartInstance =
-new Chart(
-resultCanvas,
-{
+    if (attendanceCanvas) {
 
+        attendanceChartInstance = new Chart(attendanceCanvas, {
 
-type:"bar",
+            type: "pie",
 
+            data: {
 
-data:{
+                labels: [
 
+                    "Present",
 
-labels:[
+                    "Absent"
 
-"Average Marks",
+                ],
 
-"Pass Percentage"
+                datasets: [
 
-],
+                    {
 
+                        data: [
 
+                            data.presentStudents || 0,
 
-datasets:[{
+                            data.absentStudents || 0
 
-label:"Performance",
+                        ]
 
-data:[
+                    }
 
-data.averageMarks || 0,
+                ]
 
-data.passPercentage || 0
+            }
 
-]
+        });
 
-
-}]
-
-
-}
-
-
-
-}
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-if(attendanceCanvas){
-
-
-
-attendanceChartInstance =
-new Chart(
-attendanceCanvas,
-{
-
-
-type:"pie",
-
-
-data:{
-
-
-labels:[
-
-"Present",
-
-"Absent"
-
-],
-
-
-
-datasets:[{
-
-
-data:[
-
-data.presentStudents || 0,
-
-data.absentStudents || 0
-
-]
-
-
-}]
-
-
-}
-
-
-
-}
-
-);
-
-
-
-}
-
-
-
+    }
 
 }

@@ -195,7 +195,9 @@ router.get("/", (req, res) => {
                                     END
                                 ) AS absentStudents,
 
-                                ROUND(AVG(r.marks),2) AS averageMarks
+                                ROUND(AVG(r.marks),2) AS averageMarks,
+
+COUNT(DISTINCT r.roll) AS resultsCount
 
                             FROM students s
 
@@ -223,29 +225,30 @@ router.get("/", (req, res) => {
 
                             const departments = departmentData.map(dep => ({
 
-                                department: dep.department,
+    department: dep.department,
 
-                                totalStudents: dep.totalStudents || 0,
+    totalStudents: dep.totalStudents || 0,
 
-                                presentStudents: dep.presentStudents || 0,
+    presentStudents: dep.presentStudents || 0,
 
-                                absentStudents: dep.absentStudents || 0,
+    absentStudents: dep.absentStudents || 0,
 
-                                averageMarks: dep.averageMarks || 0,
+    averageMarks: dep.averageMarks || 0,
 
-                                attendancePercentage:
-                                    dep.totalStudents > 0
-                                        ? Number(
-                                            (
-                                                dep.presentStudents *
-                                                100 /
-                                                dep.totalStudents
-                                            ).toFixed(2)
-                                        )
-                                        : 0
+    resultsCount: dep.resultsCount || 0,
 
-                            }));
+    attendancePercentage:
+        dep.totalStudents > 0
+            ? Number(
+                (
+                    dep.presentStudents *
+                    100 /
+                    dep.totalStudents
+                ).toFixed(2)
+            )
+            : 0
 
+}));
                             // =====================================
                             // FINAL RESPONSE
                             // =====================================
@@ -333,7 +336,9 @@ router.get("/department", (req, res) => {
                 END
             ) AS absentStudents,
 
-            ROUND(AVG(r.marks),2) AS averageMarks
+            ROUND(AVG(r.marks),2) AS averageMarks,
+
+COUNT(DISTINCT r.roll) AS resultsCount
 
         FROM students s
 
@@ -367,30 +372,32 @@ router.get("/department", (req, res) => {
 
         }
 
-        const departments = rows.map(row => ({
+       const departments = rows.map(row => ({
 
-            department: row.department,
+    department: row.department,
 
-            totalStudents: row.totalStudents || 0,
+    totalStudents: row.totalStudents || 0,
 
-            presentStudents: row.presentStudents || 0,
+    presentStudents: row.presentStudents || 0,
 
-            absentStudents: row.absentStudents || 0,
+    absentStudents: row.absentStudents || 0,
 
-            averageMarks: row.averageMarks || 0,
+    averageMarks: row.averageMarks || 0,
 
-            attendancePercentage:
-                row.totalStudents > 0
-                    ? Number(
-                        (
-                            row.presentStudents *
-                            100 /
-                            row.totalStudents
-                        ).toFixed(2)
-                    )
-                    : 0
+    resultsCount: row.resultsCount || 0,
 
-        }));
+    attendancePercentage:
+        row.totalStudents > 0
+            ? Number(
+                (
+                    row.presentStudents *
+                    100 /
+                    row.totalStudents
+                ).toFixed(2)
+            )
+            : 0
+
+}));
 
         res.json({
 

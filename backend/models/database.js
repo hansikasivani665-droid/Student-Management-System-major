@@ -681,7 +681,48 @@ const students = [
 "1234"
 ],
 
+// ECE
+["Naveen","ECE006","ECE","III","naveen@gmail.com","9876500006","1234"],
+["Pooja","ECE007","ECE","IV","pooja@gmail.com","9876500007","1234"],
+["Vamsi","ECE008","ECE","IV","vamsi@gmail.com","9876500008","1234"],
+["Sneha","ECE009","ECE","IV","sneha@gmail.com","9876500009","1234"],
+["Akhil","ECE010","ECE","IV","akhil@gmail.com","9876500010","1234"],
 
+// EEE
+["Rakesh","EEE001","EEE","I","rakesh@gmail.com","9876510001","1234"],
+["Swathi","EEE002","EEE","I","swathi@gmail.com","9876510002","1234"],
+["Vinay","EEE003","EEE","II","vinay@gmail.com","9876510003","1234"],
+["Lavanya","EEE004","EEE","II","lavanya@gmail.com","9876510004","1234"],
+["Sai Krishna","EEE005","EEE","III","saikrishna@gmail.com","9876510005","1234"],
+["Deepthi","EEE006","EEE","III","deepthi@gmail.com","9876510006","1234"],
+["Mahesh","EEE007","EEE","IV","mahesh@gmail.com","9876510007","1234"],
+["Sravani","EEE008","EEE","IV","sravani@gmail.com","9876510008","1234"],
+["Tarun","EEE009","EEE","IV","tarun@gmail.com","9876510009","1234"],
+["Pavan","EEE010","EEE","IV","pavan@gmail.com","9876510010","1234"],
+
+// Civil
+["Ravi","CIV001","Civil","I","ravi.civil@gmail.com","9876520001","1234"],
+["Sowmya","CIV002","Civil","I","sowmya@gmail.com","9876520002","1234"],
+["Manoj","CIV003","Civil","II","manoj@gmail.com","9876520003","1234"],
+["Kavya","CIV004","Civil","II","kavya@gmail.com","9876520004","1234"],
+["Arun","CIV005","Civil","III","arun@gmail.com","9876520005","1234"],
+["Divya","CIV006","Civil","III","divya.civil@gmail.com","9876520006","1234"],
+["Ramesh","CIV007","Civil","IV","ramesh@gmail.com","9876520007","1234"],
+["Bhavya","CIV008","Civil","IV","bhavya@gmail.com","9876520008","1234"],
+["Ganesh","CIV009","Civil","IV","ganesh@gmail.com","9876520009","1234"],
+["Pavani","CIV010","Civil","IV","pavani@gmail.com","9876520010","1234"],
+
+// Mechanical
+["Pradeep","MEC001","Mechanical","I","pradeep@gmail.com","9876530001","1234"],
+["Suresh","MEC002","Mechanical","I","suresh.mech@gmail.com","9876530002","1234"],
+["Vijay","MEC003","Mechanical","II","vijay@gmail.com","9876530003","1234"],
+["Rohini","MEC004","Mechanical","II","rohini@gmail.com","9876530004","1234"],
+["Kishore","MEC005","Mechanical","III","kishore@gmail.com","9876530005","1234"],
+["Harini","MEC006","Mechanical","III","harini@gmail.com","9876530006","1234"],
+["Naresh","MEC007","Mechanical","IV","naresh@gmail.com","9876530007","1234"],
+["Snehal","MEC008","Mechanical","IV","snehal@gmail.com","9876530008","1234"],
+["Lokesh","MEC009","Mechanical","IV","lokesh@gmail.com","9876530009","1234"],
+["Aishwarya","MEC010","Mechanical","IV","aishwarya@gmail.com","9876530010","1234"]
 
 // =====================
 // Add remaining students
