@@ -1,108 +1,148 @@
-if(localStorage.getItem("loggedIn")!=="true")
-{
+// ======================================
+// MANAGE TEACHERS
+// ======================================
 
-location.href="/html/login.html";
+if (localStorage.getItem("loggedIn") !== "true") {
+
+    location.href = "/html/login.html";
 
 }
 
 const API = `${window.API_BASE || window.location.origin}/teachers`;
 
-const form =
-document.getElementById("teacherForm");
-
-const table =
-document.getElementById("teacherTable");
+const form = document.getElementById("teacherForm");
+const table = document.getElementById("teacherTable");
 
 document.addEventListener(
-"DOMContentLoaded",
-loadTeachers
+    "DOMContentLoaded",
+    loadTeachers
 );
+
+// ======================================
+// ADD TEACHER
+// ======================================
 
 form.addEventListener(
-"submit",
-async(e)=>{
+    "submit",
+    async (e) => {
 
-e.preventDefault();
+        e.preventDefault();
 
-const teacher={
+        const teacher = {
 
-name:
-document.getElementById("teacherName").value,
+            teacherId:
+                document.getElementById("teacherEmployeeId").value.trim(),
 
-employeeId:
-document.getElementById("teacherEmployeeId").value,
+            name:
+                document.getElementById("teacherName").value.trim(),
 
-email:
-document.getElementById("teacherEmail").value,
+            email:
+                document.getElementById("teacherEmail").value.trim(),
 
-department:
-document.getElementById("teacherDepartment").value,
+            department:
+                document.getElementById("teacherDepartment").value.trim(),
 
-qualification:
-document.getElementById("teacherSubject").value,
+            subject:
+                document.getElementById("teacherSubject").value.trim(),
 
-phone:
-document.getElementById("teacherPhone").value
+            phone:
+                document.getElementById("teacherPhone").value.trim(),
 
-};
+            qualification: "",
 
-const response =
-await fetch(API,{
+            experience: "",
 
-method:"POST",
+            password: "Teacher@123"
 
-headers:{
+        };
 
-"Content-Type":"application/json"
+        // Validation
 
-},
+        if (
+            !teacher.teacherId ||
+            !teacher.name ||
+            !teacher.email ||
+            !teacher.department ||
+            !teacher.phone
+        ) {
 
-body:
-JSON.stringify(teacher)
+            alert("Please fill all required fields.");
+            return;
 
-});
+        }
 
-const data =
-await response.json();
+        if (!/^[0-9]{10}$/.test(teacher.phone)) {
 
-if(!data.success){
+            alert("Phone number must contain exactly 10 digits.");
+            return;
 
-alert(data.message || "Failed to add teacher");
-return;
+        }
 
-}
+        try {
 
-alert(
-"Teacher Added Successfully"
+            const response = await fetch(API, {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(teacher)
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+
+                alert(data.message || "Failed to add teacher");
+                return;
+
+            }
+
+            alert("Teacher Added Successfully");
+
+            form.reset();
+
+            loadTeachers();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Server connection failed.");
+
+        }
+
+    }
 );
 
-form.reset();
+// ======================================
+// LOAD TEACHERS
+// ======================================
 
-loadTeachers();
+async function loadTeachers() {
 
-});
+    try {
 
-async function loadTeachers(){
+        const response = await fetch(API);
 
-try{
+        const data = await response.json();
 
-let response =
-await fetch(API);
+        table.innerHTML = "";
 
-let data =
-await response.json();
+        if (!data.success) return;
 
-table.innerHTML="";
+        data.teachers.forEach(t => {
 
-if(data.success){
-
-data.teachers.forEach(t=>{
-
-table.innerHTML += `
+            table.innerHTML += `
 
 <tr>
 
-<td>${t.id}</td>
+<td>${t.teacherId}</td>
 
 <td>${t.name}</td>
 
@@ -110,7 +150,7 @@ table.innerHTML += `
 
 <td>${t.department}</td>
 
-<td>${t.qualification || "-"}</td>
+<td>${t.subject || "-"}</td>
 
 <td>${t.phone}</td>
 
@@ -129,62 +169,65 @@ Delete
 
 `;
 
-});
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
 
 }
 
-}
+// ======================================
+// DELETE TEACHER
+// ======================================
 
-catch(error){
+async function deleteTeacher(id) {
 
-console.log(error);
+    if (!confirm("Delete Teacher?")) return;
 
-}
+    try {
 
-}
+        await fetch(`${API}/${id}`, {
 
-async function deleteTeacher(id){
+            method: "DELETE"
 
-if(
-confirm("Delete Teacher?")
-)
-{
+        });
 
-await fetch(
-`${API}/${id}`,
-{
+        loadTeachers();
 
-method:"DELETE"
+    }
 
-});
+    catch (error) {
 
-loadTeachers();
+        console.error(error);
 
-}
+    }
 
 }
+
+// ======================================
+// SEARCH
+// ======================================
 
 document
 .getElementById("searchTeacher")
-.addEventListener(
-"keyup",
-function(){
+.addEventListener("keyup", function () {
 
-let value=this.value.toLowerCase();
+    const value = this.value.toLowerCase();
 
-document
-.querySelectorAll("#teacherTable tr")
-.forEach(row=>{
+    document
+    .querySelectorAll("#teacherTable tr")
+    .forEach(row => {
 
-row.style.display =
-row.innerText
-.toLowerCase()
-.includes(value)
-?
-""
-:
-"none";
+        row.style.display =
+            row.innerText.toLowerCase().includes(value)
+                ? ""
+                : "none";
 
-});
+    });
 
 });
